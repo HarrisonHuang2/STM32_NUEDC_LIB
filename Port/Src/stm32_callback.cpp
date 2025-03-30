@@ -35,9 +35,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
   if(htim == &htim1)
     {
-      SEGGER_SYSVIEW_RecordEnterISR();
       g_message_handler.processHandler();
-      SEGGER_SYSVIEW_RecordExitISR();
     }
 
 }

@@ -90,24 +90,26 @@ public:
   }
 
   float readVoltage() {
-    while(isDataReady_!=STM32_ADC_DMA_READY){}
+//    startSample();
+//    while(isDataReady_!=STM32_ADC_DMA_READY){}
     //		uint32_t temp=0;
     //		for (int i = 0; i < 20; i+=2) {
     //			temp += readData_[i];//读十次取平均
     //		}
-    isDataReady_=STM32_ADC_DMA_NOT_READY;
-    HAL_ADC_Start_DMA(hadc_,readData_.data(),readData_.size());
+//    isDataReady_=STM32_ADC_DMA_NOT_READY;
+//    startSample();
     return readData_[0] / 4096.0f * 3.3f;
   }
 
   float readCurrent() {
-    while(isDataReady_!=STM32_ADC_DMA_READY){}
+//    startSample();
+//    while(isDataReady_!=STM32_ADC_DMA_READY){}
     //		uint32_t temp=0;
     //		for (int i = 1; i < 20; i+=2) {
     //			temp += readData_[i];//读十次取平均
     //		}
-    isDataReady_=STM32_ADC_DMA_NOT_READY;
-    HAL_ADC_Start_DMA(hadc_,readData_.data(),readData_.size());
+//    isDataReady_=STM32_ADC_DMA_NOT_READY;
+//    startSample();
     return readData_[1] / 4096.0f * 3.3f;
   }
 

@@ -70,7 +70,6 @@ public:
     }
   }
 
-private:
   UART_HandleTypeDef *_huart;
   uint8_t **_buffer;
   uint8_t _buffer_num;

@@ -99,7 +99,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  stm32_test::segger_systemview_test_enable();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -111,6 +111,7 @@ int main(void)
   MX_ADC2_Init();
   MX_ADC3_Init();
   MX_TIM1_Init();
+
 
   /* USER CODE BEGIN 2 */
   //定时事件处理

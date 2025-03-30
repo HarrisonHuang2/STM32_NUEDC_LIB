@@ -159,6 +159,13 @@ namespace stm32_test
 	g_bool_isResetPID = RESET_PID;
 	printf("RESET PID\n");
       }
+    else if(strcmp (s, "DEBUG") == 0)
+      {
+	//数据回显
+	printf("voltage:%f\n",g_dc_buck_handler.adc_out_->readVoltage());
+	printf("current:%f\n",g_dc_buck_handler.adc_out_->readCurrent());
+	printf("%d\n",g_dc_buck_handler.isEnable());
+      }
   }
 
 
@@ -332,7 +339,6 @@ namespace stm32_test
 
     //ADC抽象层初始化
     g_adc_handler=stm32_adc::getADC1();
-    g_adc_handler.startSample();
     __HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT);
     //继电器抽象层初始化
     g_relay_handler=stm32_relay::getRelay1();
@@ -345,11 +351,9 @@ namespace stm32_test
     g_current_pid.begin(2, 2, 2);
     g_dc_buck_handler.setCV_PID(&g_voltage_pid);
     g_dc_buck_handler.setCC_PID(&g_current_pid);
-    g_adc_handler.startSample();
-    __HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT);
 
     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
-
+    g_adc_handler.startSample();
     while (1)
       {
 	if(g_bool_isOutput == OUTPUT_START)
@@ -385,10 +389,6 @@ namespace stm32_test
 	    g_dc_buck_handler.closedCurrentLoopControl ();
 	    break;
 	}
-//	printf("voltage:%f\n",g_dc_buck_handler.adc_out_->readVoltage());
-//	printf("current:%f\n",g_dc_buck_handler.adc_out_->readCurrent());
-//	printf("%d\n",g_dc_buck_handler.isEnable());
-//	HAL_Delay(10);
       }
   }
 
