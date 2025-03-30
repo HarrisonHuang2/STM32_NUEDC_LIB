@@ -18,6 +18,20 @@ namespace stm32_hrtim_pwm
     hrtim_pwm.begin(&hhrtim1, HRTIM_TIMER_A, HRTIM_COMPARE_EVENT_2);
     return hrtim_pwm;
   }
+
+  Hardware_STM32_HRTIM_PWM getTimerBOutput()
+  {
+    Hardware_STM32_HRTIM_PWM hrtim_pwm;
+    hrtim_pwm.begin(&hhrtim1, HRTIM_TIMER_B, HRTIM_COMPARE_EVENT_2);
+    return hrtim_pwm;
+  }
+
+  Hardware_STM32_HRTIM_PWM getTimerCOutput()
+  {
+    Hardware_STM32_HRTIM_PWM hrtim_pwm;
+    hrtim_pwm.begin(&hhrtim1, HRTIM_TIMER_C, HRTIM_COMPARE_EVENT_2);
+    return hrtim_pwm;
+  }
 }
 
 

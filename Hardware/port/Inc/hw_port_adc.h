@@ -64,7 +64,7 @@ public:
 
   void startSample()
   {
-    HAL_ADC_Start_DMA(hadc_, readData_.data(), readData_.size());\
+    HAL_ADC_Start_DMA(hadc_, readData_.data(), readData_.size());
   }
 
   void stopSample() {
@@ -96,7 +96,7 @@ public:
     //			temp += readData_[i];//读十次取平均
     //		}
     isDataReady_=STM32_ADC_DMA_NOT_READY;
-    //		HAL_ADC_Start_DMA(hadc_,readData_,(sizeof(readData_)/sizeof(readData_[0])));
+    HAL_ADC_Start_DMA(hadc_,readData_.data(),readData_.size());
     return readData_[0] / 4096.0f * 3.3f;
   }
 
@@ -107,23 +107,19 @@ public:
     //			temp += readData_[i];//读十次取平均
     //		}
     isDataReady_=STM32_ADC_DMA_NOT_READY;
-    //		HAL_ADC_Start_DMA(hadc_,readData_,(sizeof(readData_)/sizeof(readData_[0])));
+    HAL_ADC_Start_DMA(hadc_,readData_.data(),readData_.size());
     return readData_[1] / 4096.0f * 3.3f;
   }
 
-  float readVoltage_IT() {
-    while (isDataReady_IT_ != STM32_ADC_IT_READY) {}
-    isDataReady_IT_=STM32_ADC_IT_NOT_READY;
-    //    HAL_ADCEx_InjectedStart_IT(hadc_);
-    return hadc_->Instance->JDR1 / 4096.0f * 3.3f;
-  }
-
-  float readCurrent_IT() {
+  int8_t read3Channel_IT (float *data,size_t length)
+  {
+    if (length != 3){return -1;}
     while (isDataReady_IT_ != STM32_ADC_IT_READY){}
-
-    isDataReady_IT_=STM32_ADC_IT_NOT_READY;
-    //    HAL_ADCEx_InjectedStart_IT(hadc_);
-    return hadc_->Instance->JDR2 / 4096.0f * 3.3f;
+    isDataReady_IT_ = STM32_ADC_IT_NOT_READY;
+    data[0] = hadc_->Instance->JDR1 / 4096.0f * 3.3f;
+    data[1] = hadc_->Instance->JDR2 / 4096.0f * 3.3f;
+    data[2] = hadc_->Instance->JDR3 / 4096.0f * 3.3f;
+    return 0;
   }
 
   void dmaCallbackHandler(ADC_HandleTypeDef *hadc) {
