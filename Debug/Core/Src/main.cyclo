@@ -46,16 +46,16 @@ F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide
 ../Port/Inc/stm32_test.h:243:8:void stm32_test::adc2_dma_test()	1
 ../Port/Inc/stm32_test.h:261:8:void stm32_test::adc2_it_test()	1
 ../Port/Inc/stm32_test.h:278:8:void stm32_test::adc3_dma_test()	1
-../Port/Inc/stm32_test.h:298:8:void stm32_test::dc_dc_openLoop_test()	1
-../Port/Inc/stm32_test.h:313:8:void stm32_test::dc_dc_voltageClosedLoop_test()	1
-../Port/Inc/stm32_test.h:330:8:void stm32_test::dc_dc_doubleMode_closedLoop_test()	6
-../Port/Inc/stm32_test.h:398:8:void stm32_test::vofa_send_test()	1
-../Port/Inc/stm32_test.h:407:8:void stm32_test::vofa_receive_callback_test(uint8_t*, uint16_t)	2
-../Port/Inc/stm32_test.h:418:8:void stm32_test::vofa_receive_test()	1
-../Port/Inc/stm32_test.h:430:8:void stm32_test::segger_systemview_test_enable()	1
+../Port/Inc/stm32_test.h:298:8:void stm32_test::dc_dc_openLoop_test()	2
+../Port/Inc/stm32_test.h:328:8:void stm32_test::dc_dc_voltageClosedLoop_test()	1
+../Port/Inc/stm32_test.h:345:8:void stm32_test::dc_dc_doubleMode_closedLoop_test()	6
+../Port/Inc/stm32_test.h:414:8:void stm32_test::vofa_send_test()	1
+../Port/Inc/stm32_test.h:423:8:void stm32_test::vofa_receive_callback_test(uint8_t*, uint16_t)	2
+../Port/Inc/stm32_test.h:434:8:void stm32_test::vofa_receive_test()	1
+../Port/Inc/stm32_test.h:446:8:void stm32_test::segger_systemview_test_enable()	1
 ../Core/Src/main.cpp:82:5:int main()	1
-../Core/Src/main.cpp:138:6:void SystemClock_Config()	3
-../Core/Src/main.cpp:188:6:void Error_Handler()	1
+../Core/Src/main.cpp:139:6:void SystemClock_Config()	3
+../Core/Src/main.cpp:189:6:void Error_Handler()	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\stl_vector.h:137:2:constexpr std::_Vector_base<_Tp, _Alloc>::_Vector_impl::_Vector_impl() [with _Tp = long unsigned int; _Alloc = std::allocator<long unsigned int>]	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\allocator.h:174:7:constexpr std::allocator< <template-parameter-1-1> >::~allocator() [with _Tp = long unsigned int]	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\stl_vector.h:364:7:constexpr std::_Vector_base<_Tp, _Alloc>::~_Vector_base() [with _Tp = long unsigned int; _Alloc = std::allocator<long unsigned int>]	1
@@ -72,16 +72,16 @@ F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\stl_vector.h:1121:7:constexpr std::vector<_Tp, _Alloc>::reference std::vector<_Tp, _Alloc>::operator[](size_type) [with _Tp = long unsigned int; _Alloc = std::allocator<long unsigned int>]	1
 ../App/algorithim/Inc/alg_dc_buck.h:33:3:Algorithim_DC_Buck<PWM, ADC, RELAY>::Algorithim_DC_Buck() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
 ../App/algorithim/Inc/alg_dc_buck.h:34:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::begin(PWM*, float, float, ADC*, RELAY*, float, ADC*) [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
-../App/algorithim/Inc/alg_dc_buck.h:106:8:bool Algorithim_DC_Buck<PWM, ADC, RELAY>::isEnable() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
+../App/algorithim/Inc/alg_dc_buck.h:107:8:bool Algorithim_DC_Buck<PWM, ADC, RELAY>::isEnable() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
 ../App/algorithim/Inc/alg_dc_buck.h:55:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::setVin(float) [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
+../App/algorithim/Inc/alg_dc_buck.h:97:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::enable() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
+../App/algorithim/Inc/alg_dc_buck.h:102:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::disable() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
 ../App/algorithim/Inc/alg_dc_buck.h:60:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::setVout(float) [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
-../App/algorithim/Inc/alg_dc_buck.h:96:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::enable() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
-../App/algorithim/Inc/alg_dc_buck.h:77:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::openVoltageLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	3
+../App/algorithim/Inc/alg_dc_buck.h:77:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::openVoltageLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	4
 ../App/algorithim/Inc/alg_dc_buck.h:45:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::setCV_PID(Algorithim_PID*) [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
-../App/algorithim/Inc/alg_dc_buck.h:81:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::closedVoltageLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	5
+../App/algorithim/Inc/alg_dc_buck.h:82:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::closedVoltageLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	5
 ../App/algorithim/Inc/alg_dc_buck.h:50:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::setCC_PID(Algorithim_PID*) [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
-../App/algorithim/Inc/alg_dc_buck.h:101:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::disable() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	1
-../App/algorithim/Inc/alg_dc_buck.h:88:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::closedCurrentLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	5
+../App/algorithim/Inc/alg_dc_buck.h:89:8:void Algorithim_DC_Buck<PWM, ADC, RELAY>::closedCurrentLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; ADC = Hardware_STM32_ADC; RELAY = Hardware_STM32_Relay]	5
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\stl_vector.h:99:2:constexpr std::_Vector_base<_Tp, _Alloc>::_Vector_impl_data::_Vector_impl_data() [with _Tp = long unsigned int; _Alloc = std::allocator<long unsigned int>]	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\stl_vector.h:383:7:constexpr void std::_Vector_base<_Tp, _Alloc>::_M_deallocate(pointer, std::size_t) [with _Tp = long unsigned int; _Alloc = std::allocator<long unsigned int>]	2
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\stl_vector.h:298:7:constexpr std::_Vector_base<_Tp, _Alloc>::_Tp_alloc_type& std::_Vector_base<_Tp, _Alloc>::_M_get_Tp_allocator() [with _Tp = long unsigned int; _Alloc = std::allocator<long unsigned int>]	1
@@ -139,6 +139,6 @@ F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\new_allocator.h:210:7:constexpr std::__new_allocator<_Tp>::size_type std::__new_allocator<_Tp>::_M_max_size() const [with _Tp = long unsigned int]	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\stl_algobase.h:967:5:constexpr void std::__fill_a(_FIte, _FIte, const _Tp&) [with _FIte = long unsigned int*; _Tp = long unsigned int]	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.200.202406191623\tools\arm-none-eabi\include\c++\12.3.1\bits\stl_algobase.h:917:5:constexpr typename __gnu_cxx::__enable_if<std::__is_scalar<_Tp>::__value, void>::__type std::__fill_a1(_ForwardIterator, _ForwardIterator, const _Tp&) [with _ForwardIterator = long unsigned int*; _Tp = long unsigned int]	2
-../Core/Src/main.cpp:197:1:void __static_initialization_and_destruction_0(int, int)	5
-../Core/Src/main.cpp:197:1:cpp)	1
-../Core/Src/main.cpp:197:1:cpp)	1
+../Core/Src/main.cpp:198:1:void __static_initialization_and_destruction_0(int, int)	5
+../Core/Src/main.cpp:198:1:cpp)	1
+../Core/Src/main.cpp:198:1:cpp)	1

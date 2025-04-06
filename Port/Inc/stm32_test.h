@@ -48,7 +48,7 @@ namespace stm32_test
   };
 
 
-  target_vofa_set_value_t g_target_vofa_set;
+  target_vofa_set_value_t g_target_vofa_set={0};
   vofa_isResetPID_bool_t g_bool_isResetPID = NO_RESET_PID;
   vofa_isOutput_bool_t g_bool_isOutput = OUTPUT_STOP;
   power_control_mode_t g_power_control_mode = VOLTAGE_CLOSE_LOOP;
@@ -68,52 +68,52 @@ namespace stm32_test
     if (sscanf(s, "VP=%f", &temp) >0)
       {
 	g_voltage_pid_vofa_set.kp=temp;
-	printf("VP: %f\n", temp);
+	printf("VP: %f\n", g_voltage_pid_vofa_set.kp);
       }
     else if (sscanf(s, "VI=%f", &temp) >0)
       {
 	g_voltage_pid_vofa_set.ki=temp;
-	printf("VI: %f\n", temp);
+	printf("VI: %f\n",g_voltage_pid_vofa_set.ki);
       }
     else if (sscanf(s, "VD=%f", &temp) >0)
       {
 	g_voltage_pid_vofa_set.kd=temp;
-	printf("VD: %f\n", temp);
+	printf("VD: %f\n",g_voltage_pid_vofa_set.kd);
       }
     else if (sscanf(s, "CP=%f", &temp) >0)
       {
 	g_current_pid_vofa_set.kp=temp;
-	printf("CP: %f\n", temp);
+	printf("CP: %f\n", g_current_pid_vofa_set.kp);
       }
     else if (sscanf(s, "CI=%f", &temp) >0)
       {
 	g_current_pid_vofa_set.ki=temp;
-	printf("CI: %f\n", temp);
+	printf("CI: %f\n", g_current_pid_vofa_set.ki);
       }
     else if (sscanf(s, "CD=%f", &temp) >0)
       {
 	g_current_pid_vofa_set.kd=temp;
-	printf("CD: %f\n", temp);
+	printf("CD: %f\n", g_current_pid_vofa_set.kd);
       }
     else if (sscanf(s, "V=%f", &temp)>0)
       {
 	g_target_vofa_set.target_voltage = temp;
-	printf("V: %f\n", temp);
+	printf("V: %f\n", g_target_vofa_set.target_voltage);
       }
     else if (sscanf(s, "C=%f", &temp)>0)
       {
 	g_target_vofa_set.target_current = temp;
-	printf("C: %f\n", temp);
+	printf("C: %f\n", g_target_vofa_set.target_current);
       }
     else if (sscanf(s, "VL=%f", &temp)>0)
       {
 	g_voltage_pid_vofa_set.integral_limit=temp;
-	printf("VL: %f\n", temp);
+	printf("VL: %f\n", g_voltage_pid_vofa_set.integral_limit);
       }
     else if (sscanf(s, "CL=%f", &temp) >0)
       {
 	g_current_pid_vofa_set.integral_limit=temp;
-	printf("CL: %f\n", temp);
+	printf("CL: %f\n", g_current_pid_vofa_set.integral_limit);
       }
     else if (sscanf(s, "MODE=%f", &temp) >0)
       {
@@ -297,12 +297,27 @@ namespace stm32_test
    * */
   void dc_dc_openLoop_test()
   {
+    g_message_handler=stm32_message::getUART1();
+    g_message_handler.startReceive();
+    //高级定时器抽象层初始化
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+    g_hrtimer_pwm_handler.setOutput();
+    g_relay_handler=stm32_relay::getRelay1();
     g_dc_buck_handler=stm32_dc_buck::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler,&g_relay_handler);
-    g_dc_buck_handler.setVin(5);
-    g_dc_buck_handler.setVout(3.3);
-    g_dc_buck_handler.enable();
+    g_dc_buck_handler.setVin(12);
+
+    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
     while (1)
       {
+	if(g_bool_isOutput == OUTPUT_START)
+	  {
+	    g_dc_buck_handler.enable();
+	  }
+	else
+	  {
+	    g_dc_buck_handler.disable();
+	  }
+	g_dc_buck_handler.setVout(g_target_vofa_set.target_voltage);
 	g_dc_buck_handler.openVoltageLoopControl();
       }
   }
@@ -375,6 +390,7 @@ namespace stm32_test
 		g_dc_buck_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
 		g_dc_buck_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
 	      }
+
 	    g_dc_buck_handler.closedVoltageLoopControl ();
 
 	    break;

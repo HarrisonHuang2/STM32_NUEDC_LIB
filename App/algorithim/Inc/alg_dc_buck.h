@@ -76,6 +76,7 @@ public:
 
   void openVoltageLoopControl() {
     if(vin_ == 0 || vout_>vin_||!isEnable_) {return ;}
+    pwm_->setDutyCycle(vout_/vin_);
   }
 
   void closedVoltageLoopControl() {

@@ -123,7 +123,8 @@ int main(void)
   while (1)
     {
       /* USER CODE END WHILE */
-      stm32_test::dc_dc_doubleMode_closedLoop_test();
+
+      stm32_test::dc_dc_openLoop_test();
 
       /* USER CODE BEGIN 3 */
     }

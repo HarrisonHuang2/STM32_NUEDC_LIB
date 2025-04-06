@@ -15,7 +15,7 @@ namespace stm32_relay
   Hardware_STM32_Relay getRelay1()
   {
     Hardware_STM32_Relay relay;
-    relay.begin(RELAY1_GPIO_Port,RELAY1_Pin,1);
+    relay.begin(RELAY1_GPIO_Port,RELAY1_Pin,0);
     return relay;
   }
 }
