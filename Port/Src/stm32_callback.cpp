@@ -5,37 +5,54 @@
  *      Author: GAOTIANHAO
  */
 
-
+#include"hw_port_hrtim_pwm.h"
 #include"hw_port_adc.h"
 #include"hw_port_message.h"
 #include "tim.h"
 #include "SEGGER_SYSVIEW_Conf.h"
 #include "SEGGER_SYSVIEW.h"
 
-extern Hardware_STM32_Message g_message_handler;
-extern Hardware_STM32_ADC g_adc_handler;
-extern Hardware_STM32_Message g_message_handler;
+namespace stm32_test
+{
+  extern Hardware_STM32_Message g_message_handler;
+  extern Hardware_STM32_ADC g_adc_handler;
+  extern Hardware_STM32_Message g_message_handler;
+}
+
+namespace nuedc_2015
+{
+  extern Hardware_STM32_HRTIM_PWM g_hrtimer_pwm_handler;
+  extern Hardware_STM32_ADC g_adc1_handler;
+  extern Hardware_STM32_ADC g_adc3_handler;
+  extern Hardware_STM32_Message g_message_handler;
+}
+
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-  g_adc_handler.dmaCallbackHandler(hadc);
+  stm32_test::g_adc_handler.dmaCallbackHandler(hadc);
+  nuedc_2015::g_adc1_handler.dmaCallbackHandler(hadc);
+  nuedc_2015::g_adc3_handler.dmaCallbackHandler(hadc);
 }
 
 void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-  g_adc_handler.iTCallbackHandler(hadc);
+  stm32_test::g_adc_handler.iTCallbackHandler(hadc);
+  nuedc_2015::g_adc1_handler.iTCallbackHandler(hadc);
+  nuedc_2015::g_adc3_handler.dmaCallbackHandler(hadc);
 }
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-  g_message_handler.callbackHandler(huart, Size);
+  stm32_test::g_message_handler.callbackHandler(huart, Size);
+  nuedc_2015::g_message_handler.callbackHandler(huart, Size);
 }
 
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
   if(htim == &htim1)
     {
-      g_message_handler.processHandler();
+      stm32_test::g_message_handler.processHandler();
+      nuedc_2015::g_message_handler.processHandler();
     }
-
 }

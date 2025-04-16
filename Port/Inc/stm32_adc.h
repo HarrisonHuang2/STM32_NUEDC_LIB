@@ -17,18 +17,21 @@ namespace stm32_adc
   {
     Hardware_STM32_ADC adc;
     adc.begin(&hadc1, STM32_ADC_SINGLE_ENDED);
+    __HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT);
     return adc;
   }
   Hardware_STM32_ADC getADC2()
   {
     Hardware_STM32_ADC adc;
     adc.begin(&hadc2, STM32_ADC_SINGLE_ENDED);
+    __HAL_DMA_DISABLE_IT(&hdma_adc2, DMA_IT_HT);
     return adc;
   }
   Hardware_STM32_ADC getADC3()
   {
     Hardware_STM32_ADC adc;
     adc.begin(&hadc3, STM32_ADC_SINGLE_ENDED);
+    __HAL_DMA_DISABLE_IT(&hdma_adc3, DMA_IT_HT);
     return adc;
   }
 }

@@ -17,6 +17,7 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <stm32_dc_dc.h>
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
@@ -28,23 +29,17 @@
 /* USER CODE BEGIN Includes */
 #include "stm32_hrtim_pwm.h"
 #include "stm32_adc.h"
-#include "stm32_dc_buck.h"
 #include "stm32_relay.h"
 #include "stm32_test.h"
 #include "stm32_message.h"
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_Conf.h"
+#include "2015.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-Hardware_STM32_HRTIM_PWM g_hrtimer_pwm_handler;
-Hardware_STM32_ADC g_adc_handler;
-Hardware_STM32_Relay g_relay_handler;
-Hardware_STM32_Message g_message_handler;
-Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC,Hardware_STM32_Relay>g_dc_buck_handler;
-Algorithim_PID g_voltage_pid;
-Algorithim_PID g_current_pid;
+
 
 
 /* USER CODE END PTD */
@@ -124,8 +119,8 @@ int main(void)
     {
       /* USER CODE END WHILE */
 
-      stm32_test::dc_dc_openLoop_test();
-
+//      stm32_test::dc_dc_openLoop_test();
+      nuedc_2015::loop();
       /* USER CODE BEGIN 3 */
     }
 

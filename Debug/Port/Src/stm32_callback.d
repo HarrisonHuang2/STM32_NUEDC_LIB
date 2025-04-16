@@ -1,6 +1,7 @@
 Port/Src/stm32_callback.o: ../Port/Src/stm32_callback.cpp \
- ../Hardware/port/Inc/hw_port_adc.h ../Hardware/hal/Inc/hw_hal_adc.h \
- ../Core/Inc/main.h ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
+ ../Hardware/port/Inc/hw_port_hrtim_pwm.h \
+ ../Hardware/hal/Inc/hw_hal_pwm.h ../Core/Inc/main.h \
+ ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
  ../Core/Inc/stm32g4xx_hal_conf.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h \
@@ -33,16 +34,18 @@ Port/Src/stm32_callback.o: ../Port/Src/stm32_callback.cpp \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
- ../Port/Inc/portmacro.h ../Core/Inc/adc.h ../Core/Inc/main.h \
- ../Hardware/port/Inc/hw_port_message.h ../Core/Inc/usart.h \
- ../Core/Inc/tim.h ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h \
+ ../Port/Inc/portmacro.h ../Core/Inc/hrtim.h ../Core/Inc/main.h \
+ ../Hardware/port/Inc/hw_port_adc.h ../Hardware/hal/Inc/hw_hal_adc.h \
+ ../Core/Inc/adc.h ../Hardware/port/Inc/hw_port_message.h \
+ ../Core/Inc/usart.h ../Core/Inc/tim.h \
+ ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h \
  ../Segger/SystemView/SEGGER_SYSVIEW.h ../Segger/SystemView/SEGGER.h \
  ../Segger/SystemView/Global.h \
  ../Segger/SystemView/SEGGER_SYSVIEW_ConfDefaults.h \
  ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h \
  ../Segger/SystemView/SEGGER_RTT_Conf.h
-../Hardware/port/Inc/hw_port_adc.h:
-../Hardware/hal/Inc/hw_hal_adc.h:
+../Hardware/port/Inc/hw_port_hrtim_pwm.h:
+../Hardware/hal/Inc/hw_hal_pwm.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
 ../Core/Inc/stm32g4xx_hal_conf.h:
@@ -78,8 +81,11 @@ Port/Src/stm32_callback.o: ../Port/Src/stm32_callback.cpp \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h:
 ../Port/Inc/portmacro.h:
-../Core/Inc/adc.h:
+../Core/Inc/hrtim.h:
 ../Core/Inc/main.h:
+../Hardware/port/Inc/hw_port_adc.h:
+../Hardware/hal/Inc/hw_hal_adc.h:
+../Core/Inc/adc.h:
 ../Hardware/port/Inc/hw_port_message.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/tim.h:

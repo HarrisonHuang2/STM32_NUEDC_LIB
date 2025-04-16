@@ -8,21 +8,22 @@
 #ifndef INC_STM32_TEST_H_
 #define INC_STM32_TEST_H_
 
-#include "stm32_dc_buck.h"
+#include "stm32_dc_dc.h"
 #include "stm32_message.h"
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_Conf.h"
 
-extern Hardware_STM32_HRTIM_PWM g_hrtimer_pwm_handler;
-extern Hardware_STM32_ADC g_adc_handler;
-extern Hardware_STM32_Relay g_relay_handler;
-extern Hardware_STM32_Message g_message_handler;
-extern Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC ,Hardware_STM32_Relay>g_dc_buck_handler;
-extern Algorithim_PID g_voltage_pid;
-extern Algorithim_PID g_current_pid;
 
 namespace stm32_test
 {
+  Hardware_STM32_HRTIM_PWM g_hrtimer_pwm_handler;
+  Hardware_STM32_ADC g_adc_handler;
+  Hardware_STM32_Relay g_relay_handler;
+  Hardware_STM32_Message g_message_handler;
+  Algorithim_DC_DC<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC> g_dc_buck_handler;
+  Algorithim_PID g_voltage_pid;
+  Algorithim_PID g_current_pid;
+
   enum power_control_mode_t
   {
     VOLTAGE_CLOSE_LOOP,
@@ -303,7 +304,7 @@ namespace stm32_test
     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
     g_hrtimer_pwm_handler.setOutput();
     g_relay_handler=stm32_relay::getRelay1();
-    g_dc_buck_handler=stm32_dc_buck::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler,&g_relay_handler);
+    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler);
     g_dc_buck_handler.setVin(12);
 
     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
@@ -318,7 +319,7 @@ namespace stm32_test
 	    g_dc_buck_handler.disable();
 	  }
 	g_dc_buck_handler.setVout(g_target_vofa_set.target_voltage);
-	g_dc_buck_handler.openVoltageLoopControl();
+//	g_dc_buck_handler.openVoltageLoopControl();
       }
   }
 
@@ -327,7 +328,7 @@ namespace stm32_test
    * */
   void dc_dc_voltageClosedLoop_test()
   {
-    g_dc_buck_handler=stm32_dc_buck::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler,&g_relay_handler);
+    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler);
     g_dc_buck_handler.setVin(5);
     g_dc_buck_handler.setVout(3.3);
     g_voltage_pid.begin(0, 0, 0);
@@ -335,7 +336,7 @@ namespace stm32_test
     g_dc_buck_handler.enable();
     while (1)
       {
-	g_dc_buck_handler.closedVoltageLoopControl();
+//	g_dc_buck_handler.closedVoltageLoopControl();
       }
   }
 
@@ -359,7 +360,7 @@ namespace stm32_test
     g_relay_handler=stm32_relay::getRelay1();
 
     //算法抽象层初始化
-    g_dc_buck_handler=stm32_dc_buck::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler,&g_relay_handler);
+    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler);
     g_dc_buck_handler.setVin(5);
     g_dc_buck_handler.setVout(3.3);
     g_voltage_pid.begin(1, 1, 1);
@@ -391,7 +392,7 @@ namespace stm32_test
 		g_dc_buck_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
 	      }
 
-	    g_dc_buck_handler.closedVoltageLoopControl ();
+//	    g_dc_buck_handler.closedVoltageLoopControl ();
 
 	    break;
 	  case CURRENT_CLOSE_LOOP:
@@ -402,7 +403,7 @@ namespace stm32_test
 		g_dc_buck_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
 		g_dc_buck_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
 	      }
-	    g_dc_buck_handler.closedCurrentLoopControl ();
+//	    g_dc_buck_handler.closedCurrentLoopControl ();
 	    break;
 	}
       }
