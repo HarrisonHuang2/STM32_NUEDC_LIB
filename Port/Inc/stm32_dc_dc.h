@@ -12,6 +12,7 @@
 #include "alg_dc_boost.h"
 #include "alg_dc_buck_boost.h"
 #include "stm32_hrtim_pwm.h"
+#include "alg_dc_dc.h"
 #include "stm32_adc.h"
 #include "stm32_relay.h"
 
@@ -35,10 +36,10 @@ namespace stm32_dc_dc
   }
 
   Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC>
-  getDCBuckBoost1(Hardware_STM32_HRTIM_PWM *pwm, Hardware_STM32_ADC *adc_out, Hardware_STM32_ADC *adc_in)
+  getDCBuckBoost1(Hardware_STM32_HRTIM_PWM *pwm, Hardware_STM32_ADC *adc)
   {
    Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC>dc_buck_boost;
-   dc_buck_boost.begin(pwm, adc_out,adc_in);
+   dc_buck_boost.begin(pwm, adc);
    return dc_buck_boost;
   }
 

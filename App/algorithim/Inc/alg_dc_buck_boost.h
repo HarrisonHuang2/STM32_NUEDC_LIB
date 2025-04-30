@@ -21,33 +21,41 @@ class Algorithim_DC_Buck_Boost : public Algorithim_DC_Buck<PWM, ADC>
 public:
   void closedBuckVoltageLoopControl() {
     //双环-电压外环电流内环
-    if(!this->adc_out_ || !this->isEnable_){return ;}
-    float outer = this->cv_pid_->cal_absolute(this->vout_, this->adc_out_->readVoltage());
-    float inner = this->cc_pid_->cal_absolute(outer, this->adc_out_->readCurrent());
+    if(!this->adc_ || !this->isEnable_){return ;}
+    float data[3];//0:vin 1:vout 2:current
+    this->adc_->read3Channel(data,3);
+    float outer = this->cv_pid_->cal_absolute(this->vout_, data[1]);
+    float inner = this->cc_pid_->cal_absolute(outer, data[2]);
     float output = LIMIT(inner, 0, 1);
     this->pwm_->setDutyCycle(output);
   }
 
   void closedBoostVoltageLoopControl() {
     //双环-电压外环电流内环
-    if(!this->adc_in_ || !this->adc_out_ || !this->isEnable_){return ;}
-    float outer = this->cv_pid_->cal_absolute(this->vout_, this->adc_in_->readVoltage());
-    float inner = this->cc_pid_->cal_absolute(-outer, this->adc_out_->readCurrent());
+    if( !this->adc_ || !this->isEnable_){return ;}
+    float data[3];//0:vin 1:vout 2:current
+     this->adc_->read3Channel(data,3);
+    float outer = this->cv_pid_->cal_absolute(this->vin_, data[0]);
+    float inner = this->cc_pid_->cal_absolute(-outer, data[2]);
     float output = LIMIT(inner, 0, 1);
     this->pwm_->setDutyCycle(output);
   }
 
   void closedBuckCurrentLoopControl() {
     //单电流环
-    if(!this->adc_out_ || !this->isEnable_){return ;}
-    float output = LIMIT(this->cc_pid_->cal_absolute(this->current_, this->adc_out_->readCurrent()), 0, 1);
+    if(!this->adc_ || !this->isEnable_){return ;}
+    float data[3];//0:vin 1:vout 2:current
+     this->adc_->read3Channel(data,3);
+    float output = LIMIT(this->cc_pid_->cal_absolute(this->current_, data[2]), 0, 1);
     this->pwm_->setDutyCycle(output);
   }
 
   void closedBoostCurrentLoopControl() {
     //单电流环
-    if(!this->adc_out_ || !this->isEnable_){return ;}
-    float output = LIMIT(this->cc_pid_->cal_absolute(-this->current_, this->adc_out_->readCurrent()), 0, 1);
+    if(!this->adc_ || !this->isEnable_){return ;}
+    float data[3];//0:vin 1:vout 2:current
+     this->adc_->read3Channel(data,3);
+    float output = LIMIT(this->cc_pid_->cal_absolute(-this->current_, data[2]), 0, 1);
     this->pwm_->setDutyCycle(output);
   }
 };

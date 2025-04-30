@@ -1,6 +1,5 @@
-Core/Src/main.o: ../Core/Src/main.cpp ../Port/Inc/stm32_dc_dc.h \
- ../App/algorithim/Inc/alg_dc_buck.h ../App/algorithim/Inc/alg_dc_dc.h \
- ../Core/Inc/main.h ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
+Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
+ ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
  ../Core/Inc/stm32g4xx_hal_conf.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h \
@@ -22,6 +21,8 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Port/Inc/stm32_dc_dc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_adc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_adc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_adc_ex.h \
+ ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_dac.h \
+ ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_dac_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_exti.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ex.h \
@@ -33,30 +34,37 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Port/Inc/stm32_dc_dc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
- ../Port/Inc/portmacro.h ../Hardware/hal/Inc/hw_hal_pwm.h \
- ../Hardware/hal/Inc/hw_hal_adc.h ../Hardware/hal/Inc/hw_hal_relay.h \
+ ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/dac.h ../Core/Inc/dma.h \
+ ../Core/Inc/hrtim.h ../Core/Inc/tim.h ../Core/Inc/usart.h \
+ ../Core/Inc/gpio.h ../Port/Inc/stm32_hrtim_pwm.h \
+ ../Hardware/port/Inc/hw_port_hrtim_pwm.h \
+ ../Hardware/hal/Inc/hw_hal_pwm.h ../Port/Inc/portmacro.h \
+ ../Port/Inc/stm32_adc.h ../Hardware/port/Inc/hw_port_adc.h \
+ ../Hardware/hal/Inc/hw_hal_adc.h ../Port/Inc/stm32_relay.h \
+ ../Hardware/port/Inc/hw_port_relay.h ../Hardware/hal/Inc/hw_hal_relay.h \
+ ../Port/Inc/stm32_test.h ../Port/Inc/stm32_us_timer.h \
+ ../Hardware/port/Inc/hw_port_us_timer.h \
+ ../Hardware/hal/Inc/hw_hal_us_timer.h ../Port/Inc/stm32_dc_dc.h \
+ ../App/algorithim/Inc/alg_dc_buck.h ../App/algorithim/Inc/alg_dc_dc.h \
  ../App/algorithim/Inc/alg_pid.h ../App/algorithim/Inc/alg_dc_boost.h \
  ../App/algorithim/Inc/alg_dc_buck.h \
  ../App/algorithim/Inc/alg_dc_buck_boost.h ../Port/Inc/stm32_hrtim_pwm.h \
- ../Hardware/port/Inc/hw_port_hrtim_pwm.h ../Core/Inc/hrtim.h \
- ../Core/Inc/main.h ../Port/Inc/stm32_adc.h \
- ../Hardware/port/Inc/hw_port_adc.h ../Core/Inc/adc.h \
- ../Port/Inc/stm32_relay.h ../Hardware/port/Inc/hw_port_relay.h \
- ../Core/Inc/dma.h ../Core/Inc/usart.h ../Core/Inc/gpio.h \
- ../Core/Inc/tim.h ../Port/Inc/stm32_hrtim_pwm.h ../Port/Inc/stm32_adc.h \
- ../Port/Inc/stm32_relay.h ../Port/Inc/stm32_test.h \
- ../Port/Inc/stm32_dc_dc.h ../Port/Inc/stm32_message.h \
- ../Hardware/port/Inc/hw_port_message.h \
+ ../App/algorithim/Inc/alg_dc_dc.h ../Port/Inc/stm32_adc.h \
+ ../Port/Inc/stm32_relay.h ../Port/Inc/stm32_message.h \
+ ../Hardware/port/Inc/hw_port_message.h ../Port/Inc/stm32_dac.h \
+ ../Hardware/port/Inc/hw_port_dac.h \
+ ../Middlewares/ST/ARM/DSP/Inc/arm_math.h \
+ ../App/filiter/Inc/flt_fir_hilbert.h \
  ../Segger/SystemView/SEGGER_SYSVIEW.h ../Segger/SystemView/SEGGER.h \
  ../Segger/SystemView/Global.h \
  ../Segger/SystemView/SEGGER_SYSVIEW_ConfDefaults.h \
  ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h \
  ../Segger/SystemView/SEGGER_RTT_Conf.h \
  ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h ../Port/Inc/stm32_message.h \
- ../Core/NUEDC/2015.h
-../Port/Inc/stm32_dc_dc.h:
-../App/algorithim/Inc/alg_dc_buck.h:
-../App/algorithim/Inc/alg_dc_dc.h:
+ ../Port/Inc/stm32_dc_dc.h ../Core/NUEDC/2015.h \
+ ../Hardware/port/Inc/hw_port_mk1031.h \
+ ../App/protocol/ptl_modbus_master.h ../Hardware/hal/Inc/hw_hal_message.h \
+ ../Hardware/port/Inc/hw_port_message.h
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
 ../Core/Inc/stm32g4xx_hal_conf.h:
@@ -80,6 +88,8 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Port/Inc/stm32_dc_dc.h \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_adc.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_ll_adc.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_adc_ex.h:
+../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_dac.h:
+../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_dac_ex.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_exti.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ex.h:
@@ -91,34 +101,45 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Port/Inc/stm32_dc_dc.h \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h:
-../Port/Inc/portmacro.h:
+../Core/Inc/adc.h:
+../Core/Inc/main.h:
+../Core/Inc/dac.h:
+../Core/Inc/dma.h:
+../Core/Inc/hrtim.h:
+../Core/Inc/tim.h:
+../Core/Inc/usart.h:
+../Core/Inc/gpio.h:
+../Port/Inc/stm32_hrtim_pwm.h:
+../Hardware/port/Inc/hw_port_hrtim_pwm.h:
 ../Hardware/hal/Inc/hw_hal_pwm.h:
+../Port/Inc/portmacro.h:
+../Port/Inc/stm32_adc.h:
+../Hardware/port/Inc/hw_port_adc.h:
 ../Hardware/hal/Inc/hw_hal_adc.h:
+../Port/Inc/stm32_relay.h:
+../Hardware/port/Inc/hw_port_relay.h:
 ../Hardware/hal/Inc/hw_hal_relay.h:
+../Port/Inc/stm32_test.h:
+../Port/Inc/stm32_us_timer.h:
+../Hardware/port/Inc/hw_port_us_timer.h:
+../Hardware/hal/Inc/hw_hal_us_timer.h:
+../Port/Inc/stm32_dc_dc.h:
+../App/algorithim/Inc/alg_dc_buck.h:
+../App/algorithim/Inc/alg_dc_dc.h:
 ../App/algorithim/Inc/alg_pid.h:
 ../App/algorithim/Inc/alg_dc_boost.h:
 ../App/algorithim/Inc/alg_dc_buck.h:
 ../App/algorithim/Inc/alg_dc_buck_boost.h:
 ../Port/Inc/stm32_hrtim_pwm.h:
-../Hardware/port/Inc/hw_port_hrtim_pwm.h:
-../Core/Inc/hrtim.h:
-../Core/Inc/main.h:
-../Port/Inc/stm32_adc.h:
-../Hardware/port/Inc/hw_port_adc.h:
-../Core/Inc/adc.h:
-../Port/Inc/stm32_relay.h:
-../Hardware/port/Inc/hw_port_relay.h:
-../Core/Inc/dma.h:
-../Core/Inc/usart.h:
-../Core/Inc/gpio.h:
-../Core/Inc/tim.h:
-../Port/Inc/stm32_hrtim_pwm.h:
+../App/algorithim/Inc/alg_dc_dc.h:
 ../Port/Inc/stm32_adc.h:
 ../Port/Inc/stm32_relay.h:
-../Port/Inc/stm32_test.h:
-../Port/Inc/stm32_dc_dc.h:
 ../Port/Inc/stm32_message.h:
 ../Hardware/port/Inc/hw_port_message.h:
+../Port/Inc/stm32_dac.h:
+../Hardware/port/Inc/hw_port_dac.h:
+../Middlewares/ST/ARM/DSP/Inc/arm_math.h:
+../App/filiter/Inc/flt_fir_hilbert.h:
 ../Segger/SystemView/SEGGER_SYSVIEW.h:
 ../Segger/SystemView/SEGGER.h:
 ../Segger/SystemView/Global.h:
@@ -127,4 +148,9 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Port/Inc/stm32_dc_dc.h \
 ../Segger/SystemView/SEGGER_RTT_Conf.h:
 ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h:
 ../Port/Inc/stm32_message.h:
+../Port/Inc/stm32_dc_dc.h:
 ../Core/NUEDC/2015.h:
+../Hardware/port/Inc/hw_port_mk1031.h:
+../App/protocol/ptl_modbus_master.h:
+../Hardware/hal/Inc/hw_hal_message.h:
+../Hardware/port/Inc/hw_port_message.h:

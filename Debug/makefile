@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (12.3.rel1)
+# Toolchain: GNU Tools for STM32 (13.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -87,7 +87,7 @@ main-build: STM32_NUEDC_LIB.elf secondary-outputs
 
 # Tool invocations
 STM32_NUEDC_LIB.elf STM32_NUEDC_LIB.map: $(OBJS) $(USER_OBJS) D:\STM32\ Lab\STM32_NUEDC_LIB\STM32G474RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "STM32_NUEDC_LIB.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\STM32 Lab\STM32_NUEDC_LIB\STM32G474RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_NUEDC_LIB.map" -Wl,--gc-sections -static -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+	arm-none-eabi-g++ -o "STM32_NUEDC_LIB.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\STM32 Lab\STM32_NUEDC_LIB\STM32G474RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_NUEDC_LIB.map" -Wl,--gc-sections -static -L../Middlewares/ST/ARM/DSP/Lib -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

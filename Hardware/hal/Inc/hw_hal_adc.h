@@ -14,9 +14,9 @@
 
 #ifdef __cpp_concepts
 template <typename T>
-concept ADCInterfaceConcept = requires(T t) {
-  { t.readVoltage() } -> std::convertible_to<float>;
-  { t.readCurrent() } -> std::convertible_to<float>;
+concept ADCInterfaceConcept = requires(T t, float* data, size_t length) {
+  { t.read3Channel(data, length) } -> std::convertible_to<int8_t>;
+  { t.startSample() } -> std::convertible_to<void>;
 };
 #endif
 

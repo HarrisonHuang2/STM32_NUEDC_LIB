@@ -17,14 +17,14 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <stm32_dc_dc.h>
 #include "main.h"
 #include "adc.h"
+#include "dac.h"
 #include "dma.h"
 #include "hrtim.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "tim.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stm32_hrtim_pwm.h"
@@ -32,9 +32,12 @@
 #include "stm32_relay.h"
 #include "stm32_test.h"
 #include "stm32_message.h"
+#include "stm32_dc_dc.h"
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_Conf.h"
 #include "2015.h"
+#include "flt_fir_hilbert.h"
+#include "hw_port_dac.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,6 +49,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#include "hw_port_mk1031.h"
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -106,11 +110,17 @@ int main(void)
   MX_ADC2_Init();
   MX_ADC3_Init();
   MX_TIM1_Init();
-
-
+  MX_DAC1_Init();
+  MX_TIM6_Init();
+  MX_TIM7_Init();
+  MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
   //定时事件处理
-  HAL_TIM_Base_Start_IT(&htim1);
+    HAL_TIM_Base_Start_IT(&htim1);
+  //  stm32_test::filiter_hilbert_test();
+  //  stm32_test::dac1_dma_test();
+  stm32_test::pll_init_test();
+//  stm32_test::vofa_receive_test();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -119,8 +129,10 @@ int main(void)
     {
       /* USER CODE END WHILE */
 
-//      stm32_test::dc_dc_openLoop_test();
-      nuedc_2015::loop();
+      //      stm32_test::dc_dc_openLoop_test();
+      //      nuedc_2015::loop();
+      //      stm32_test::us_timer_test();
+
       /* USER CODE BEGIN 3 */
     }
 

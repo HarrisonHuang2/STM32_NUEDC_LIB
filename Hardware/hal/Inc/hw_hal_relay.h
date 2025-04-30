@@ -14,7 +14,7 @@
 
 #ifdef __cpp_concepts
 template <typename T>
-concept RelayInterfaceConcept = requires(T t, bool state) {
+concept RelayInterfaceConcept = requires(T t) {
   { t.on() } -> std::same_as<void>;
   { t.off() } -> std::same_as<void>;
   { t.getState() } -> std::convertible_to<bool>;

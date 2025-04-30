@@ -30,7 +30,7 @@ namespace stm32_adc
   Hardware_STM32_ADC getADC3()
   {
     Hardware_STM32_ADC adc;
-    adc.begin(&hadc3, STM32_ADC_SINGLE_ENDED);
+    adc.begin(&hadc3, STM32_ADC_SINGLE_ENDED,2);
     __HAL_DMA_DISABLE_IT(&hdma_adc3, DMA_IT_HT);
     return adc;
   }

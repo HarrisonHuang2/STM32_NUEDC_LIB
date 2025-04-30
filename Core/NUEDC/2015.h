@@ -167,8 +167,12 @@ namespace nuedc_2015
     else if(strcmp (s, "DEBUG") == 0)
       {
 	//数据回显
-	printf("voltage:%f\n",g_dc_controler_handler.adc_out_->readVoltage());
-	printf("current:%f\n",g_dc_controler_handler.adc_out_->readCurrent());
+	//0:vin 1:vout 2:current
+	float data[3];
+	g_dc_controler_handler.adc_->read3Channel(data,3);
+	printf("Vin:%f\n",data[0]);
+	printf("Vout:%f\n",data[1]);
+	printf("Current:%f\n",data[2]);
 	printf("%d\n",g_dc_controler_handler.isEnable());
       }
   }
@@ -204,6 +208,8 @@ namespace nuedc_2015
   void loop()
   {
     hardware_init();
+    float battery_data[2]={0};//0:battery_voltage 1:battery_current
+    float battery_voltage=0;
     while (1)
       {
 	if(g_bool_isOutput == OUTPUT_START)
@@ -226,8 +232,9 @@ namespace nuedc_2015
 		g_dc_controler_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
 	      }
 
-	    float voltage_battery = g_adc3_handler.readVoltage();
-	    if ( voltage_battery > 24)
+	   g_adc3_handler.read2Channel(battery_data,2);
+	   battery_voltage=battery_data[0];
+	    if ( battery_voltage > 24)
 	      {
 		//电池过压保护
 		g_relay_handler.off();
@@ -238,8 +245,6 @@ namespace nuedc_2015
 		g_dc_controler_handler.setCurrent(g_target_vofa_set.target_current);
 		g_dc_controler_handler.closedBuckCurrentLoopControl ();
 	      }
-
-
 	    break;
 	  case VOLTAGE_DOUBLE_LOOP:
 	    if (g_bool_isResetPID == RESET_PID)
@@ -252,6 +257,8 @@ namespace nuedc_2015
 	    //若过压保护后切换模式，需要重新使能继电器，并重新使能控制器
 	    g_relay_handler.on();
 	    g_dc_controler_handler.closedBoostVoltageLoopControl ();
+	    break;
+	  default:
 	    break;
 	}
       }

@@ -53,12 +53,12 @@ public:
 
     return *this;
   }
-  void begin(ADC_HandleTypeDef *hadc,hw_stm32_adc_mode_t mode) {
+  void begin(ADC_HandleTypeDef *hadc,hw_stm32_adc_mode_t mode,size_t length=3) {
     if (hadc == nullptr) {
 	return;
     }
     hadc_ = hadc;
-    readData_=std::vector<uint32_t>(2,0);
+    readData_=std::vector<uint32_t>(length,0);
     HAL_ADCEx_Calibration_Start(hadc_,mode);
   }
 
@@ -81,41 +81,37 @@ public:
 
   void startSample_IT()
   {
+    //需要先开启对应的定时器才会触发中断
     HAL_ADCEx_InjectedStart_IT(hadc_);
   }
 
   void stopSample_IT()
   {
+    //需要先开启对应的定时器才会触发中断
     HAL_ADCEx_InjectedStop_IT(hadc_);
   }
 
-  float readVoltage() {
-//    startSample();
-//    while(isDataReady_!=STM32_ADC_DMA_READY){}
-    //		uint32_t temp=0;
-    //		for (int i = 0; i < 20; i+=2) {
-    //			temp += readData_[i];//读十次取平均
-    //		}
-//    isDataReady_=STM32_ADC_DMA_NOT_READY;
-//    startSample();
-    return readData_[0] / 4096.0f * 3.3f;
+  int8_t read2Channel (float *data,size_t length)
+  {
+    if (length != readData_.size()){return -1;}
+    data[0] = readData_[0] / 4096.0f * 3.3f;
+    data[1] = readData_[1] / 4096.0f * 3.3f;
+    return 0;
   }
 
-  float readCurrent() {
-//    startSample();
-//    while(isDataReady_!=STM32_ADC_DMA_READY){}
-    //		uint32_t temp=0;
-    //		for (int i = 1; i < 20; i+=2) {
-    //			temp += readData_[i];//读十次取平均
-    //		}
-//    isDataReady_=STM32_ADC_DMA_NOT_READY;
-//    startSample();
-    return readData_[1] / 4096.0f * 3.3f;
+
+  int8_t read3Channel (float *data,size_t length)
+  {
+    if (length != readData_.size()){return -1;}
+    data[0] = readData_[0] / 4096.0f * 3.3f;
+    data[1] = readData_[1] / 4096.0f * 3.3f;
+    data[2] = readData_[2] / 4096.0f * 3.3f;
+    return 0;
   }
 
   int8_t read3Channel_IT (float *data,size_t length)
   {
-    if (length != 3){return -1;}
+    if (length != readData_.size()){return -1;}
     while (isDataReady_IT_ != STM32_ADC_IT_READY){}
     isDataReady_IT_ = STM32_ADC_IT_NOT_READY;
     data[0] = hadc_->Instance->JDR1 / 4096.0f * 3.3f;

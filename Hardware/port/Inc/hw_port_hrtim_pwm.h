@@ -39,6 +39,7 @@ enum hw_tim_id_t {
 };
 
 ////sysclk到tim不要分频！！！注意
+//TO DO，程序在计算频率时可能出了点问题
 class Hardware_STM32_HRTIM_PWM
 {
 public:

@@ -31,8 +31,7 @@ template <class PWM, class ADC>
 class Algorithim_DC_DC {
 public:
   PWM *pwm_;
-  ADC *adc_out_;
-  ADC *adc_in_;
+  ADC *adc_;
   Algorithim_PID *cc_pid_;
   Algorithim_PID *cv_pid_;
   bool isEnable_=false;
@@ -40,11 +39,10 @@ public:
   float vout_;
   float current_;
   Algorithim_DC_DC(){}
-  void begin(PWM *pwm,ADC *adc_out = nullptr,ADC *adc_in = nullptr)
+  void begin(PWM *pwm,ADC *adc = nullptr)
   {
     pwm_ = pwm;
-    adc_out_ = adc_out;
-    adc_in_ = adc_in;
+    adc_ = adc;
   }
 
   void setCV_PID(Algorithim_PID *pid)
@@ -65,13 +63,6 @@ public:
   void setVout(float vout)
   {
     vout_ = vout;
-  }
-
-  bool readVin()
-  {
-    if(!adc_in_){return false;}
-    vin_ = adc_in_->readVoltage();
-    return true;
   }
 
   void setCurrent(float current)
