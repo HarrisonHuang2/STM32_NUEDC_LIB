@@ -198,7 +198,7 @@ namespace nuedc_2015
     g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID1, STM32_ADC_WRAPPER_VIN);
     g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID2, STM32_ADC_WRAPPER_VOUT);
     g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID3, STM32_ADC_WRAPPER_CURRENT);
-    g_dc_controler_handler=stm32_dc_dc::getDCBuckBoost1(&g_hrtimer_pwm_handler,&g_adc_wrapper);
+    g_dc_controler_handler=stm32_dc_dc::getDCBuckBoostADC(&g_hrtimer_pwm_handler,&g_adc_wrapper);
     g_voltage_pid.begin(0.295160, 20.9333, 0);
     g_current_pid.begin(0.0456, 41.4562, 0);
     g_dc_controler_handler.setCV_PID(&g_voltage_pid);

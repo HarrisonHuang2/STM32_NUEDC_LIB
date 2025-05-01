@@ -50,7 +50,7 @@ public:
     hhrtim_ = hhrtim;
     channel_=hrtim_timer_id;
     compare_unit_=compare_unit;
-    sysclk_frequency_=HAL_RCC_GetSysClockFreq();
+    sysclk_frequency_=HAL_RCC_GetSysClockFreq();//TO DO修改主频需要修改
     //启动互补输出
     switch (channel_) {
       case HRTIM_TIMER_MASTER:

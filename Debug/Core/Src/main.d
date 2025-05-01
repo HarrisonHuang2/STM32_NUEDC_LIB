@@ -52,13 +52,15 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
  ../App/algorithim/Inc/alg_dc_buck_boost.h ../Port/Inc/stm32_hrtim_pwm.h \
  ../App/algorithim/Inc/alg_dc_dc.h \
  ../Hardware/port/Inc/hw_port_adc_wrapper.h \
- ../Hardware/port/Inc/hw_port_adc.h ../Port/Inc/stm32_relay.h \
+ ../Hardware/port/Inc/hw_port_adc.h \
+ ../Hardware/port/Inc/hw_port_mk1031_wrapper.h \
+ ../Hardware/port/Inc/hw_port_mk1031.h \
+ ../App/protocol/ptl_modbus_master.h ../Hardware/hal/Inc/hw_hal_message.h \
+ ../Hardware/port/Inc/hw_port_message.h ../Port/Inc/stm32_relay.h \
  ../Port/Inc/stm32_message.h ../Hardware/port/Inc/hw_port_message.h \
  ../Port/Inc/stm32_dac.h ../Hardware/port/Inc/hw_port_dac.h \
  ../Middlewares/ST/ARM/DSP/Inc/arm_math.h ../Port/Inc/stm32_mk1031.h \
  ../Hardware/port/Inc/hw_port_mk1031.h \
- ../App/protocol/ptl_modbus_master.h ../Hardware/hal/Inc/hw_hal_message.h \
- ../Hardware/port/Inc/hw_port_message.h \
  ../App/filiter/Inc/flt_fir_hilbert.h \
  ../Segger/SystemView/SEGGER_SYSVIEW.h ../Segger/SystemView/SEGGER.h \
  ../Segger/SystemView/Global.h \
@@ -137,6 +139,11 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
 ../App/algorithim/Inc/alg_dc_dc.h:
 ../Hardware/port/Inc/hw_port_adc_wrapper.h:
 ../Hardware/port/Inc/hw_port_adc.h:
+../Hardware/port/Inc/hw_port_mk1031_wrapper.h:
+../Hardware/port/Inc/hw_port_mk1031.h:
+../App/protocol/ptl_modbus_master.h:
+../Hardware/hal/Inc/hw_hal_message.h:
+../Hardware/port/Inc/hw_port_message.h:
 ../Port/Inc/stm32_relay.h:
 ../Port/Inc/stm32_message.h:
 ../Hardware/port/Inc/hw_port_message.h:
@@ -145,9 +152,6 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
 ../Middlewares/ST/ARM/DSP/Inc/arm_math.h:
 ../Port/Inc/stm32_mk1031.h:
 ../Hardware/port/Inc/hw_port_mk1031.h:
-../App/protocol/ptl_modbus_master.h:
-../Hardware/hal/Inc/hw_hal_message.h:
-../Hardware/port/Inc/hw_port_message.h:
 ../App/filiter/Inc/flt_fir_hilbert.h:
 ../Segger/SystemView/SEGGER_SYSVIEW.h:
 ../Segger/SystemView/SEGGER.h:

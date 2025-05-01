@@ -13,6 +13,7 @@
 #include "stm32_message.h"
 #include "stm32_dac.h"
 #include "stm32_mk1031.h"
+#include "hw_port_mk1031_wrapper.h"
 #include "flt_fir_hilbert.h"
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_Conf.h"
@@ -25,7 +26,9 @@ namespace stm32_test
   Hardware_STM32_ADC_Wrapper g_adc_wrapper;
   Hardware_STM32_Relay g_relay_handler;
   Hardware_STM32_Message g_message_handler;
-  Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> g_dc_buck_handler;
+  Hardware_STM32_Message g_modbus_message_handler;
+  Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> g_dc_buck_adc_handler;
+  Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> g_dc_buck_sensor_handler;
   Algorithim_PID g_voltage_pid;
   Algorithim_PID g_current_pid;
   Algorithim_PID g_pll_pid;
@@ -34,6 +37,7 @@ namespace stm32_test
   Hardware_STM32_US_Timer g_us_timer_handler;
   Flt_Fir_Hilbert g_filiter_hilbert_handler;
   Hardware_MK1031 g_mk1031_sensor_handler;
+  Hardware_MK1031_Wrapper g_mk1031_wrapper_handler;
 
   enum power_control_mode_t
   {
@@ -201,10 +205,10 @@ namespace stm32_test
     else if(strcmp (s, "DEBUG") == 0)
       {
 	//数据回显
-	printf("Vin:%f\n",g_dc_buck_handler.dataWrapper_->readVin());
-	printf("Vout:%f\n",g_dc_buck_handler.dataWrapper_->readVout());
-	printf("Current:%f\n",g_dc_buck_handler.dataWrapper_->readCurrent());
-	printf("%d\n",g_dc_buck_handler.isEnable());
+	printf("Vin:%f\n",g_dc_buck_adc_handler.dataWrapper_->readVin());
+	printf("Vout:%f\n",g_dc_buck_adc_handler.dataWrapper_->readVout());
+	printf("Current:%f\n",g_dc_buck_adc_handler.dataWrapper_->readCurrent());
+	printf("%d\n",g_dc_buck_adc_handler.isEnable());
       }
   }
 
@@ -217,6 +221,7 @@ namespace stm32_test
     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
     g_hrtimer_pwm_handler.setDutyCycle(0.3);
     g_hrtimer_pwm_handler.setOutput();
+    g_hrtimer_pwm_handler.setFrequency(5000);
   }
 
   /*函数名: timerB_pwm_test
@@ -461,13 +466,19 @@ namespace stm32_test
       g_mk1031_sensor_handler.responseHandler(data,len);
 				  },PINGPONG_BUFFER);
     g_message_handler.startReceive();
+
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
+
     //定时事件处理，处理串口空闲中断接收到的数据
-      HAL_TIM_Base_Start_IT(&htim1);
+    HAL_TIM_Base_Start_IT(&htim1);
+
+    static float voltage=0;
 
     while(1)
       {
 	g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
 	HAL_Delay(10);
+	voltage=g_mk1031_wrapper_handler.readVout();
       }
   }
 
@@ -483,22 +494,22 @@ namespace stm32_test
     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
     g_hrtimer_pwm_handler.setOutput();
     g_relay_handler=stm32_relay::getRelay1();
-    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler);
-    g_dc_buck_handler.setVin(12);
+    g_dc_buck_adc_handler=stm32_dc_dc::getDCBuckADC(&g_hrtimer_pwm_handler);
+    g_dc_buck_adc_handler.setVin(12);
 
     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
     while (1)
       {
 	if(g_bool_isOutput == OUTPUT_START)
 	  {
-	    g_dc_buck_handler.enable();
+	    g_dc_buck_adc_handler.enable();
 	  }
 	else
 	  {
-	    g_dc_buck_handler.disable();
+	    g_dc_buck_adc_handler.disable();
 	  }
-	g_dc_buck_handler.setVout(g_target_vofa_set.target_voltage);
-	g_dc_buck_handler.openVoltageLoopControl();
+	g_dc_buck_adc_handler.setVout(g_target_vofa_set.target_voltage);
+	g_dc_buck_adc_handler.openVoltageLoopControl();
       }
   }
 
@@ -509,18 +520,70 @@ namespace stm32_test
   {
     g_adc_handler=stm32_adc::getADC1();
     g_adc_wrapper.init(&g_adc_handler);
-    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID1, STM32_ADC_WRAPPER_VOUT);
-    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_wrapper);
-    g_dc_buck_handler.setVin(5);
-    g_dc_buck_handler.setVout(3.3);
+    //    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID1, STM32_ADC_WRAPPER_VOUT);
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
+    //TO DO
+    g_dc_buck_adc_handler=stm32_dc_dc::getDCBuckADC(&g_hrtimer_pwm_handler,&g_adc_wrapper);
+    g_dc_buck_adc_handler.setVin(5);
+    g_dc_buck_adc_handler.setVout(3.3);
     g_voltage_pid.begin(0, 0, 0);
-    g_dc_buck_handler.setCV_PID(&g_voltage_pid);
-    g_dc_buck_handler.enable();
+    g_dc_buck_adc_handler.setCV_PID(&g_voltage_pid);
+    g_dc_buck_adc_handler.enable();
+
+    //定时事件处理，处理串口空闲中断接收到的数据以及发送modbus采样
+    HAL_TIM_Base_Start_IT(&htim1);
+
+
     while (1)
       {
-	g_dc_buck_handler.closedVoltageLoopControl();
+	g_dc_buck_adc_handler.closedVoltageLoopControl();
       }
   }
+
+  /*函数名: dc_dc_voltageClosedLoop_test
+   * 测试dcdc降压是否正常工作
+   * */
+  void dc_dc_currentClosedLoop_test()
+  {
+    //蓝牙调试串口抽象层初始化
+    g_message_handler=stm32_message::getUART1();
+    g_modbus_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+    //mk1031传感器初始化
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
+      g_mk1031_sensor_handler.responseHandler(data,len);
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
+
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
+
+    //定时事件处理，处理串口空闲中断接收到的数据
+    HAL_TIM_Base_Start_IT(&htim1);
+    //TO DO
+    g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    g_dc_buck_sensor_handler.setCurrent(1);
+    g_voltage_pid.begin(0, 0, 0);
+    g_dc_buck_sensor_handler.setCV_PID(&g_current_pid);
+    g_dc_buck_sensor_handler.enable();
+    while (1)
+      {
+	if (g_bool_isResetPID == RESET_PID)
+	  {
+	    g_dc_buck_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
+	    g_dc_buck_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
+	    g_dc_buck_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
+	    g_dc_buck_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
+	  }
+
+	g_dc_buck_sensor_handler.closedCurrentLoopControl();
+      }
+  }
+
+
 
   /*函数名: dc_dc_doubleMode_closedLoop_test
    * 测试dcdc降压双闭环是否正常工作
@@ -542,15 +605,15 @@ namespace stm32_test
     g_relay_handler=stm32_relay::getRelay1();
 
     //算法抽象层初始化
-    g_adc_wrapper.init(&g_adc_handler);
-    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID1, STM32_ADC_WRAPPER_VOUT);
-    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID2, STM32_ADC_WRAPPER_CURRENT);
-    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_wrapper);
-    g_dc_buck_handler.setVout(5);
+    //    g_adc_wrapper.init(&g_adc_handler);
+    //    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID1, STM32_ADC_WRAPPER_VOUT);
+    //    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID2, STM32_ADC_WRAPPER_CURRENT);
+    g_dc_buck_adc_handler=stm32_dc_dc::getDCBuckADC(&g_hrtimer_pwm_handler,&g_adc_wrapper);
+    g_dc_buck_adc_handler.setVout(5);
     g_voltage_pid.begin(1, 1, 1);
     g_current_pid.begin(2, 2, 2);
-    g_dc_buck_handler.setCV_PID(&g_voltage_pid);
-    g_dc_buck_handler.setCC_PID(&g_current_pid);
+    g_dc_buck_adc_handler.setCV_PID(&g_voltage_pid);
+    g_dc_buck_adc_handler.setCC_PID(&g_current_pid);
 
     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
     g_adc_handler.startSample();
@@ -558,12 +621,12 @@ namespace stm32_test
       {
 	if(g_bool_isOutput == OUTPUT_START)
 	  {
-	    g_dc_buck_handler.enable();
+	    g_dc_buck_adc_handler.enable();
 	    g_relay_handler.on();
 	  }
 	else
 	  {
-	    g_dc_buck_handler.disable();
+	    g_dc_buck_adc_handler.disable();
 	    g_relay_handler.off();
 	  }
 
@@ -572,24 +635,24 @@ namespace stm32_test
 	  case VOLTAGE_CLOSE_LOOP:
 	    if (g_bool_isResetPID == RESET_PID)
 	      {
-		g_dc_buck_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
-		g_dc_buck_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
-		g_dc_buck_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
-		g_dc_buck_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
+		g_dc_buck_adc_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
+		g_dc_buck_adc_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
+		g_dc_buck_adc_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
+		g_dc_buck_adc_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
 	      }
 
-	    g_dc_buck_handler.closedVoltageLoopControl ();
+	    g_dc_buck_adc_handler.closedVoltageLoopControl ();
 
 	    break;
 	  case CURRENT_CLOSE_LOOP:
 	    if (g_bool_isResetPID == RESET_PID)
 	      {
-		g_dc_buck_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
-		g_dc_buck_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
-		g_dc_buck_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
-		g_dc_buck_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
+		g_dc_buck_adc_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
+		g_dc_buck_adc_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
+		g_dc_buck_adc_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
+		g_dc_buck_adc_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
 	      }
-	    g_dc_buck_handler.closedCurrentLoopControl ();
+	    g_dc_buck_adc_handler.closedCurrentLoopControl ();
 	    break;
 	}
       }

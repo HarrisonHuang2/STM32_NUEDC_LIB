@@ -2,6 +2,7 @@ F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\arm-none-eabi\include\c++\13.3.1\type_traits:3649:3:constexpr bool std::is_constant_evaluated()	1
 ../Hardware/port/Inc/hw_port_hrtim_pwm.h:46:8:void Hardware_STM32_HRTIM_PWM::begin(HRTIM_HandleTypeDef*, hw_port_hrtim_pwm_channel_t, hw_port_hrtim_pwm_compare_unit_t)	15
 ../Hardware/port/Inc/hw_port_hrtim_pwm.h:91:8:void Hardware_STM32_HRTIM_PWM::setOutput()	1
+../Hardware/port/Inc/hw_port_hrtim_pwm.h:96:8:void Hardware_STM32_HRTIM_PWM::setFrequency(float)	10
 ../Hardware/port/Inc/hw_port_hrtim_pwm.h:108:8:void Hardware_STM32_HRTIM_PWM::setDutyCycle(float)	8
 ../Port/Inc/stm32_hrtim_pwm.h:15:28:Hardware_STM32_HRTIM_PWM stm32_hrtim_pwm::getTimerAOutput()	1
 ../Port/Inc/stm32_hrtim_pwm.h:22:28:Hardware_STM32_HRTIM_PWM stm32_hrtim_pwm::getTimerBOutput()	1
@@ -40,17 +41,26 @@ F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide
 ../Hardware/port/Inc/hw_port_adc_wrapper.h:50:9:float Hardware_STM32_ADC_Wrapper::readVin()	3
 ../Hardware/port/Inc/hw_port_adc_wrapper.h:55:9:float Hardware_STM32_ADC_Wrapper::readVout()	3
 ../Hardware/port/Inc/hw_port_adc_wrapper.h:60:9:float Hardware_STM32_ADC_Wrapper::readCurrent()	3
-../App/algorithim/Inc/alg_dc_buck.h:18:7:Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper>::Algorithim_DC_Buck()	1
-../Port/Inc/stm32_dc_dc.h:23:3:Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> stm32_dc_dc::getDCBuck1(Hardware_STM32_HRTIM_PWM*, Hardware_STM32_ADC_Wrapper*)	1
-../Port/Inc/stm32_dc_dc.h:31:3:Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> stm32_dc_dc::getDCBoost1(Hardware_STM32_HRTIM_PWM*, Hardware_STM32_ADC_Wrapper*)	1
-../App/algorithim/Inc/alg_dc_buck_boost.h:18:7:Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper>::Algorithim_DC_Buck_Boost()	1
-../Port/Inc/stm32_dc_dc.h:39:3:Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> stm32_dc_dc::getDCBuckBoost1(Hardware_STM32_HRTIM_PWM*, Hardware_STM32_ADC_Wrapper*)	1
 ../Hardware/port/Inc/hw_port_message.h:24:8:void Hardware_STM32_Message::begin(uint16_t, size_t, UART_HandleTypeDef*)	6
 ../Hardware/port/Inc/hw_port_message.h:41:8:void Hardware_STM32_Message::send(uint8_t*, uint16_t)	1
 ../Hardware/port/Inc/hw_port_message.h:46:8:void Hardware_STM32_Message::startReceive()	1
 ../Hardware/port/Inc/hw_port_message.h:60:8:void Hardware_STM32_Message::attachEvent(MessageCallback, ProcessEvent)	1
 ../Hardware/port/Inc/hw_port_message.h:68:8:void Hardware_STM32_Message::processHandler()	3
 ../Hardware/port/Inc/hw_port_message.h:88:8:void Hardware_STM32_Message::_startDMA()	1
+../App/protocol/ptl_modbus_master.h:22:7:constexpr Protocol_Modbus_Master<Hardware_STM32_Message>::Protocol_Modbus_Master()	1
+../Hardware/port/Inc/hw_port_mk1031.h:52:3:Hardware_MK1031::Hardware_MK1031()	1
+../Hardware/port/Inc/hw_port_mk1031.h:58:8:virtual void Hardware_MK1031::updateSensorData(const uint8_t*, size_t)	4
+../Hardware/port/Inc/hw_port_mk1031_wrapper.h:18:3:Hardware_MK1031_Wrapper::Hardware_MK1031_Wrapper()	1
+../Hardware/port/Inc/hw_port_mk1031_wrapper.h:19:8:void Hardware_MK1031_Wrapper::init(Hardware_MK1031*, Hardware_MK1031*)	1
+../Hardware/port/Inc/hw_port_mk1031_wrapper.h:29:9:float Hardware_MK1031_Wrapper::readVout()	2
+../Hardware/port/Inc/hw_port_mk1031_wrapper.h:34:9:float Hardware_MK1031_Wrapper::readCurrent()	2
+../App/algorithim/Inc/alg_dc_buck.h:18:7:Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper>::Algorithim_DC_Buck()	1
+../Port/Inc/stm32_dc_dc.h:24:3:Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> stm32_dc_dc::getDCBuckADC(Hardware_STM32_HRTIM_PWM*, Hardware_STM32_ADC_Wrapper*)	1
+../Port/Inc/stm32_dc_dc.h:32:3:Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> stm32_dc_dc::getDCBoostADC(Hardware_STM32_HRTIM_PWM*, Hardware_STM32_ADC_Wrapper*)	1
+../App/algorithim/Inc/alg_dc_buck_boost.h:18:7:Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper>::Algorithim_DC_Buck_Boost()	1
+../Port/Inc/stm32_dc_dc.h:40:3:Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> stm32_dc_dc::getDCBuckBoostADC(Hardware_STM32_HRTIM_PWM*, Hardware_STM32_ADC_Wrapper*)	1
+../App/algorithim/Inc/alg_dc_buck.h:18:7:Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper>::Algorithim_DC_Buck()	1
+../Port/Inc/stm32_dc_dc.h:49:3:Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> stm32_dc_dc::getDCBuckMK1031(Hardware_STM32_HRTIM_PWM*, Hardware_MK1031_Wrapper*)	1
 ../Hardware/port/Inc/hw_port_message.h:21:7:constexpr Hardware_STM32_Message::Hardware_STM32_Message()	1
 ../Port/Inc/stm32_message.h:18:26:Hardware_STM32_Message stm32_message::getUART1()	1
 ../Port/Inc/stm32_message.h:25:26:Hardware_STM32_Message stm32_message::getUART2()	1
@@ -59,48 +69,49 @@ F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide
 ../Hardware/port/Inc/hw_port_dac.h:59:3:constexpr Hardware_STM32_DAC<MaxPoints>::Hardware_STM32_DAC() [with unsigned int MaxPoints = 200]	1
 ../Port/Inc/stm32_dac.h:16:27:Hardware_STM32_DAC<200> stm32_dac::getDAC1_CH1()	1
 ../Port/Inc/stm32_dac.h:23:27:Hardware_STM32_DAC<200> stm32_dac::getDAC1_CH2()	1
-../App/protocol/ptl_modbus_master.h:22:7:constexpr Protocol_Modbus_Master<Hardware_STM32_Message>::Protocol_Modbus_Master()	1
-../Hardware/port/Inc/hw_port_mk1031.h:52:3:Hardware_MK1031::Hardware_MK1031()	1
-../Hardware/port/Inc/hw_port_mk1031.h:58:8:virtual void Hardware_MK1031::updateSensorData(const uint8_t*, size_t)	4
 ../Port/Inc/stm32_mk1031.h:15:19:Hardware_MK1031 stm32_mk1031::getMK1031(Hardware_STM32_Message*, uint8_t)	1
 ../App/filiter/Inc/flt_fir_hilbert.h:26:3:Flt_Fir_Hilbert::Flt_Fir_Hilbert()	1
 ../App/filiter/Inc/flt_fir_hilbert.h:31:9:float Flt_Fir_Hilbert::process(float)	1
 ../App/filiter/Inc/flt_fir_hilbert.h:60:8:void Flt_Fir_Hilbert::reset()	1
-../Port/Inc/stm32_test.h:76:8:void stm32_test::vofaReceiveCallback(uint8_t*, uint16_t)	25
-../Port/Inc/stm32_test.h:215:8:void stm32_test::timerA_pwm_test()	1
-../Port/Inc/stm32_test.h:225:8:void stm32_test::timerB_pwm_test()	1
-../Port/Inc/stm32_test.h:235:8:void stm32_test::timerC_pwm_test()	1
-../Port/Inc/stm32_test.h:246:8:void stm32_test::adc1_dma_test()	1
-../Port/Inc/stm32_test.h:267:8:void stm32_test::adc1_it_test()	1
-../Port/Inc/stm32_test.h:283:8:void stm32_test::adc2_dma_test()	1
-../Port/Inc/stm32_test.h:301:8:void stm32_test::adc2_it_test()	1
-../Port/Inc/stm32_test.h:318:8:void stm32_test::adc3_dma_test()	1
-../Port/Inc/stm32_test.h:332:8:void stm32_test::dac1_dma_test()	1
-../Port/Inc/stm32_test.h:341:8:void stm32_test::filiter_hilbert_it_singlePoint_test()	1
-../Port/Inc/stm32_test.h:349:8:void stm32_test::us_timer_test()	3
-../Port/Inc/stm32_test.h:359:8:void stm32_test::pll_init_test()	1
-../Port/Inc/stm32_test.h:378:8:void stm32_test::pll_it_test()	13
-../Port/Inc/stm32_test.h:429:8:void stm32_test::filiter_hilbert_test()	1
-../Port/Inc/stm32_test.h:440:8:void stm32_test::dq_pll_test()	1
+../Port/Inc/stm32_test.h:80:8:void stm32_test::vofaReceiveCallback(uint8_t*, uint16_t)	25
+../Port/Inc/stm32_test.h:219:8:void stm32_test::timerA_pwm_test()	1
+../Port/Inc/stm32_test.h:230:8:void stm32_test::timerB_pwm_test()	1
+../Port/Inc/stm32_test.h:240:8:void stm32_test::timerC_pwm_test()	1
+../Port/Inc/stm32_test.h:251:8:void stm32_test::adc1_dma_test()	1
+../Port/Inc/stm32_test.h:272:8:void stm32_test::adc1_it_test()	1
+../Port/Inc/stm32_test.h:288:8:void stm32_test::adc2_dma_test()	1
+../Port/Inc/stm32_test.h:306:8:void stm32_test::adc2_it_test()	1
+../Port/Inc/stm32_test.h:323:8:void stm32_test::adc3_dma_test()	1
+../Port/Inc/stm32_test.h:337:8:void stm32_test::dac1_dma_test()	1
+../Port/Inc/stm32_test.h:346:8:void stm32_test::filiter_hilbert_it_singlePoint_test()	1
+../Port/Inc/stm32_test.h:354:8:void stm32_test::us_timer_test()	3
+../Port/Inc/stm32_test.h:364:8:void stm32_test::pll_init_test()	1
+../Port/Inc/stm32_test.h:383:8:void stm32_test::pll_it_test()	13
+../Port/Inc/stm32_test.h:434:8:void stm32_test::filiter_hilbert_test()	1
+../Port/Inc/stm32_test.h:445:8:void stm32_test::dq_pll_test()	1
 ../App/protocol/ptl_modbus_master.h:22:7:constexpr Protocol_Modbus_Master<Hardware_STM32_Message>& Protocol_Modbus_Master<Hardware_STM32_Message>::operator=(Protocol_Modbus_Master<Hardware_STM32_Message>&&)	1
 ../Hardware/port/Inc/hw_port_mk1031.h:49:7:constexpr Hardware_MK1031& Hardware_MK1031::operator=(Hardware_MK1031&&)	1
-../Port/Inc/stm32_test.h:459:35:stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>	1
-../Port/Inc/stm32_test.h:459:35:static constexpr void stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	1
-../Port/Inc/stm32_test.h:459:35:constexpr stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>::operator void (*)(uint8_t*, uint16_t)() const	1
-../Port/Inc/stm32_test.h:454:8:void stm32_test::mk1031_sensor_test()	1
-../Port/Inc/stm32_test.h:478:8:void stm32_test::dc_dc_openLoop_test()	2
-../Port/Inc/stm32_test.h:508:8:void stm32_test::dc_dc_voltageClosedLoop_test()	1
-../Port/Inc/stm32_test.h:528:8:void stm32_test::dc_dc_doubleMode_closedLoop_test()	6
-../Port/Inc/stm32_test.h:601:8:void stm32_test::vofa_send_test()	1
-../Port/Inc/stm32_test.h:610:8:void stm32_test::vofa_receive_callback_test(uint8_t*, uint16_t)	2
-../Port/Inc/stm32_test.h:621:8:void stm32_test::vofa_receive_test()	1
-../Port/Inc/stm32_test.h:636:8:void stm32_test::segger_systemview_test_enable()	1
+../Port/Inc/stm32_test.h:464:35:stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>	1
+../Port/Inc/stm32_test.h:464:35:static constexpr void stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	1
+../Port/Inc/stm32_test.h:464:35:constexpr stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>::operator void (*)(uint8_t*, uint16_t)() const	1
+../Port/Inc/stm32_test.h:459:8:void stm32_test::mk1031_sensor_test()	1
+../Port/Inc/stm32_test.h:489:8:void stm32_test::dc_dc_openLoop_test()	2
+../Port/Inc/stm32_test.h:519:8:void stm32_test::dc_dc_voltageClosedLoop_test()	1
+../Port/Inc/stm32_test.h:556:42:stm32_test::dc_dc_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>	1
+../Port/Inc/stm32_test.h:556:42:static constexpr void stm32_test::dc_dc_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	1
+../Port/Inc/stm32_test.h:556:42:constexpr stm32_test::dc_dc_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::operator void (*)(uint8_t*, uint16_t)() const	1
+../Port/Inc/stm32_test.h:546:8:void stm32_test::dc_dc_currentClosedLoop_test()	2
+../Port/Inc/stm32_test.h:591:8:void stm32_test::dc_dc_doubleMode_closedLoop_test()	6
+../Port/Inc/stm32_test.h:664:8:void stm32_test::vofa_send_test()	1
+../Port/Inc/stm32_test.h:673:8:void stm32_test::vofa_receive_callback_test(uint8_t*, uint16_t)	2
+../Port/Inc/stm32_test.h:684:8:void stm32_test::vofa_receive_test()	1
+../Port/Inc/stm32_test.h:699:8:void stm32_test::segger_systemview_test_enable()	1
 ../Core/NUEDC/2015.h:69:8:void nuedc_2015::vofaReceiveCallback(uint8_t*, uint16_t)	20
 ../Core/NUEDC/2015.h:179:8:void nuedc_2015::hardware_init()	1
 ../Core/NUEDC/2015.h:212:8:void nuedc_2015::loop()	7
 ../Core/Src/main.cpp:80:5:int main()	1
-../Core/Src/main.cpp:145:6:void SystemClock_Config()	3
-../Core/Src/main.cpp:195:6:void Error_Handler()	1
+../Core/Src/main.cpp:147:6:void SystemClock_Config()	3
+../Core/Src/main.cpp:197:6:void Error_Handler()	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\arm-none-eabi\include\c++\13.3.1\bits\stl_vector.h:137:2:constexpr std::_Vector_base<_Tp, _Alloc>::_Vector_impl::_Vector_impl() requires  is_default_constructible_v<typename __gnu_cxx::__alloc_traits<_Allocator, typename _Allocator::value_type>::rebind::other> [with _Tp = long unsigned int; _Alloc = std::allocator<long unsigned int>]	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\arm-none-eabi\include\c++\13.3.1\bits\stl_vector.h:367:7:constexpr std::_Vector_base<_Tp, _Alloc>::~_Vector_base() [with _Tp = long unsigned int; _Alloc = std::allocator<long unsigned int>]	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\arm-none-eabi\include\c++\13.3.1\bits\stl_vector.h:733:7:constexpr std::vector<_Tp, _Alloc>::~vector() [with _Tp = long unsigned int; _Alloc = std::allocator<long unsigned int>]	1
@@ -116,6 +127,8 @@ F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide
 ../App/algorithim/Inc/alg_dc_dc.h:40:3:Algorithim_DC_DC<PWM, DATA>::Algorithim_DC_DC() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_STM32_ADC_Wrapper]	1
 ../App/algorithim/Inc/alg_dc_dc.h:41:8:void Algorithim_DC_DC<PWM, DATA>::begin(PWM*, DATA*) [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_STM32_ADC_Wrapper]	1
 ../App/algorithim/Inc/alg_dc_boost.h:21:3:Algorithim_DC_Boost<PWM, DATA>::Algorithim_DC_Boost() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_STM32_ADC_Wrapper]	1
+../App/algorithim/Inc/alg_dc_dc.h:40:3:Algorithim_DC_DC<PWM, DATA>::Algorithim_DC_DC() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_MK1031_Wrapper]	1
+../App/algorithim/Inc/alg_dc_dc.h:41:8:void Algorithim_DC_DC<PWM, DATA>::begin(PWM*, DATA*) [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_MK1031_Wrapper]	1
 ../Hardware/port/Inc/hw_port_dac.h:107:8:void Hardware_STM32_DAC<MaxPoints>::begin(DAC_HandleTypeDef*, TIM_HandleTypeDef*, hw_dac_channel_t, float, uint16_t, hw_dac_mode_t, float) [with unsigned int MaxPoints = 200]	2
 ../App/protocol/ptl_modbus_master.h:26:8:void Protocol_Modbus_Master<UART>::init(uint8_t, UART*) [with UART = Hardware_STM32_Message]	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/include/c++/13.3.1/array:115:7:constexpr void std::array<_Tp, _Nm>::fill(const value_type&) [with _Tp = float; unsigned int _Nm = 61]	1
@@ -135,6 +148,10 @@ F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide
 ../App/algorithim/Inc/alg_dc_buck.h:22:8:void Algorithim_DC_Buck<PWM, DATA>::openVoltageLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_STM32_ADC_Wrapper]	4
 ../App/algorithim/Inc/alg_dc_dc.h:47:8:void Algorithim_DC_DC<PWM, DATA>::setCV_PID(Algorithim_PID*) [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_STM32_ADC_Wrapper]	1
 ../App/algorithim/Inc/alg_dc_buck.h:27:8:void Algorithim_DC_Buck<PWM, DATA>::closedVoltageLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_STM32_ADC_Wrapper]	5
+../App/algorithim/Inc/alg_dc_dc.h:67:8:void Algorithim_DC_DC<PWM, DATA>::setCurrent(float) [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_MK1031_Wrapper]	1
+../App/algorithim/Inc/alg_dc_dc.h:47:8:void Algorithim_DC_DC<PWM, DATA>::setCV_PID(Algorithim_PID*) [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_MK1031_Wrapper]	1
+../App/algorithim/Inc/alg_dc_dc.h:72:8:void Algorithim_DC_DC<PWM, DATA>::enable() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_MK1031_Wrapper]	1
+../App/algorithim/Inc/alg_dc_buck.h:34:8:void Algorithim_DC_Buck<PWM, DATA>::closedCurrentLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_MK1031_Wrapper]	5
 ../App/algorithim/Inc/alg_dc_dc.h:52:8:void Algorithim_DC_DC<PWM, DATA>::setCC_PID(Algorithim_PID*) [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_STM32_ADC_Wrapper]	1
 ../App/algorithim/Inc/alg_dc_buck.h:34:8:void Algorithim_DC_Buck<PWM, DATA>::closedCurrentLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_STM32_ADC_Wrapper]	5
 ../App/algorithim/Inc/alg_dc_dc.h:67:8:void Algorithim_DC_DC<PWM, DATA>::setCurrent(float) [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_STM32_ADC_Wrapper]	1
@@ -217,7 +234,7 @@ F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\arm-none-eabi\include\c++\13.3.1\bits\stl_algobase.h:1117:5:constexpr _OutputIterator std::__fill_n_a(_OutputIterator, _Size, const _Tp&, random_access_iterator_tag) [with _OutputIterator = long unsigned int*; _Size = unsigned int; _Tp = long unsigned int]	2
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\arm-none-eabi\include\c++\13.3.1\bits\stl_algobase.h:976:5:constexpr void std::__fill_a(_FIte, _FIte, const _Tp&) [with _FIte = long unsigned int*; _Tp = long unsigned int]	1
 F:\CubeIDE\CUBEIDE\STM32CubeIDE_1.16.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\arm-none-eabi\include\c++\13.3.1\bits\stl_algobase.h:926:5:constexpr typename __gnu_cxx::__enable_if<std::__is_scalar<_Tp>::__value, void>::__type std::__fill_a1(_ForwardIterator, _ForwardIterator, const _Tp&) [with _ForwardIterator = long unsigned int*; _Tp = long unsigned int]	2
-../Core/Src/main.cpp:204:1:void __static_initialization_and_destruction_0()	1
-../Core/Src/main.cpp:204:1:void __static_initialization_and_destruction_1()	1
-../Core/Src/main.cpp:204:1:cpp)	1
-../Core/Src/main.cpp:204:1:cpp)	1
+../Core/Src/main.cpp:206:1:void __static_initialization_and_destruction_0()	1
+../Core/Src/main.cpp:206:1:void __static_initialization_and_destruction_1()	1
+../Core/Src/main.cpp:206:1:cpp)	1
+../Core/Src/main.cpp:206:1:cpp)	1

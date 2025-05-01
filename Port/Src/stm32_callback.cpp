@@ -9,6 +9,7 @@
 #include"hw_port_hrtim_pwm.h"
 #include"hw_port_adc.h"
 #include"hw_port_message.h"
+#include"hw_port_mk1031.h".h"
 #include "tim.h"
 #include "SEGGER_SYSVIEW_Conf.h"
 #include "SEGGER_SYSVIEW.h"
@@ -19,6 +20,7 @@ namespace stm32_test
   extern Hardware_STM32_ADC g_adc_handler;
   extern Hardware_STM32_Message g_message_handler;
   extern Hardware_STM32_US_Timer g_us_timer_handler;
+  extern Hardware_MK1031 g_mk1031_sensor_handler;
   void pll_it_test();
   void filiter_hilbert_it_singlePoint_test();
   void filiter_hilbert_multyPoints_test();
@@ -57,7 +59,9 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
   if(htim == &htim1)
     {
-      stm32_test::g_message_handler.processHandler();
+      stm32_test::g_message_handler.processHandler();//蓝牙调试
+      stm32_test:: g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);//发送modbus采样
+      //modbus串口接收
 //      nuedc_2015::g_message_handler.processHandler();
     }
   else if(htim == &htim7)

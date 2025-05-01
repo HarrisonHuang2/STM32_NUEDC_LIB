@@ -40,7 +40,9 @@ Port/Src/stm32_callback.o: ../Port/Src/stm32_callback.cpp \
  ../Hardware/hal/Inc/hw_hal_pwm.h ../Core/Inc/hrtim.h ../Core/Inc/main.h \
  ../Hardware/port/Inc/hw_port_adc.h ../Hardware/hal/Inc/hw_hal_adc.h \
  ../Core/Inc/adc.h ../Hardware/port/Inc/hw_port_message.h \
- ../Core/Inc/usart.h ../Core/Inc/tim.h \
+ ../Core/Inc/usart.h ../Hardware/port/Inc/hw_port_mk1031.h \
+ ../App/protocol/ptl_modbus_master.h ../Hardware/hal/Inc/hw_hal_message.h \
+ ../Hardware/port/Inc/hw_port_message.h ../Core/Inc/tim.h \
  ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h \
  ../Segger/SystemView/SEGGER_SYSVIEW.h ../Segger/SystemView/SEGGER.h \
  ../Segger/SystemView/Global.h \
@@ -95,6 +97,10 @@ Port/Src/stm32_callback.o: ../Port/Src/stm32_callback.cpp \
 ../Core/Inc/adc.h:
 ../Hardware/port/Inc/hw_port_message.h:
 ../Core/Inc/usart.h:
+../Hardware/port/Inc/hw_port_mk1031.h:
+../App/protocol/ptl_modbus_master.h:
+../Hardware/hal/Inc/hw_hal_message.h:
+../Hardware/port/Inc/hw_port_message.h:
 ../Core/Inc/tim.h:
 ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h:
 ../Segger/SystemView/SEGGER_SYSVIEW.h:
