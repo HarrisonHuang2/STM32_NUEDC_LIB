@@ -21,6 +21,13 @@ namespace stm32_message
     message.begin(2, 20, &huart1);
     return message;
   }
+
+  Hardware_STM32_Message getUART2()
+  {
+    Hardware_STM32_Message message;
+    message.begin(2, 20, &huart2);
+    return message;
+  }
 }
 
 

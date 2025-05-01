@@ -12,6 +12,7 @@
 #include "stm32_dc_dc.h"
 #include "stm32_message.h"
 #include "stm32_dac.h"
+#include "stm32_mk1031.h"
 #include "flt_fir_hilbert.h"
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_Conf.h"
@@ -21,9 +22,10 @@ namespace stm32_test
 {
   Hardware_STM32_HRTIM_PWM g_hrtimer_pwm_handler;
   Hardware_STM32_ADC g_adc_handler;
+  Hardware_STM32_ADC_Wrapper g_adc_wrapper;
   Hardware_STM32_Relay g_relay_handler;
   Hardware_STM32_Message g_message_handler;
-  Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC> g_dc_buck_handler;
+  Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> g_dc_buck_handler;
   Algorithim_PID g_voltage_pid;
   Algorithim_PID g_current_pid;
   Algorithim_PID g_pll_pid;
@@ -31,6 +33,7 @@ namespace stm32_test
   Hardware_STM32_DAC<200> g_dac_ch2_handler;
   Hardware_STM32_US_Timer g_us_timer_handler;
   Flt_Fir_Hilbert g_filiter_hilbert_handler;
+  Hardware_MK1031 g_mk1031_sensor_handler;
 
   enum power_control_mode_t
   {
@@ -148,7 +151,7 @@ namespace stm32_test
       }
     else if (sscanf(s, "PHA=%f", &temp) >0)
       {
-	  g_target_vofa_set.target_phase=temp;
+	g_target_vofa_set.target_phase=temp;
 	printf("PHA: %f\n", g_target_vofa_set.target_phase);
       }
     else if (sscanf(s, "MODE=%f", &temp) >0)
@@ -198,12 +201,9 @@ namespace stm32_test
     else if(strcmp (s, "DEBUG") == 0)
       {
 	//数据回显
-	//0:vin 1:vout 2:current
-	float data[3];
-	g_dc_buck_handler.adc_->read3Channel(data,3);
-	printf("Vin:%f\n",data[0]);
-	printf("Vout:%f\n",data[1]);
-	printf("Current:%f\n",data[2]);
+	printf("Vin:%f\n",g_dc_buck_handler.dataWrapper_->readVin());
+	printf("Vout:%f\n",g_dc_buck_handler.dataWrapper_->readVout());
+	printf("Current:%f\n",g_dc_buck_handler.dataWrapper_->readCurrent());
 	printf("%d\n",g_dc_buck_handler.isEnable());
       }
   }
@@ -362,7 +362,7 @@ namespace stm32_test
     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
     g_message_handler.startReceive();
 
-//    g_pll_pid.begin(0.1,0.001,0,0.0016);
+    //    g_pll_pid.begin(0.1,0.001,0,0.0016);
     g_pll_pid.begin(43.59,0.8242,0,0.0847);
     g_dac_ch1_handler=stm32_dac::getDAC1_CH1();
 
@@ -419,7 +419,7 @@ namespace stm32_test
       }
     float output_pll=g_pll_pid.cal_absolute(0, phase);
     g_dac_ch1_handler.update_sin(50, 200, g_target_vofa_set.target_phase);
-//    g_dac_ch2_handler.update_sin(abs(output_pll), 200);
+    //    g_dac_ch2_handler.update_sin(abs(output_pll), 200);
     g_dac_ch2_handler.update_sin(abs(output_pll), 200);
 
 
@@ -447,9 +447,28 @@ namespace stm32_test
 
     while(1)
       {
-
+	//TO DO
       }
   }
+
+  void mk1031_sensor_test()
+  {
+    g_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_message_handler, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
+    g_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+				  {
+      g_mk1031_sensor_handler.processReadResponse(data,len);
+				  },PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+
+    while(1)
+      {
+	g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,2);
+	HAL_Delay(10);
+      }
+  }
+
 
   /*函数名: dc_dc_openLoop_test
    * 测试dcdc降压开环是否正常工作
@@ -462,7 +481,7 @@ namespace stm32_test
     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
     g_hrtimer_pwm_handler.setOutput();
     g_relay_handler=stm32_relay::getRelay1();
-    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler);
+    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler);
     g_dc_buck_handler.setVin(12);
 
     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
@@ -486,7 +505,10 @@ namespace stm32_test
    * */
   void dc_dc_voltageClosedLoop_test()
   {
-    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler);
+    g_adc_handler=stm32_adc::getADC1();
+    g_adc_wrapper.init(&g_adc_handler);
+    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID1, STM32_ADC_WRAPPER_VOUT);
+    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_wrapper);
     g_dc_buck_handler.setVin(5);
     g_dc_buck_handler.setVout(3.3);
     g_voltage_pid.begin(0, 0, 0);
@@ -518,9 +540,11 @@ namespace stm32_test
     g_relay_handler=stm32_relay::getRelay1();
 
     //算法抽象层初始化
-    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_handler);
-    g_dc_buck_handler.setVin(5);
-    g_dc_buck_handler.setVout(3.3);
+    g_adc_wrapper.init(&g_adc_handler);
+    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID1, STM32_ADC_WRAPPER_VOUT);
+    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID2, STM32_ADC_WRAPPER_CURRENT);
+    g_dc_buck_handler=stm32_dc_dc::getDCBuck1(&g_hrtimer_pwm_handler,&g_adc_wrapper);
+    g_dc_buck_handler.setVout(5);
     g_voltage_pid.begin(1, 1, 1);
     g_current_pid.begin(2, 2, 2);
     g_dc_buck_handler.setCV_PID(&g_voltage_pid);

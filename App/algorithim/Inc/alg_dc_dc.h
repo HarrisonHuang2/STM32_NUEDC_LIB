@@ -12,26 +12,25 @@
 #include "portmacro.h"
 #include <utility>
 #include "hw_hal_pwm.h"
-#include "hw_hal_adc.h"
 #include "hw_hal_relay.h"
+#include "hw_hal_data_wrapper.h"
 #include "alg_pid.h"
 
 //Note
-/*输入电压可用户设置，也可以通过ADC读取，输入电压主要用于过压保护和切换
- * Algorithim_DC_DC类中的vout和current是设定的目标值，类中不存有adc读到的实际值
- * adc需要提供接口给du_buck类读取实际值
+/*TO DO
+
  */
 
 // BuckConverter 类声明
 #ifdef __cpp_concepts
-template < PWMInterfaceConcept PWM, ADCInterfaceConcept ADC >
+template < PWMInterfaceConcept PWM ,DataWrapperInterfaceConcept DATA>
 #else
-template <class PWM, class ADC>
+template <class PWM, class DATA>
 #endif
 class Algorithim_DC_DC {
 public:
   PWM *pwm_;
-  ADC *adc_;
+  DATA *dataWrapper_;
   Algorithim_PID *cc_pid_;
   Algorithim_PID *cv_pid_;
   bool isEnable_=false;
@@ -39,10 +38,10 @@ public:
   float vout_;
   float current_;
   Algorithim_DC_DC(){}
-  void begin(PWM *pwm,ADC *adc = nullptr)
+  void begin(PWM *pwm,DATA *dataWrapper=nullptr)
   {
     pwm_ = pwm;
-    adc_ = adc;
+    dataWrapper_=dataWrapper;
   }
 
   void setCV_PID(Algorithim_PID *pid)

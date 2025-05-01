@@ -37,6 +37,8 @@ public:
   // 移动构造函数
   Hardware_STM32_ADC(Hardware_STM32_ADC&& other)noexcept = default;
 
+  std::vector<uint32_t>readData_;//普通模式下每个通道采集1次
+
   Hardware_STM32_ADC& operator=(Hardware_STM32_ADC&& other) noexcept
   {
     // 自我赋值检查
@@ -135,8 +137,8 @@ public:
 	isDataReady_IT_ = STM32_ADC_IT_READY;
       }
   }
+
 private:
-  std::vector<uint32_t>readData_;//普通模式下每个通道采集1次
   ADC_HandleTypeDef *hadc_;
   hw_stm32_adc_dma_ready_t isDataReady_=STM32_ADC_DMA_NOT_READY;
   hw_stm32_adc_it_ready_t isDataReady_IT_=STM32_ADC_IT_NOT_READY;

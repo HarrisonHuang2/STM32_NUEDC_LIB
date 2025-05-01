@@ -11,11 +11,11 @@
 #include "alg_dc_buck.h"
 
 #ifdef __cpp_concepts
-template < PWMInterfaceConcept PWM, ADCInterfaceConcept ADC >
+template < PWMInterfaceConcept PWM, DataWrapperInterfaceConcept DATA >
 #else
-template <class PWM, class ADC>
+template <class PWM, class DATA>
 #endif
-class Algorithim_DC_Boost : public Algorithim_DC_Buck<PWM, ADC>
+class Algorithim_DC_Boost : public Algorithim_DC_Buck<PWM, DATA>
 {
 public:
   Algorithim_DC_Boost (){}

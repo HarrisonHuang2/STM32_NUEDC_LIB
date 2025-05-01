@@ -11,11 +11,11 @@
 #include "alg_dc_dc.h"
 
 #ifdef __cpp_concepts
-template < PWMInterfaceConcept PWM, ADCInterfaceConcept ADC >
+template < PWMInterfaceConcept PWM ,DataWrapperInterfaceConcept DATA>
 #else
-template <class PWM, class ADC>
+template <class PWM, class DATA>
 #endif
-class Algorithim_DC_Buck : public Algorithim_DC_DC<PWM, ADC>
+class Algorithim_DC_Buck : public Algorithim_DC_DC<PWM, DATA>
 {
 public:
 
@@ -26,19 +26,15 @@ public:
 
   void closedVoltageLoopControl() {
     float output;
-    if(!this->adc_ || !this->isEnable_){return ;}
-    float data[3];//0:vin 1:vout 2:current
-    this->adc_->read3Channel(data,3);
-    output = LIMIT(this->cv_pid_->cal_increase(this->vout_,data[1]),0,1);
+    if(!this->dataWrapper_ || !this->isEnable_){return ;}
+    output = LIMIT(this->cv_pid_->cal_increase(this->vout_,this->dataWrapper_->readVout()),0,1);
     this->pwm_->setDutyCycle(output);
   }
 
   void closedCurrentLoopControl() {
     float output;
-    if(!this->adc_ || !this->isEnable_){return ;}
-    float data[3];//0:vin 1:vout 2:current
-    this->adc_->read3Channel(data,3);
-    output = LIMIT(this->cc_pid_->cal_increase(this->current_, data[2]),0,1);
+    if(!this->dataWrapper_ || !this->isEnable_){return ;}
+    output = LIMIT(this->cc_pid_->cal_increase(this->current_, this->dataWrapper_->readCurrent()),0,1);
     this->pwm_->setDutyCycle(output);
   }
 };

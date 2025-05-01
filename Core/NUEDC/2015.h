@@ -11,6 +11,7 @@
 #include <stm32_dc_dc.h>
 #include "stm32_hrtim_pwm.h"
 #include "stm32_adc.h"
+#include "hw_port_adc_wrapper.h"
 #include "stm32_relay.h"
 #include "stm32_test.h"
 #include "stm32_message.h"
@@ -20,11 +21,12 @@ namespace nuedc_2015
 {
 
   Hardware_STM32_HRTIM_PWM g_hrtimer_pwm_handler;
+  Hardware_STM32_ADC_Wrapper g_adc_wrapper;
   Hardware_STM32_ADC g_adc1_handler;
   Hardware_STM32_ADC g_adc3_handler;
   Hardware_STM32_Relay g_relay_handler;
   Hardware_STM32_Message g_message_handler;
-  Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC>g_dc_controler_handler;
+  Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper>g_dc_controler_handler;
   Algorithim_PID g_voltage_pid;
   Algorithim_PID g_current_pid;
 
@@ -167,12 +169,9 @@ namespace nuedc_2015
     else if(strcmp (s, "DEBUG") == 0)
       {
 	//数据回显
-	//0:vin 1:vout 2:current
-	float data[3];
-	g_dc_controler_handler.adc_->read3Channel(data,3);
-	printf("Vin:%f\n",data[0]);
-	printf("Vout:%f\n",data[1]);
-	printf("Current:%f\n",data[2]);
+	printf("Vin:%f\n",g_dc_controler_handler.dataWrapper_->readVin());
+	printf("Vout:%f\n",g_dc_controler_handler.dataWrapper_->readVout());
+	printf("Current:%f\n",g_dc_controler_handler.dataWrapper_->readCurrent());
 	printf("%d\n",g_dc_controler_handler.isEnable());
       }
   }
@@ -195,7 +194,11 @@ namespace nuedc_2015
     g_relay_handler=stm32_relay::getRelay1();
 
     //算法抽象层初始化
-    g_dc_controler_handler=stm32_dc_dc::getDCBuckBoost1(&g_hrtimer_pwm_handler,&g_adc1_handler);
+    g_adc_wrapper.init(&g_adc1_handler);
+    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID1, STM32_ADC_WRAPPER_VIN);
+    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID2, STM32_ADC_WRAPPER_VOUT);
+    g_adc_wrapper.create_mapping(STM32_ADC_WRAPPER_CHANNEL_ID3, STM32_ADC_WRAPPER_CURRENT);
+    g_dc_controler_handler=stm32_dc_dc::getDCBuckBoost1(&g_hrtimer_pwm_handler,&g_adc_wrapper);
     g_voltage_pid.begin(0.295160, 20.9333, 0);
     g_current_pid.begin(0.0456, 41.4562, 0);
     g_dc_controler_handler.setCV_PID(&g_voltage_pid);
@@ -203,6 +206,7 @@ namespace nuedc_2015
 
     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
     g_adc1_handler.startSample();
+    g_adc3_handler.startSample();
   }
 
   void loop()
