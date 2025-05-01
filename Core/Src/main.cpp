@@ -115,11 +115,10 @@ int main(void)
   MX_TIM8_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  //定时事件处理
-    HAL_TIM_Base_Start_IT(&htim1);
   //  stm32_test::filiter_hilbert_test();
   //  stm32_test::dac1_dma_test();
-  stm32_test::pll_init_test();
+//  stm32_test::pll_init_test();
+    stm32_test::mk1031_sensor_test();
 //  stm32_test::vofa_receive_test();
   /* USER CODE END 2 */
 

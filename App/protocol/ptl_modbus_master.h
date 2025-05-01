@@ -31,6 +31,7 @@ public:
   // 读取保持寄存器（功能码03H）
   void readRegisters(uint16_t startAddr, uint16_t regCount) {
     uint8_t frame[8];
+    m_first_regAddr = startAddr;
     frame[0] = m_slaveAddr;
     frame[1] = 0x03;
     frame[2] = startAddr >> 8;
@@ -45,7 +46,6 @@ public:
   void writeRegisters(uint16_t startAddr, const uint16_t* values, uint16_t regCount) {
     uint8_t frame[256];
     const uint8_t byteCount = regCount * 2;
-
     frame[0] = m_slaveAddr;
     frame[1] = 0x10;
     frame[2] = startAddr >> 8;
@@ -73,7 +73,7 @@ public:
 
     switch(functionCode) {
       case 0x03:  // 处理读取响应
-	processReadResponse(data, length);
+	updateSensorData(data, length);
 	break;
       case 0x10:  // 处理写入响应
 	// 不需要特殊处理
@@ -81,21 +81,9 @@ public:
     }
   }
 
-  virtual void updateSensorData(uint16_t regAddr, uint16_t rawValue)=0; // 纯虚函数，子类实现具体数据解析
-
-
   //用户需要将该函数放到需要的地方更新数据，否则数据不更新
-  void processReadResponse(const uint8_t* data, size_t length) {
-    const uint8_t byteCount = data[2];
-    const uint16_t regCount = byteCount / 2;
-    const uint16_t baseAddr = (data[0] << 8) | data[1];  // 实际应用中需要跟踪请求
+  virtual void updateSensorData(const uint8_t* data, size_t length)=0; // 纯虚函数，子类实现具体数据解析
 
-    for(uint16_t i = 0; i < regCount; ++i) {
-	const uint16_t regAddr = baseAddr + i;
-	const uint16_t value = (data[3 + i*2] << 8) | data[4 + i*2];
-	updateSensorData(regAddr, value);
-    }
-  }
 
 
   // CRC16校验算法（MODBUS）
@@ -122,6 +110,7 @@ public:
     return crc16(data, length-2) == receivedCRC;
   }
 
+uint16_t m_first_regAddr;
   uint8_t m_slaveAddr;
   UART *uart_;
 };

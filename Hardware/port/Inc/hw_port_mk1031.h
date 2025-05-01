@@ -16,14 +16,19 @@
 
 // MODBUS寄存器地址定义
 enum  ModbusRegisters : uint16_t {
-      MK1031_VOLTAGE         = 0x0048,
-      MK1031_CURRENT         = 0x0049,
-      MK1031_ACTIVE_POWER    = 0x004B,
-      MK1031_TOTAL_ENERGY    = 0x004D,
+  MK1031_VOLTAGE         = 0x0048,
+      MK1031_CURRENT_H         = 0x0049,
+      MK1031_CURRENT_L         = 0x004A,
+      MK1031_ACTIVE_POWER_H    = 0x004B,
+      MK1031_ACTIVE_POWER_L    = 0x004C,
+      MK1031_TOTAL_ENERGY_H    = 0x004D,
+      MK1031_TOTAL_ENERGY_L    = 0x004E,
       MK1031_POWER_FACTOR    = 0x004F,
       MK1031_FREQUENCY       = 0x0050,
-      MK1031_APPARENT_POWER  = 0x0057,
-      MK1031_REACTIVE_POWER  = 0x0059,
+      MK1031_APPARENT_POWER_H  = 0x0057,
+      MK1031_APPARENT_POWER_L  = 0x0058,
+      MK1031_REACTIVE_POWER_H  = 0x0059,
+      MK1031_REACTIVE_POWER_L  = 0x005A,
       MK1031_PHASE_ANGLE     = 0x005B
 };
 
@@ -50,37 +55,24 @@ public:
   const hw_mk1031_sensor_data_t& getData() const { return m_sensorData ;}
 
 
-  void updateSensorData(uint16_t regAddr, uint16_t rawValue) override{
-    // 根据实际传感器规格添加转换逻辑
-    switch(regAddr) {
-      case MK1031_VOLTAGE:
-	m_sensorData.voltage = rawValue * 0.01f;  // 示例转换
-	break;
-      case MK1031_CURRENT:
-	m_sensorData.current = rawValue * 0.0001f;
-	break;
-      case MK1031_ACTIVE_POWER:
-	m_sensorData.active_power = rawValue * 0.0001f;
-	break;
-      case MK1031_TOTAL_ENERGY:
-	m_sensorData.total_energy = rawValue * 0.01f;
-	break;
-      case MK1031_POWER_FACTOR:
-	m_sensorData.power_factor = rawValue * 0.001f;
-	break;
-      case MK1031_FREQUENCY:
-	m_sensorData.frequency = rawValue * 0.01f;
-	break;
-      case MK1031_APPARENT_POWER:
-	m_sensorData.apparent_power = rawValue * 0.0001f;
-	break;
-      case MK1031_REACTIVE_POWER:
-	m_sensorData.reactive_power = rawValue * 0.0001f;
-	break;
-      case MK1031_PHASE_ANGLE:
-	m_sensorData.phase_angle = rawValue * 0.01f;
-	break;
+  void updateSensorData(const uint8_t* data, size_t length)override{
+    const uint8_t byteCount = data[2];
+    const uint16_t regCount = byteCount / 2;
+
+    for(uint16_t i = 0; i < regCount; ++i) {
+	const uint16_t regAddr =  this->m_first_regAddr + i;
+	const uint16_t rawValue = (data[3 + i*2] << 8) | data[4 + i*2];
+
+	// 现在只解析电压和电流寄存器，电流最大量程为63356/10000=6.3356A
+	switch(regAddr) {
+	  case MK1031_VOLTAGE:
+	    m_sensorData.voltage = rawValue * 0.01f;  // 示例转换
+	    break;
+	  case MK1031_CURRENT_L:
+	    m_sensorData.current = rawValue * 0.0001f;
+	    break;
     }
+  }
   }
 };
 

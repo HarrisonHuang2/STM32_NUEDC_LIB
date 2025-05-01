@@ -458,13 +458,15 @@ namespace stm32_test
     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
     g_message_handler.attachEvent([](uint8_t *data, uint16_t len)
 				  {
-      g_mk1031_sensor_handler.processReadResponse(data,len);
+      g_mk1031_sensor_handler.responseHandler(data,len);
 				  },PINGPONG_BUFFER);
     g_message_handler.startReceive();
+    //定时事件处理，处理串口空闲中断接收到的数据
+      HAL_TIM_Base_Start_IT(&htim1);
 
     while(1)
       {
-	g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,2);
+	g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
 	HAL_Delay(10);
       }
   }

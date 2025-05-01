@@ -40,7 +40,7 @@ public:
 
   void send(uint8_t *data, uint16_t len)
   {
-    HAL_UART_Transmit_IT(_huart, data, len);
+    HAL_UART_Transmit(_huart, data, len,10);
   }
 
   void startReceive()
