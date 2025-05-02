@@ -1,13 +1,18 @@
-../Hardware/port/Inc/hw_port_adc.h:125:8:void Hardware_STM32_ADC::dmaCallbackHandler(ADC_HandleTypeDef*)	16	static
-../Hardware/port/Inc/hw_port_adc.h:133:8:void Hardware_STM32_ADC::iTCallbackHandler(ADC_HandleTypeDef*)	16	static
+../Hardware/port/Inc/hw_port_hrtim_pwm.h:108:8:void Hardware_STM32_HRTIM_PWM::setDutyCycle(float)	24	static
+../App/algorithim/Inc/alg_pid.h:76:9:float Algorithim_PID::cal_increase(float, float)	48	static
 ../Hardware/port/Inc/hw_port_message.h:41:8:void Hardware_STM32_Message::send(uint8_t*, uint16_t)	24	static
 ../Hardware/port/Inc/hw_port_message.h:51:8:void Hardware_STM32_Message::callbackHandler(UART_HandleTypeDef*, uint16_t)	24	static
 ../Hardware/port/Inc/hw_port_message.h:68:8:void Hardware_STM32_Message::processHandler()	16	static
 ../Hardware/port/Inc/hw_port_message.h:88:8:void Hardware_STM32_Message::_startDMA()	16	static
-../Port/Src/stm32_callback.cpp:39:6:void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef*)	16	static
-../Port/Src/stm32_callback.cpp:46:6:void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef*)	16	static
-../Port/Src/stm32_callback.cpp:53:6:void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*, uint16_t)	16	static
-../Port/Src/stm32_callback.cpp:60:6:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*)	24	static
+../Hardware/port/Inc/hw_port_mk1031_wrapper.h:29:9:float Hardware_MK1031_Wrapper::readVout()	16	static
+../Hardware/port/Inc/hw_port_mk1031_wrapper.h:34:9:float Hardware_MK1031_Wrapper::readCurrent()	16	static
+../Hardware/port/Inc/hw_port_adc.h:125:8:void Hardware_STM32_ADC::dmaCallbackHandler(ADC_HandleTypeDef*)	16	static
+../Hardware/port/Inc/hw_port_adc.h:133:8:void Hardware_STM32_ADC::iTCallbackHandler(ADC_HandleTypeDef*)	16	static
+../Port/Src/stm32_callback.cpp:43:6:void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef*)	16	static
+../Port/Src/stm32_callback.cpp:50:6:void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef*)	16	static
+../Port/Src/stm32_callback.cpp:57:6:void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*, uint16_t)	16	static
+../Port/Src/stm32_callback.cpp:64:6:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*)	24	static
 ../App/protocol/ptl_modbus_master.h:32:8:void Protocol_Modbus_Master<UART>::readRegisters(uint16_t, uint16_t) [with UART = Hardware_STM32_Message]	24	static
+../App/algorithim/Inc/alg_dc_buck.h:42:8:void Algorithim_DC_Buck<PWM, DATA>::closedVoltageCurrentLoopControl() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_MK1031_Wrapper]	40	static
 ../App/protocol/ptl_modbus_master.h:101:8:void Protocol_Modbus_Master<UART>::addCRC16(uint8_t*, size_t) [with UART = Hardware_STM32_Message]	32	static
 ../App/protocol/ptl_modbus_master.h:90:19:static uint16_t Protocol_Modbus_Master<UART>::crc16(const uint8_t*, size_t) [with UART = Hardware_STM32_Message]	24	static

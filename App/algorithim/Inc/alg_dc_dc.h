@@ -34,8 +34,8 @@ public:
   Algorithim_PID *cc_pid_;
   Algorithim_PID *cv_pid_;
   bool isEnable_=false;
-  float vin_;
-  float vout_;
+  volatile float vin_;
+  volatile float vout_;
   float current_;
   Algorithim_DC_DC(){}
   void begin(PWM *pwm,DATA *dataWrapper=nullptr)

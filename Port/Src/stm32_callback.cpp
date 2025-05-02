@@ -7,12 +7,15 @@
 
 #include"hw_port_us_timer.h"
 #include"hw_port_hrtim_pwm.h"
+#include "alg_dc_buck.h"
+#include "hw_port_mk1031_wrapper.h"
 #include"hw_port_adc.h"
 #include"hw_port_message.h"
 #include"hw_port_mk1031.h"
 #include "tim.h"
 #include "SEGGER_SYSVIEW_Conf.h"
 #include "SEGGER_SYSVIEW.h"
+#include "stdio.h"
 
 namespace stm32_test
 {
@@ -22,6 +25,7 @@ namespace stm32_test
   extern Hardware_STM32_US_Timer g_us_timer_handler;
   extern Hardware_MK1031 g_mk1031_sensor_handler;
   extern Hardware_STM32_Message g_modbus_message_handler;
+  extern Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper>g_dc_buck_sensor_handler;
   void pll_it_test();
   void filiter_hilbert_it_singlePoint_test();
   void filiter_hilbert_multyPoints_test();
@@ -68,15 +72,16 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 	{
 	  //发送modbus采样
 	  stm32_test::g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
+	  //电流环测试
+	  stm32_test::g_dc_buck_sensor_handler.closedVoltageCurrentLoopControl();
+	  //电流环测试
+
 	}
       count=(count+1)%clock_div;
 
       stm32_test::g_message_handler.processHandler();//蓝牙调试
       stm32_test:: g_modbus_message_handler.processHandler();//处理modbus接收数据
-      //电流环测试
 
-
-      //电流环测试
       //      nuedc_2015::g_message_handler.processHandler();
     }
   else if(htim == &htim7)

@@ -1,0 +1,4 @@
+../Port/Src/stm32_callback.cpp:43:6:void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef*)	0	static
+../Port/Src/stm32_callback.cpp:50:6:void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef*)	0	static
+../Port/Src/stm32_callback.cpp:57:6:void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef*, uint16_t)	16	static
+../Port/Src/stm32_callback.cpp:64:6:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*)	16	static

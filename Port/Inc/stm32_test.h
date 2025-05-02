@@ -510,22 +510,31 @@ namespace stm32_test
     HAL_TIM_Base_Start_IT(&htim1);
     //TO DO
     g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-    g_dc_buck_sensor_handler.setCurrent(0.1);
-    g_current_pid.begin(0, 0, 0);
+    g_current_pid.begin(1.502, 0.015, 0, 0.0535);
     g_dc_buck_sensor_handler.setCC_PID(&g_current_pid);
+
+    g_voltage_pid.begin(0, 0, 0);
+    g_dc_buck_sensor_handler.setCV_PID(&g_voltage_pid);
+
+    g_dc_buck_sensor_handler.setVout(0);
     g_hrtimer_pwm_handler.setOutput();
     g_dc_buck_sensor_handler.enable();
     while (1)
       {
-//	if (g_bool_isResetPID == RESET_PID)
-//	  {
+	HAL_Delay(1);
+	printf("%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readVout());
+	g_dc_buck_sensor_handler.setVout(g_target_vofa_set.target_voltage);
+	if (g_bool_isResetPID == RESET_PID)
+	  {
 //	    g_dc_buck_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
 //	    g_dc_buck_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
 //	    g_dc_buck_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
 //	    g_dc_buck_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
-//	  }
-
-	g_dc_buck_sensor_handler.closedCurrentLoopControl();
+	    g_dc_buck_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
+	    g_dc_buck_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
+	    g_dc_buck_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
+	    g_dc_buck_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
+	  }
       }
   }
 
@@ -558,7 +567,7 @@ namespace stm32_test
        //TO DO
        g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
        g_dc_buck_sensor_handler.setVin(10);
-       g_dc_buck_sensor_handler.setVout(5);
+       g_dc_buck_sensor_handler.setVout(10);
        g_hrtimer_pwm_handler.setOutput();
        g_dc_buck_sensor_handler.enable();
     while (1)

@@ -30,5 +30,7 @@
 
 #define LIMIT(value, minVal, maxVal) (((value) < (minVal)) ? (minVal) : (((value) > (maxVal)) ? (maxVal) : (value)))
 
+#define STM32_MIN_DUTY (0.0001f)
+#define STM32_MAX_DUTY (0.9999f)
 
 #endif /* INC_PORTMACRO_H_ */
