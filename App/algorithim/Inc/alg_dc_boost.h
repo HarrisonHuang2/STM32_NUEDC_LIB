@@ -22,7 +22,7 @@ public:
 
   void openVoltageLoopControl ()
   {
-    if (this->vin_ == 0 || this->vout_ <= this->vin_ || !this->isEnable_)
+    if (this->vin_ == 0 || this->vout_ < this->vin_ || !this->isEnable_)
       {
         return;
       }

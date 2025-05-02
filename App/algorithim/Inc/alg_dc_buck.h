@@ -20,7 +20,7 @@ class Algorithim_DC_Buck : public Algorithim_DC_DC<PWM, DATA>
 public:
 
   void openVoltageLoopControl() {
-    if(this->vin_ == 0 || this->vout_ >= this->vin_ || !this->isEnable_) {return ;}
+    if(this->vin_ == 0 || this->vout_ > this->vin_ || !this->isEnable_) {return ;}
     this->pwm_->setDutyCycle(this->vout_/this->vin_);
   }
 

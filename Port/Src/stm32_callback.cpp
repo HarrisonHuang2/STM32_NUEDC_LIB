@@ -9,7 +9,7 @@
 #include"hw_port_hrtim_pwm.h"
 #include"hw_port_adc.h"
 #include"hw_port_message.h"
-#include"hw_port_mk1031.h".h"
+#include"hw_port_mk1031.h"
 #include "tim.h"
 #include "SEGGER_SYSVIEW_Conf.h"
 #include "SEGGER_SYSVIEW.h"
@@ -21,6 +21,7 @@ namespace stm32_test
   extern Hardware_STM32_Message g_message_handler;
   extern Hardware_STM32_US_Timer g_us_timer_handler;
   extern Hardware_MK1031 g_mk1031_sensor_handler;
+  extern Hardware_STM32_Message g_modbus_message_handler;
   void pll_it_test();
   void filiter_hilbert_it_singlePoint_test();
   void filiter_hilbert_multyPoints_test();
@@ -52,22 +53,36 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef* hadc)
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
   stm32_test::g_message_handler.callbackHandler(huart, Size);
-//  nuedc_2015::g_message_handler.callbackHandler(huart, Size);
+  stm32_test:: g_modbus_message_handler.callbackHandler(huart, Size);
+  //  nuedc_2015::g_message_handler.callbackHandler(huart, Size);
 }
 
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
   if(htim == &htim1)
     {
+      //定时器1的频率是2000hz，周期为0.5ms
+      constexpr uint16_t clock_div=25;//mk1031的采样周期要大于这里clock_div对应的25
+      static uint16_t count=0;
+      if(count == 0)
+	{
+	  //发送modbus采样
+	  stm32_test::g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
+	}
+      count=(count+1)%clock_div;
+
       stm32_test::g_message_handler.processHandler();//蓝牙调试
-      stm32_test:: g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);//发送modbus采样
-      //modbus串口接收
-//      nuedc_2015::g_message_handler.processHandler();
+      stm32_test:: g_modbus_message_handler.processHandler();//处理modbus接收数据
+      //电流环测试
+
+
+      //电流环测试
+      //      nuedc_2015::g_message_handler.processHandler();
     }
   else if(htim == &htim7)
     {
       stm32_test::pll_it_test();
-//      stm32_test::filiter_hilbert_it_singlePoint_test();
+      //      stm32_test::filiter_hilbert_it_singlePoint_test();
     }
-//  stm32_test::g_us_timer_handler.callbackHandler(htim);
+  //  stm32_test::g_us_timer_handler.callbackHandler(htim);
 }

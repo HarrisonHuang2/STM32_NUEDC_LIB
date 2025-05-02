@@ -458,19 +458,19 @@ namespace stm32_test
 
   void mk1031_sensor_test()
   {
-    g_message_handler=stm32_message::getUART2();
-    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_message_handler, 1);
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
-    g_message_handler.attachEvent([](uint8_t *data, uint16_t len)
-				  {
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
       g_mk1031_sensor_handler.responseHandler(data,len);
-				  },PINGPONG_BUFFER);
-    g_message_handler.startReceive();
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
 
     g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
 
     //定时事件处理，处理串口空闲中断接收到的数据
-    HAL_TIM_Base_Start_IT(&htim1);
+    //    HAL_TIM_Base_Start_IT(&htim1);
 
     static float voltage=0;
 
@@ -478,7 +478,54 @@ namespace stm32_test
       {
 	g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
 	HAL_Delay(10);
+	g_modbus_message_handler.processHandler();
 	voltage=g_mk1031_wrapper_handler.readVout();
+      }
+  }
+
+  /*函数名: dc_dc_voltageClosedLoop_test
+   * 测试dcdc降压是否正常工作
+   * */
+  void dc_dc_currentClosedLoop_test()
+  {
+    //蓝牙调试串口抽象层初始化
+    g_message_handler=stm32_message::getUART1();
+    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+    //mk1031传感器初始化
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
+      g_mk1031_sensor_handler.responseHandler(data,len);
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
+
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
+    //定时器初始化
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+
+    //定时事件处理，处理串口空闲中断接收到的数据
+    HAL_TIM_Base_Start_IT(&htim1);
+    //TO DO
+    g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    g_dc_buck_sensor_handler.setCurrent(0.1);
+    g_current_pid.begin(0, 0, 0);
+    g_dc_buck_sensor_handler.setCC_PID(&g_current_pid);
+    g_hrtimer_pwm_handler.setOutput();
+    g_dc_buck_sensor_handler.enable();
+    while (1)
+      {
+//	if (g_bool_isResetPID == RESET_PID)
+//	  {
+//	    g_dc_buck_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
+//	    g_dc_buck_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
+//	    g_dc_buck_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
+//	    g_dc_buck_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
+//	  }
+
+	g_dc_buck_sensor_handler.closedCurrentLoopControl();
       }
   }
 
@@ -488,28 +535,44 @@ namespace stm32_test
    * */
   void dc_dc_openLoop_test()
   {
-    g_message_handler=stm32_message::getUART1();
-    g_message_handler.startReceive();
-    //高级定时器抽象层初始化
-    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
-    g_hrtimer_pwm_handler.setOutput();
-    g_relay_handler=stm32_relay::getRelay1();
-    g_dc_buck_adc_handler=stm32_dc_dc::getDCBuckADC(&g_hrtimer_pwm_handler);
-    g_dc_buck_adc_handler.setVin(12);
+    //蓝牙调试串口抽象层初始化
+       g_message_handler=stm32_message::getUART1();
+       g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+       g_message_handler.startReceive();
+       //mk1031传感器初始化
+       g_modbus_message_handler=stm32_message::getUART2();
+       g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+       //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
+       g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+   					 {
+         g_mk1031_sensor_handler.responseHandler(data,len);
+   					 },PINGPONG_BUFFER);
+       g_modbus_message_handler.startReceive();
 
-    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+       g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
+       //定时器初始化
+       g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+
+       //定时事件处理，处理串口空闲中断接收到的数据
+       HAL_TIM_Base_Start_IT(&htim1);
+       //TO DO
+       g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+       g_dc_buck_sensor_handler.setVin(10);
+       g_dc_buck_sensor_handler.setVout(5);
+       g_hrtimer_pwm_handler.setOutput();
+       g_dc_buck_sensor_handler.enable();
     while (1)
       {
-	if(g_bool_isOutput == OUTPUT_START)
-	  {
-	    g_dc_buck_adc_handler.enable();
-	  }
-	else
-	  {
-	    g_dc_buck_adc_handler.disable();
-	  }
-	g_dc_buck_adc_handler.setVout(g_target_vofa_set.target_voltage);
-	g_dc_buck_adc_handler.openVoltageLoopControl();
+//	if(g_bool_isOutput == OUTPUT_START)
+//	  {
+//	    g_dc_buck_sensor_handler.enable();
+//	  }
+//	else
+//	  {
+//	    g_dc_buck_sensor_handler.disable();
+//	  }
+//	g_dc_buck_sensor_handler.setVout(g_target_vofa_set.target_voltage);
+	g_dc_buck_sensor_handler.openVoltageLoopControl();
       }
   }
 
@@ -539,50 +602,6 @@ namespace stm32_test
 	g_dc_buck_adc_handler.closedVoltageLoopControl();
       }
   }
-
-  /*函数名: dc_dc_voltageClosedLoop_test
-   * 测试dcdc降压是否正常工作
-   * */
-  void dc_dc_currentClosedLoop_test()
-  {
-    //蓝牙调试串口抽象层初始化
-    g_message_handler=stm32_message::getUART1();
-    g_modbus_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
-    g_message_handler.startReceive();
-    //mk1031传感器初始化
-    g_modbus_message_handler=stm32_message::getUART2();
-    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
-    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
-    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
-					 {
-      g_mk1031_sensor_handler.responseHandler(data,len);
-					 },PINGPONG_BUFFER);
-    g_modbus_message_handler.startReceive();
-
-    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
-
-    //定时事件处理，处理串口空闲中断接收到的数据
-    HAL_TIM_Base_Start_IT(&htim1);
-    //TO DO
-    g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-    g_dc_buck_sensor_handler.setCurrent(1);
-    g_voltage_pid.begin(0, 0, 0);
-    g_dc_buck_sensor_handler.setCV_PID(&g_current_pid);
-    g_dc_buck_sensor_handler.enable();
-    while (1)
-      {
-	if (g_bool_isResetPID == RESET_PID)
-	  {
-	    g_dc_buck_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
-	    g_dc_buck_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
-	    g_dc_buck_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
-	    g_dc_buck_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
-	  }
-
-	g_dc_buck_sensor_handler.closedCurrentLoopControl();
-      }
-  }
-
 
 
   /*函数名: dc_dc_doubleMode_closedLoop_test
@@ -686,7 +705,7 @@ namespace stm32_test
     g_message_handler=stm32_message::getUART1();
     g_message_handler.attachEvent(vofa_receive_callback_test,PINGPONG_BUFFER);
     g_message_handler.startReceive();
-    printf("AT+ROLE=2\r\n");
+    //    printf("AT+ROLE=2\r\n");
     while(1)
       {
 	g_message_handler.processHandler();
