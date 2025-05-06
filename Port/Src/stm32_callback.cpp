@@ -66,7 +66,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
   if(htim == &htim1)
     {
       //定时器1的频率是2000hz，周期为0.5ms
-      constexpr uint16_t clock_div=25;//mk1031的采样周期要大于这里clock_div对应的25
+      constexpr uint16_t clock_div=50;//mk1031的采样周期要大于这里clock_div对应的25
       static uint16_t count=0;
       if(count == 0)
 	{
