@@ -76,13 +76,13 @@ public:
   float cal_increase(float target_value, float measured_value) {
     float error = target_value - measured_value; // 计算误差
     float proportional = kp * (error-lastError);
-    integral += error;
+    float integralTerm = ki * error;
     // 限幅
     if (integral_limit > 0) {
-	integral = LIMIT(integral, -integral_limit, integral_limit);
+	integralTerm = LIMIT(integral, -integral_limit, integral_limit);
     }
 
-    float integralTerm = ki * integral;
+
     float derivative = kd * (error - 2*lastError + last_lastError);
     float output = lastOutput + proportional + integralTerm + derivative;
 
