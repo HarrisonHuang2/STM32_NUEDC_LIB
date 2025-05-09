@@ -28,6 +28,15 @@ public:
       }
     this->pwm_->setDutyCycle (this->vin_ / this->vout_); // 输入小于输出（Boost 模式）
   }
+
+  void closedBoostCurrentLoopControl() {
+    //单电流环
+    if(!this->dataWrapper_ || !this->isEnable_){return ;}
+    float output = LIMIT(this->cc_pid_->cal_absolute(this->current_, this->dataWrapper_->readCurrent()), 0, 1);
+    this->pwm_->setDutyCycle(1-output);
+  }
+
+
 };
 
 

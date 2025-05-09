@@ -8,6 +8,7 @@
 #include"hw_port_us_timer.h"
 #include"hw_port_hrtim_pwm.h"
 #include "alg_dc_buck.h"
+#include "alg_dc_boost.h"
 #include "hw_port_mk1031_wrapper.h"
 #include"hw_port_adc.h"
 #include"hw_port_message.h"
@@ -26,6 +27,7 @@ namespace stm32_test
   extern Hardware_MK1031 g_mk1031_sensor_handler;
   extern Hardware_STM32_Message g_modbus_message_handler;
   extern Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper>g_dc_buck_sensor_handler;
+  extern Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> g_dc_boost_sensor_handler;
   void pll_it_test();
   void filiter_hilbert_it_singlePoint_test();
   void filiter_hilbert_multyPoints_test();
@@ -73,8 +75,10 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 	  //发送modbus采样
 	  stm32_test::g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
 	  //电流环测试
-	  stm32_test::g_dc_buck_sensor_handler.closedVoltageCurrentLoopControl();
+//	  stm32_test::g_dc_buck_sensor_handler.closedVoltageCurrentLoopControl();
+
 	  //电流环测试
+	  stm32_test::g_dc_boost_sensor_handler.closedBoostCurrentLoopControl();
 
 	}
       count=(count+1)%clock_div;
