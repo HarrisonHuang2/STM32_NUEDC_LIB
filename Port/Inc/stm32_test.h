@@ -29,6 +29,7 @@ namespace stm32_test
   Hardware_STM32_Message g_modbus_message_handler;
   Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> g_dc_buck_adc_handler;
   Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> g_dc_buck_sensor_handler;
+  Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> g_dc_boost_sensor_handler;
   Algorithim_PID g_voltage_pid;
   Algorithim_PID g_current_pid;
   Algorithim_PID g_pll_pid;
@@ -588,6 +589,107 @@ namespace stm32_test
 	  }
       }
   }
+
+
+void boost_currentClosedLoop_test()
+{
+  //蓝牙调试串口抽象层初始化
+     g_message_handler=stm32_message::getUART1();
+     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+     g_message_handler.startReceive();
+     //mk1031传感器初始化
+     g_modbus_message_handler=stm32_message::getUART2();
+     g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
+     g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+ 					 {
+       g_mk1031_sensor_handler.responseHandler(data,len);
+ 					 },PINGPONG_BUFFER);
+     g_modbus_message_handler.startReceive();
+
+     g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
+     //定时器初始化
+     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+
+     //定时事件处理，处理串口空闲中断接收到的数据
+     HAL_TIM_Base_Start_IT(&htim1);
+     //TO DO
+     g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+     g_current_pid.begin(0,0,0);
+     g_dc_boost_sensor_handler.setCC_PID(&g_current_pid);
+
+
+     g_dc_boost_sensor_handler.setCurrent(0);
+     g_hrtimer_pwm_handler.setOutput();
+     g_dc_boost_sensor_handler.enable();
+     while (1)
+       {
+ 	HAL_Delay(1);
+ 	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
+ 	g_dc_boost_sensor_handler.setCurrent(g_target_vofa_set.target_current);
+ 	if (g_bool_isResetPID == RESET_PID)
+ 	  {
+ 	   g_dc_boost_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
+ 	   g_dc_boost_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
+ 	   g_dc_boost_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
+ 	   g_dc_boost_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
+ //	    g_dc_buck_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
+ //	    g_dc_buck_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
+ //	    g_dc_buck_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
+ //	    g_dc_buck_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
+ 	  }
+       }
+}
+
+void boost_openLoop_test()
+{
+  //蓝牙调试串口抽象层初始化
+     g_message_handler=stm32_message::getUART1();
+     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+     g_message_handler.startReceive();
+     //mk1031传感器初始化
+     g_modbus_message_handler=stm32_message::getUART2();
+     g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
+     g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+ 					 {
+       g_mk1031_sensor_handler.responseHandler(data,len);
+ 					 },PINGPONG_BUFFER);
+     g_modbus_message_handler.startReceive();
+
+     g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
+     //定时器初始化
+     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+
+
+     //定时事件处理，处理串口空闲中断接收到的数据
+     HAL_TIM_Base_Start_IT(&htim1);
+     //TO DO
+     g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+     g_dc_boost_sensor_handler.setVin(5);
+     g_dc_boost_sensor_handler.setVout(10);
+     g_hrtimer_pwm_handler.setOutput();
+     g_dc_boost_sensor_handler.enable();
+  while (1)
+    {
+	HAL_Delay(1);
+	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
+//	if(g_bool_isOutput == OUTPUT_START)
+//	  {
+//	    g_dc_buck_sensor_handler.enable();
+//	  }
+//	else
+//	  {
+//	    g_dc_buck_sensor_handler.disable();
+//	  }
+//	g_dc_buck_sensor_handler.setVout(g_target_vofa_set.target_voltage);
+	g_dc_boost_sensor_handler.openVoltageLoopControl();
+    }
+}
+
+
+
+
   /*函数名: dc_dc_openLoop_test
    * 测试dcdc降压开环是否正常工作
    * */
@@ -622,6 +724,8 @@ namespace stm32_test
        g_dc_buck_sensor_handler.enable();
     while (1)
       {
+	HAL_Delay(1);
+	printf("%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readCurrent());
 //	if(g_bool_isOutput == OUTPUT_START)
 //	  {
 //	    g_dc_buck_sensor_handler.enable();

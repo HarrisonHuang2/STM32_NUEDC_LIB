@@ -53,5 +53,21 @@ namespace stm32_dc_dc
     return dc_buck;
   }
 
+  Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper>
+   getDCBoostMK1031(Hardware_STM32_HRTIM_PWM *pwm, Hardware_MK1031_Wrapper *sensor_wrapper=nullptr)
+   {
+     Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper>dc_boost;
+     dc_boost.begin(pwm, sensor_wrapper);
+     return dc_boost;
+   }
+
+  Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper>
+   getDCBuckBoostMK1031(Hardware_STM32_HRTIM_PWM *pwm, Hardware_MK1031_Wrapper *sensor_wrapper=nullptr)
+   {
+    Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper>dc_buck_boost;
+     dc_buck_boost.begin(pwm, sensor_wrapper);
+     return dc_buck_boost;
+   }
+
 }
 #endif /* INC_STM32_DC_DC_H_ */
