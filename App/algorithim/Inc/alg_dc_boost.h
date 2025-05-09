@@ -15,7 +15,7 @@ template < PWMInterfaceConcept PWM, DataWrapperInterfaceConcept DATA >
 #else
 template <class PWM, class DATA>
 #endif
-class Algorithim_DC_Boost : public Algorithim_DC_Buck<PWM, DATA>
+class Algorithim_DC_Boost : public Algorithim_DC_DC<PWM, DATA>
 {
 public:
   Algorithim_DC_Boost (){}
@@ -26,17 +26,37 @@ public:
       {
         return;
       }
-    this->pwm_->setDutyCycle (this->vin_ / this->vout_); // 输入小于输出（Boost 模式）
+    this->pwm_->setDutyCycle (LIMIT(this->vin_ / this->vout_,STM32_MIN_DUTY,STM32_MAX_DUTY)); // 输入小于输出（Boost 模式）
   }
 
-  void closedBoostCurrentLoopControl() {
-    //单电流环
+  void closedVoltageLoopControl() {
+    float output;
     if(!this->dataWrapper_ || !this->isEnable_){return ;}
-    float output = LIMIT(this->cc_pid_->cal_absolute(this->current_, this->dataWrapper_->readCurrent()), 0, 1);
-    this->pwm_->setDutyCycle(1-output);
+    output = LIMIT(this->cv_pid_->cal_increase(this->vout_,this->dataWrapper_->readVout()),STM32_MIN_DUTY,STM32_MAX_DUTY);
+    this->pwm_->setDutyCycle(1-output);//默认控制上管，极性与PID输出取反
   }
 
+  void closedCurrentLoopControl() {
+    float output;
+    if(!this->dataWrapper_ || !this->isEnable_){return ;}
+    output = LIMIT(this->cc_pid_->cal_increase(this->current_, this->dataWrapper_->readCurrent()),STM32_MIN_DUTY,STM32_MAX_DUTY);
+    this->pwm_->setDutyCycle(1-output);//默认控制上管，极性与PID输出取反
+  }
 
+  void closedVoltageCurrentLoopControl() {
+    if(!this->dataWrapper_ || !this->isEnable_){return ;}
+    static float outer=0;
+    static float inner=0;
+    constexpr uint16_t frequency_div=4;
+    static uint16_t count=0;
+    if (count == 0)
+      {
+	outer = 1-LIMIT(this->cv_pid_->cal_increase(this->vout_,this->dataWrapper_->readVout()),STM32_MIN_DUTY,STM32_MAX_DUTY);
+      }
+    inner = LIMIT(this->cc_pid_->cal_increase(outer, this->dataWrapper_->readCurrent()),STM32_MIN_DUTY,STM32_MAX_DUTY);
+    count=(count+1)%frequency_div;
+    this->pwm_->setDutyCycle(inner);
+  }
 };
 
 

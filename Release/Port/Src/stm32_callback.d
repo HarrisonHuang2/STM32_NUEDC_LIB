@@ -41,7 +41,8 @@ Port/Src/stm32_callback.o: ../Port/Src/stm32_callback.cpp \
  ../App/algorithim/Inc/alg_dc_buck.h ../App/algorithim/Inc/alg_dc_dc.h \
  ../Hardware/hal/Inc/hw_hal_relay.h \
  ../Hardware/hal/Inc/hw_hal_data_wrapper.h \
- ../App/algorithim/Inc/alg_pid.h \
+ ../App/algorithim/Inc/alg_pid.h ../App/algorithim/Inc/alg_dc_boost.h \
+ ../App/algorithim/Inc/alg_dc_buck.h \
  ../Hardware/port/Inc/hw_port_mk1031_wrapper.h \
  ../Hardware/port/Inc/hw_port_mk1031.h \
  ../App/protocol/ptl_modbus_master.h ../Hardware/hal/Inc/hw_hal_message.h \
@@ -103,6 +104,8 @@ Port/Src/stm32_callback.o: ../Port/Src/stm32_callback.cpp \
 ../Hardware/hal/Inc/hw_hal_relay.h:
 ../Hardware/hal/Inc/hw_hal_data_wrapper.h:
 ../App/algorithim/Inc/alg_pid.h:
+../App/algorithim/Inc/alg_dc_boost.h:
+../App/algorithim/Inc/alg_dc_buck.h:
 ../Hardware/port/Inc/hw_port_mk1031_wrapper.h:
 ../Hardware/port/Inc/hw_port_mk1031.h:
 ../App/protocol/ptl_modbus_master.h:

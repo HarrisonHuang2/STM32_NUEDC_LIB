@@ -666,8 +666,8 @@ void boost_openLoop_test()
      HAL_TIM_Base_Start_IT(&htim1);
      //TO DO
      g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-     g_dc_boost_sensor_handler.setVin(5);
-     g_dc_boost_sensor_handler.setVout(10);
+     g_dc_boost_sensor_handler.setVin(10);
+     g_dc_boost_sensor_handler.setVout(15);
      g_hrtimer_pwm_handler.setOutput();
      g_dc_boost_sensor_handler.enable();
   while (1)

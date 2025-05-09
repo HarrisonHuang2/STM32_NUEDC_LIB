@@ -1,15 +1,19 @@
 ../Hardware/port/Inc/hw_port_mk1031.h:58:8:virtual void Hardware_MK1031::updateSensorData(const uint8_t*, size_t)	4	static
-../Port/Inc/stm32_test.h:701:8:void stm32_test::vofa_receive_callback_test(uint8_t*, uint16_t)	16	static
-../Port/Inc/stm32_test.h:80:8:void stm32_test::vofaReceiveCallback(uint8_t*, uint16_t)	32	static
+../Port/Inc/stm32_test.h:855:8:void stm32_test::vofa_receive_callback_test(uint8_t*, uint16_t)	16	static
+../Port/Inc/stm32_test.h:81:8:void stm32_test::vofaReceiveCallback(uint8_t*, uint16_t)	32	static
 ../Core/NUEDC/2015.h:69:8:void nuedc_2015::vofaReceiveCallback(uint8_t*, uint16_t)	32	static
 ../Hardware/port/Inc/hw_port_message.h:24:8:void Hardware_STM32_Message::begin(uint16_t, size_t, UART_HandleTypeDef*)	16	static
 ../Hardware/port/Inc/hw_port_message.h:24:8:void Hardware_STM32_Message::begin(uint16_t, size_t, UART_HandleTypeDef*)	16	static
+../Hardware/port/Inc/hw_port_message.h:88:8:void Hardware_STM32_Message::_startDMA()	0	static
+../Hardware/port/Inc/hw_port_hrtim_pwm.h:46:8:void Hardware_STM32_HRTIM_PWM::begin(HRTIM_HandleTypeDef*, hw_port_hrtim_pwm_channel_t, hw_port_hrtim_pwm_compare_unit_t)	16	static
 ../Hardware/port/Inc/hw_port_adc.h:58:8:void Hardware_STM32_ADC::begin(ADC_HandleTypeDef*, hw_stm32_adc_mode_t, size_t)	8	static
-../Port/Inc/stm32_test.h:464:42:static constexpr void stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	8	static
-../Port/Inc/stm32_test.h:499:42:static constexpr void stm32_test::dc_dc_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	8	static
-../Port/Inc/stm32_test.h:555:45:static constexpr void stm32_test::dc_dc_openLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	8	static
+../Port/Inc/stm32_test.h:500:46:static constexpr void stm32_test::dc_dc_current_voltage_ClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	8	static
+../Port/Inc/stm32_test.h:706:45:static constexpr void stm32_test::dc_dc_openLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	8	static
+../Port/Inc/stm32_test.h:604:43:static constexpr void stm32_test::boost_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	8	static
+../Port/Inc/stm32_test.h:654:43:static constexpr void stm32_test::boost_openLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	8	static
+../Port/Inc/stm32_test.h:465:42:static constexpr void stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	8	static
+../Port/Inc/stm32_test.h:553:42:static constexpr void stm32_test::dc_dc_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	8	static
 ../Hardware/port/Inc/hw_port_dac.h:64:23:Hardware_STM32_DAC<MaxPoints>& Hardware_STM32_DAC<MaxPoints>::operator=(Hardware_STM32_DAC<MaxPoints>&&) [with unsigned int MaxPoints = 200]	32	static
-../Hardware/port/Inc/hw_port_hrtim_pwm.h:46:8:void Hardware_STM32_HRTIM_PWM::begin(HRTIM_HandleTypeDef*, hw_port_hrtim_pwm_channel_t, hw_port_hrtim_pwm_compare_unit_t)	8	static
 ../Port/Inc/stm32_hrtim_pwm.h:15:28:Hardware_STM32_HRTIM_PWM stm32_hrtim_pwm::getTimerAOutput()	16	static
 ../Port/Inc/stm32_hrtim_pwm.h:22:28:Hardware_STM32_HRTIM_PWM stm32_hrtim_pwm::getTimerBOutput()	16	static
 ../Port/Inc/stm32_hrtim_pwm.h:29:28:Hardware_STM32_HRTIM_PWM stm32_hrtim_pwm::getTimerCOutput()	16	static
@@ -23,39 +27,44 @@
 ../Port/Inc/stm32_dc_dc.h:32:3:Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> stm32_dc_dc::getDCBoostADC(Hardware_STM32_HRTIM_PWM*, Hardware_STM32_ADC_Wrapper*)	0	static
 ../Port/Inc/stm32_dc_dc.h:40:3:Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_STM32_ADC_Wrapper> stm32_dc_dc::getDCBuckBoostADC(Hardware_STM32_HRTIM_PWM*, Hardware_STM32_ADC_Wrapper*)	0	static
 ../Port/Inc/stm32_dc_dc.h:49:3:Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> stm32_dc_dc::getDCBuckMK1031(Hardware_STM32_HRTIM_PWM*, Hardware_MK1031_Wrapper*)	0	static
+../Port/Inc/stm32_dc_dc.h:57:4:Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> stm32_dc_dc::getDCBoostMK1031(Hardware_STM32_HRTIM_PWM*, Hardware_MK1031_Wrapper*)	0	static
+../Port/Inc/stm32_dc_dc.h:65:4:Algorithim_DC_Buck_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> stm32_dc_dc::getDCBuckBoostMK1031(Hardware_STM32_HRTIM_PWM*, Hardware_MK1031_Wrapper*)	0	static
 ../Port/Inc/stm32_message.h:18:26:Hardware_STM32_Message stm32_message::getUART1()	16	static
 ../Port/Inc/stm32_message.h:25:26:Hardware_STM32_Message stm32_message::getUART2()	16	static
 ../Port/Inc/stm32_dac.h:16:27:Hardware_STM32_DAC<200> stm32_dac::getDAC1_CH1()	40	static
 ../Port/Inc/stm32_dac.h:23:27:Hardware_STM32_DAC<200> stm32_dac::getDAC1_CH2()	40	static
 ../Port/Inc/stm32_mk1031.h:15:19:Hardware_MK1031 stm32_mk1031::getMK1031(Hardware_STM32_Message*, uint8_t)	16	static
-../Port/Inc/stm32_test.h:219:8:void stm32_test::timerA_pwm_test()	16	static
-../Port/Inc/stm32_test.h:230:8:void stm32_test::timerB_pwm_test()	16	static
-../Port/Inc/stm32_test.h:240:8:void stm32_test::timerC_pwm_test()	16	static
-../Port/Inc/stm32_test.h:251:8:void stm32_test::adc1_dma_test()	32	static
-../Port/Inc/stm32_test.h:272:8:void stm32_test::adc1_it_test()	32	static
-../Port/Inc/stm32_test.h:288:8:void stm32_test::adc2_dma_test()	32	static
-../Port/Inc/stm32_test.h:306:8:void stm32_test::adc2_it_test()	32	static
-../Port/Inc/stm32_test.h:323:8:void stm32_test::adc3_dma_test()	8	static
-../Port/Inc/stm32_test.h:346:8:void stm32_test::filiter_hilbert_it_singlePoint_test()	32	static
-../Port/Inc/stm32_test.h:354:8:void stm32_test::us_timer_test()	8	static
-../Port/Inc/stm32_test.h:364:8:void stm32_test::pll_init_test()	872	static
-../Port/Inc/stm32_test.h:383:8:void stm32_test::pll_it_test()	56	static
-../Port/Inc/stm32_test.h:459:8:void stm32_test::mk1031_sensor_test()	56	static
-../Port/Inc/stm32_test.h:489:8:void stm32_test::dc_dc_currentClosedLoop_test()	64	static
-../Port/Inc/stm32_test.h:545:8:void stm32_test::dc_dc_openLoop_test()	56	static
-../Port/Inc/stm32_test.h:591:8:void stm32_test::dc_dc_voltageClosedLoop_test()	40	static
-../Port/Inc/stm32_test.h:619:8:void stm32_test::dc_dc_doubleMode_closedLoop_test()	48	static
-../Port/Inc/stm32_test.h:692:8:void stm32_test::vofa_send_test()	8	static
-../Port/Inc/stm32_test.h:712:8:void stm32_test::vofa_receive_test()	32	static
-../Port/Inc/stm32_test.h:727:8:void stm32_test::segger_systemview_test_enable()	8	static
+../Port/Inc/stm32_test.h:220:8:void stm32_test::timerA_pwm_test()	16	static
+../Port/Inc/stm32_test.h:231:8:void stm32_test::timerB_pwm_test()	16	static
+../Port/Inc/stm32_test.h:241:8:void stm32_test::timerC_pwm_test()	16	static
+../Port/Inc/stm32_test.h:252:8:void stm32_test::adc1_dma_test()	32	static
+../Port/Inc/stm32_test.h:273:8:void stm32_test::adc1_it_test()	32	static
+../Port/Inc/stm32_test.h:289:8:void stm32_test::adc2_dma_test()	32	static
+../Port/Inc/stm32_test.h:307:8:void stm32_test::adc2_it_test()	32	static
+../Port/Inc/stm32_test.h:324:8:void stm32_test::adc3_dma_test()	8	static
+../Port/Inc/stm32_test.h:347:8:void stm32_test::filiter_hilbert_it_singlePoint_test()	32	static
+../Port/Inc/stm32_test.h:355:8:void stm32_test::us_timer_test()	8	static
+../Port/Inc/stm32_test.h:365:8:void stm32_test::pll_init_test()	872	static
+../Port/Inc/stm32_test.h:384:8:void stm32_test::pll_it_test()	56	static
+../Port/Inc/stm32_test.h:460:8:void stm32_test::mk1031_sensor_test()	56	static
+../Port/Inc/stm32_test.h:490:8:void stm32_test::dc_dc_current_voltage_ClosedLoop_test()	64	static
+../Port/Inc/stm32_test.h:543:8:void stm32_test::dc_dc_currentClosedLoop_test()	64	static
+../Port/Inc/stm32_test.h:594:6:void stm32_test::boost_currentClosedLoop_test()	64	static
+../Port/Inc/stm32_test.h:644:6:void stm32_test::boost_openLoop_test()	64	static
+../Port/Inc/stm32_test.h:696:8:void stm32_test::dc_dc_openLoop_test()	64	static
+../Port/Inc/stm32_test.h:745:8:void stm32_test::dc_dc_voltageClosedLoop_test()	40	static
+../Port/Inc/stm32_test.h:773:8:void stm32_test::dc_dc_doubleMode_closedLoop_test()	48	static
+../Port/Inc/stm32_test.h:846:8:void stm32_test::vofa_send_test()	8	static
+../Port/Inc/stm32_test.h:866:8:void stm32_test::vofa_receive_test()	32	static
+../Port/Inc/stm32_test.h:881:8:void stm32_test::segger_systemview_test_enable()	8	static
 ../Core/NUEDC/2015.h:179:8:void nuedc_2015::hardware_init()	72	static
 ../Core/NUEDC/2015.h:212:8:void nuedc_2015::loop()	56	static
-../Core/Src/main.cpp:151:6:void SystemClock_Config()	88	static,ignoring_inline_asm
+../Core/Src/main.cpp:156:6:void SystemClock_Config()	88	static,ignoring_inline_asm
 ../Core/Src/main.cpp:80:5:int main()	8	static
-../Core/Src/main.cpp:201:6:void Error_Handler()	0	static,ignoring_inline_asm
+../Core/Src/main.cpp:206:6:void Error_Handler()	0	static,ignoring_inline_asm
 ../Hardware/port/Inc/hw_port_dac.h:188:8:void Hardware_STM32_DAC<MaxPoints>::enable() [with unsigned int MaxPoints = 200]	16	static
-../Port/Inc/stm32_test.h:337:8:void stm32_test::dac1_dma_test()	848	static
-../Port/Inc/stm32_test.h:434:8:void stm32_test::filiter_hilbert_test()	8	static
-../Port/Inc/stm32_test.h:445:8:void stm32_test::dq_pll_test()	848	static
-../Core/Src/main.cpp:210:1:cpp)	40	static
-../Core/Src/main.cpp:210:1:cpp)	8	static
+../Port/Inc/stm32_test.h:338:8:void stm32_test::dac1_dma_test()	848	static
+../Port/Inc/stm32_test.h:435:8:void stm32_test::filiter_hilbert_test()	8	static
+../Port/Inc/stm32_test.h:446:8:void stm32_test::dq_pll_test()	848	static
+../Core/Src/main.cpp:215:1:cpp)	40	static
+../Core/Src/main.cpp:215:1:cpp)	8	static

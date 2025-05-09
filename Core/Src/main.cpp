@@ -126,7 +126,8 @@ int main(void)
 //  stm32_test::dc_dc_currentClosedLoop_test();
 //  stm32_test::dc_dc_current_voltage_ClosedLoop_test();
 //  stm32_test::mk1031_sensor_test();
-  stm32_test::dc_dc_openLoop_test();
+//  stm32_test::boost_openLoop_test();
+  stm32_test::boost_currentClosedLoop_test();
 //    stm32_test::boost_currentClosedLoop_test();
 //    stm32_test::boost_openLoop_test();
 //  stm32_test::vofa_receive_test();

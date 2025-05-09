@@ -78,11 +78,10 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 //	  stm32_test::g_dc_buck_sensor_handler.closedVoltageCurrentLoopControl();
 
 	  //电流环测试
-	  stm32_test::g_dc_boost_sensor_handler.closedBoostCurrentLoopControl();
+	  stm32_test::g_dc_boost_sensor_handler.closedCurrentLoopControl();
 
 	}
       count=(count+1)%clock_div;
-
       stm32_test::g_message_handler.processHandler();//蓝牙调试
       stm32_test:: g_modbus_message_handler.processHandler();//处理modbus接收数据
 
