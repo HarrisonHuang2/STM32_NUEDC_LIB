@@ -79,7 +79,7 @@ public:
     float integralTerm = ki * error;
     // 限幅
     if (integral_limit > 0) {
-	integralTerm = LIMIT(integral, -integral_limit, integral_limit);
+	integralTerm = LIMIT(integralTerm, -integral_limit, integral_limit);
     }
 
 

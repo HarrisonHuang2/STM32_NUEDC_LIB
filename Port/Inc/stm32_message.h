@@ -28,7 +28,19 @@ namespace stm32_message
     message.begin(2, 20, &huart2);
     return message;
   }
+
+  Hardware_STM32_Message getUART3()
+  {
+    Hardware_STM32_Message message;
+    message.begin(2, 20, &huart3);
+    return message;
+
+  }
+
+
 }
+
+
 
 
 #endif /* INC_STM32_MESSAGE_H_ */

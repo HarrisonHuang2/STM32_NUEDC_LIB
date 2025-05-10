@@ -32,15 +32,20 @@ public:
   void closedVoltageLoopControl() {
     float output;
     if(!this->dataWrapper_ || !this->isEnable_){return ;}
-    output = LIMIT(this->cv_pid_->cal_increase(this->vout_,this->dataWrapper_->readVout()),STM32_MIN_DUTY,STM32_MAX_DUTY);
-    this->pwm_->setDutyCycle(1-output);//默认控制上管，极性与PID输出取反
+    output = LIMIT(this->cv_pid_->cal_increase(this->vin_,this->dataWrapper_->readVin()),STM32_MIN_DUTY,STM32_MAX_DUTY);
+    output = LIMIT(1 - output,STM32_MIN_DUTY,STM32_MAX_DUTY);
+    this->pwm_->setDutyCycle(output);//默认控制上管，极性与PID输出取反
   }
 
   void closedCurrentLoopControl() {
     float output;
+    float senorcurrent;
     if(!this->dataWrapper_ || !this->isEnable_){return ;}
+//    senorcurrent = this->dataWrapper_->readCurrent(); //debug
     output = LIMIT(this->cc_pid_->cal_increase(this->current_, this->dataWrapper_->readCurrent()),STM32_MIN_DUTY,STM32_MAX_DUTY);
-    this->pwm_->setDutyCycle(1-output);//默认控制上管，极性与PID输出取反
+    output = LIMIT(1 - output,STM32_MIN_DUTY,STM32_MAX_DUTY);
+    this->pwm_->setDutyCycle(output);//默认控制上管，极性与PID输出取反
+//    output = output;
   }
 
   void closedVoltageCurrentLoopControl() {
