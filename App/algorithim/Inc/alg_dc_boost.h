@@ -56,10 +56,11 @@ public:
     static uint16_t count=0;
     if (count == 0)
       {
-	outer = 1-LIMIT(this->cv_pid_->cal_increase(this->vout_,this->dataWrapper_->readVout()),STM32_MIN_DUTY,STM32_MAX_DUTY);
+	outer = LIMIT(this->cv_pid_->cal_increase(this->vin_,this->dataWrapper_->readVin()),STM32_MIN_DUTY,STM32_MAX_DUTY);
       }
     inner = LIMIT(this->cc_pid_->cal_increase(outer, this->dataWrapper_->readCurrent()),STM32_MIN_DUTY,STM32_MAX_DUTY);
     count=(count+1)%frequency_div;
+    inner = LIMIT(1 - inner,STM32_MIN_DUTY,STM32_MAX_DUTY);
     this->pwm_->setDutyCycle(inner);
   }
 };
