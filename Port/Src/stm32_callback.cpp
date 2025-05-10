@@ -25,7 +25,9 @@ namespace stm32_test
   extern Hardware_STM32_Message g_message_handler;
   extern Hardware_STM32_US_Timer g_us_timer_handler;
   extern Hardware_MK1031 g_mk1031_sensor_handler;
+  extern Hardware_MK1031 g_mk1031_sensor_handler_in;
   extern Hardware_STM32_Message g_modbus_message_handler;
+  extern Hardware_STM32_Message g_modbus_message_handler_in;
   extern Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper>g_dc_buck_sensor_handler;
   extern Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> g_dc_boost_sensor_handler;
   void pll_it_test();
@@ -60,6 +62,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
   stm32_test::g_message_handler.callbackHandler(huart, Size);
   stm32_test:: g_modbus_message_handler.callbackHandler(huart, Size);
+  stm32_test:: g_modbus_message_handler_in.callbackHandler(huart, Size);
   //  nuedc_2015::g_message_handler.callbackHandler(huart, Size);
 }
 
@@ -68,22 +71,26 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
   if(htim == &htim1)
     {
       //定时器1的频率是2000hz，周期为0.5ms
-      constexpr uint16_t clock_div=50;//mk1031的采样周期要大于这里clock_div对应的25
+      constexpr uint16_t clock_div=100;//mk1031的采样周期要大于这里clock_div对应的25
       static uint16_t count=0;
       if(count == 0)
 	{
 	  //发送modbus采样
 	  stm32_test::g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
+	  stm32_test::g_mk1031_sensor_handler_in.readRegisters(MK1031_VOLTAGE,3);
 	  //电流环测试
 //	  stm32_test::g_dc_buck_sensor_handler.closedVoltageCurrentLoopControl();
 
-	  //电流环测试
-	  stm32_test::g_dc_boost_sensor_handler.closedCurrentLoopControl();
+	  //boost电压环
+	  stm32_test::g_dc_boost_sensor_handler.closedVoltageLoopControl();
+//	  stm32_test::g_dc_boost_sensor_handler.openVoltageLoopControl();
 
 	}
       count=(count+1)%clock_div;
       stm32_test::g_message_handler.processHandler();//蓝牙调试
-      stm32_test:: g_modbus_message_handler.processHandler();//处理modbus接收数据
+      stm32_test:: g_modbus_message_handler.processHandler();//处理modbus接收数据 低压
+      stm32_test:: g_modbus_message_handler_in.processHandler();//处理modbus接收数据 高压
+
 
       //      nuedc_2015::g_message_handler.processHandler();
     }
