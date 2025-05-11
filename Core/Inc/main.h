@@ -57,8 +57,32 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define OLED_SCL_Pin GPIO_PIN_13
+#define OLED_SCL_GPIO_Port GPIOC
+#define KEY_R1_Pin GPIO_PIN_6
+#define KEY_R1_GPIO_Port GPIOC
+#define KEY_R2_Pin GPIO_PIN_7
+#define KEY_R2_GPIO_Port GPIOC
+#define KEY_R3_Pin GPIO_PIN_8
+#define KEY_R3_GPIO_Port GPIOC
 #define RELAY1_Pin GPIO_PIN_9
 #define RELAY1_GPIO_Port GPIOC
+#define KEY_R4_Pin GPIO_PIN_12
+#define KEY_R4_GPIO_Port GPIOA
+#define KEY_C4_Pin GPIO_PIN_15
+#define KEY_C4_GPIO_Port GPIOA
+#define KEY_C1_Pin GPIO_PIN_10
+#define KEY_C1_GPIO_Port GPIOC
+#define KEY_C2_Pin GPIO_PIN_11
+#define KEY_C2_GPIO_Port GPIOC
+#define KEY_C3_Pin GPIO_PIN_12
+#define KEY_C3_GPIO_Port GPIOC
+#define OLED_SDA_Pin GPIO_PIN_3
+#define OLED_SDA_GPIO_Port GPIOB
+#define OLED_DC_Pin GPIO_PIN_4
+#define OLED_DC_GPIO_Port GPIOB
+#define OLED_CS_Pin GPIO_PIN_5
+#define OLED_CS_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

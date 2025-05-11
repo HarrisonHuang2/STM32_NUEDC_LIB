@@ -17,7 +17,8 @@
 #include "flt_fir_hilbert.h"
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_Conf.h"
-
+#include "stm32_keyboard.h"
+#include "oled.h"
 
 namespace stm32_test
 {
@@ -41,6 +42,7 @@ namespace stm32_test
   Hardware_MK1031 g_mk1031_sensor_handler;      //低压侧
   Hardware_MK1031 g_mk1031_sensor_handler_in;   //高压侧
   Hardware_MK1031_Wrapper g_mk1031_wrapper_handler;
+  Hardware_STM32_Keyboard g_keyboard_handler;
 
   enum power_control_mode_t
   {
@@ -67,8 +69,33 @@ namespace stm32_test
     float target_phase;
   };
 
+  struct target_oled_set_value_t
+  {
+    float target_voltage;
+    float target_current;
+    float target_phase;
+  };
 
-  target_vofa_set_value_t g_target_vofa_set={0};
+
+  enum oled_menu_mode_t
+  {
+    OLED_MENU_BUCK,
+    OLED_MENU_BOOST,
+    OLED_MENU_PAGE_NUM
+  };
+
+  enum oled_menu_isSelcet_bool_t
+  {
+    OLED_MENU_NO_SELECT,
+    OLED_MENU_SELECT,
+    OLED_MENU_SELCET_NUM
+  };
+
+  oled_menu_mode_t g_oled_menu_mode = OLED_MENU_BUCK;
+  oled_menu_isSelcet_bool_t g_oled_menu_isSelect = OLED_MENU_NO_SELECT;
+  target_oled_set_value_t g_target_vofa_set={0};
+
+//  target_vofa_set_value_t g_target_vofa_set={0};
   vofa_isResetPID_bool_t g_bool_isResetPID = NO_RESET_PID;
   vofa_isOutput_bool_t g_bool_isOutput = OUTPUT_STOP;
   power_control_mode_t g_power_control_mode = VOLTAGE_CLOSE_LOOP;
@@ -208,14 +235,16 @@ namespace stm32_test
     else if(strcmp (s, "DEBUG") == 0)
       {
 	//数据回显
-//	printf("Vin:%f\n",g_dc_buck_adc_handler.dataWrapper_->readVin());
-//	printf("Vout:%f\n",g_dc_buck_adc_handler.dataWrapper_->readVout());
-//	printf("Current:%f\n",g_dc_buck_adc_handler.dataWrapper_->readCurrent());
-//	printf("%d\n",g_dc_buck_adc_handler.isEnable());
-//	printf("output:%f\n",g_dc_boost_sensor_handler.cc_pid_->lastOutput);
-//	printf("current:%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
-	printf("PIDoutput:%f\n",g_dc_boost_sensor_handler.cv_pid_->lastOutput);
-	printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
+	//	printf("Vin:%f\n",g_dc_buck_adc_handler.dataWrapper_->readVin());
+	//	printf("Vout:%f\n",g_dc_buck_adc_handler.dataWrapper_->readVout());
+	//	printf("Current:%f\n",g_dc_buck_adc_handler.dataWrapper_->readCurrent());
+	//	printf("%d\n",g_dc_buck_adc_handler.isEnable());
+
+
+//	printf("current:%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readCurrent());
+		printf("Vol_ouput:%f\n",g_dc_boost_sensor_handler.cv_pid_->lastOutput);
+		printf("current:%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
+		printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
       }
   }
 
@@ -226,9 +255,9 @@ namespace stm32_test
   void timerA_pwm_test ()
   {
     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
-    g_hrtimer_pwm_handler.setDutyCycle(0.);
+    g_hrtimer_pwm_handler.setDutyCycle(0.5);
     g_hrtimer_pwm_handler.setOutput();
-    g_hrtimer_pwm_handler.setFrequency(5000);
+    g_hrtimer_pwm_handler.setFrequency(40000);
   }
 
   /*函数名: timerB_pwm_test
@@ -496,59 +525,6 @@ namespace stm32_test
   void dc_dc_current_voltage_ClosedLoop_test()
   {
     //蓝牙调试串口抽象层初始化
-        g_message_handler=stm32_message::getUART1();
-        g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
-        g_message_handler.startReceive();
-        //mk1031传感器初始化
-        g_modbus_message_handler=stm32_message::getUART2();
-        g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
-        //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
-        g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
-    					 {
-          g_mk1031_sensor_handler.responseHandler(data,len);
-    					 },PINGPONG_BUFFER);
-        g_modbus_message_handler.startReceive();
-
-        g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
-        //定时器初始化
-        g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
-
-        //定时事件处理，处理串口空闲中断接收到的数据
-        HAL_TIM_Base_Start_IT(&htim1);
-        //TO DO
-        g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-        g_current_pid.begin(1.35, 0.0098, 0, 0.0535);
-        g_dc_buck_sensor_handler.setCC_PID(&g_current_pid);
-
-        g_voltage_pid.begin(0.0529, 0.0140, 0, 0.0173);
-        g_dc_buck_sensor_handler.setCV_PID(&g_voltage_pid);
-
-
-        g_hrtimer_pwm_handler.setOutput();
-        g_dc_buck_sensor_handler.enable();
-        g_dc_buck_sensor_handler.setVout(0);
-        while (1)
-          {
-	  HAL_Delay(1);
-	  printf("%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readVout());
-	  g_dc_buck_sensor_handler.setVout(g_target_vofa_set.target_voltage);
-	  if (g_bool_isResetPID == RESET_PID)
-	    {
-      //	    g_dc_buck_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
-      //	    g_dc_buck_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
-      //	    g_dc_buck_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
-      //	    g_dc_buck_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
-	      g_dc_buck_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
-	      g_dc_buck_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
-	      g_dc_buck_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
-	      g_dc_buck_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
-	    }
-      }
-  }
-
-  void dc_dc_currentClosedLoop_test()
-  {
-    //蓝牙调试串口抽象层初始化
     g_message_handler=stm32_message::getUART1();
     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
     g_message_handler.startReceive();
@@ -570,273 +546,362 @@ namespace stm32_test
     HAL_TIM_Base_Start_IT(&htim1);
     //TO DO
     g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-    g_current_pid.begin(2.70, 0.0162, 0, 0.0535);
+    g_current_pid.begin(1.35, 0.0098, 0, 0.0535);
     g_dc_buck_sensor_handler.setCC_PID(&g_current_pid);
 
+    g_voltage_pid.begin(0.0529, 0.0140, 0, 0.0173);
+    g_dc_buck_sensor_handler.setCV_PID(&g_voltage_pid);
 
-    g_dc_buck_sensor_handler.setCurrent(0.5);
+
     g_hrtimer_pwm_handler.setOutput();
     g_dc_buck_sensor_handler.enable();
+    g_dc_buck_sensor_handler.setVout(0);
     while (1)
       {
 	HAL_Delay(1);
-	printf("%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readCurrent());
+	printf("%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readVout());
+	g_dc_buck_sensor_handler.setVout(g_target_vofa_set.target_voltage);
+	if (g_bool_isResetPID == RESET_PID)
+	  {
+	    //	    g_dc_buck_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
+	    //	    g_dc_buck_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
+	    //	    g_dc_buck_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
+	    //	    g_dc_buck_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
+	    g_dc_buck_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
+	    g_dc_buck_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
+	    g_dc_buck_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
+	    g_dc_buck_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
+	  }
+      }
+  }
+
+  void dc_dc_currentClosedLoop_test()
+  {
+    //蓝牙调试串口抽象层初始化
+    g_message_handler=stm32_message::getUART1();
+    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+    //mk1031传感器初始化 //低压侧 电池
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+    //mk1031传感器初始化 //高压侧 电源
+    g_modbus_message_handler_in=stm32_message::getUART3();
+    g_mk1031_sensor_handler_in=stm32_mk1031::getMK1031(&g_modbus_message_handler_in, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数 低压侧
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
+      g_mk1031_sensor_handler.responseHandler(data,len);
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
+
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数  高压侧
+    g_modbus_message_handler_in.attachEvent([](uint8_t *data, uint16_t len)
+					    {
+      g_mk1031_sensor_handler_in.responseHandler(data,len);
+					    },PINGPONG_BUFFER);
+    g_modbus_message_handler_in.startReceive();
+
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler, &g_mk1031_sensor_handler_in);
+
+    //定时器初始化
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+
+    //定时事件处理，处理串口空闲中断接收到的数据
+    HAL_TIM_Base_Start_IT(&htim1);
+    //TO DO
+    g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    g_current_pid.begin(0.429,0.131,0,0.1109);
+    g_dc_buck_sensor_handler.setCC_PID(&g_current_pid);
+
+
+
+    g_dc_buck_sensor_handler.setCurrent(0);
+
+    g_hrtimer_pwm_handler.setOutput();
+    g_dc_buck_sensor_handler.enable();
+
+
+
+    while (1)
+      {
+	//   	HAL_Delay(1);
+	//   	printf("%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readCurrent());
 	g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);
+
 	if (g_bool_isResetPID == RESET_PID)
 	  {
 	    g_dc_buck_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
 	    g_dc_buck_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
 	    g_dc_buck_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
 	    g_dc_buck_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
-//	    g_dc_buck_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
-//	    g_dc_buck_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
-//	    g_dc_buck_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
-//	    g_dc_buck_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
+	    // 	   g_dc_buck_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
+	    // 	   g_dc_buck_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
+	    // 	   g_dc_buck_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
+	    // 	   g_dc_buck_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
 	  }
       }
   }
 
 
-void boost_currentClosedLoop_test()
-{
-  //蓝牙调试串口抽象层初始化
-     g_message_handler=stm32_message::getUART1();
-     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
-     g_message_handler.startReceive();
-     //mk1031传感器初始化
-     g_modbus_message_handler=stm32_message::getUART2();
-     g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
-     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
-     g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
- 					 {
-       g_mk1031_sensor_handler.responseHandler(data,len);
- 					 },PINGPONG_BUFFER);
-     g_modbus_message_handler.startReceive();
+  void boost_currentClosedLoop_test()
+  {
+    //蓝牙调试串口抽象层初始化
+    g_message_handler=stm32_message::getUART1();
+    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+    //mk1031传感器初始化 //低压侧 电池
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+    //mk1031传感器初始化 //高压侧 电源
+    g_modbus_message_handler_in=stm32_message::getUART3();
+    g_mk1031_sensor_handler_in=stm32_mk1031::getMK1031(&g_modbus_message_handler_in, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数 低压侧
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
+      g_mk1031_sensor_handler.responseHandler(data,len);
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
 
-     g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
-     //定时器初始化
-     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数  高压侧
+    g_modbus_message_handler_in.attachEvent([](uint8_t *data, uint16_t len)
+					    {
+      g_mk1031_sensor_handler_in.responseHandler(data,len);
+					    },PINGPONG_BUFFER);
+    g_modbus_message_handler_in.startReceive();
 
-     //定时事件处理，处理串口空闲中断接收到的数据
-     HAL_TIM_Base_Start_IT(&htim1);
-     //TO DO
-     g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-     g_current_pid.begin(0,0,0);
-     g_dc_boost_sensor_handler.setCC_PID(&g_current_pid);
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler, &g_mk1031_sensor_handler_in);
 
+    //定时器初始化
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
 
-     g_dc_boost_sensor_handler.setCurrent(0.3);
-     g_hrtimer_pwm_handler.setOutput();
-     g_dc_boost_sensor_handler.enable();
-
-     while (1)
-       {
-// 	HAL_Delay(1);
-// 	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
- 	g_dc_boost_sensor_handler.setCurrent(g_target_vofa_set.target_current);
-// 	g_dc_boost_sensor_handler.setCurrent(0.7);
- 	if (g_bool_isResetPID == RESET_PID)
- 	  {
- 	   g_dc_boost_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
- 	   g_dc_boost_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
- 	   g_dc_boost_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
- 	   g_dc_boost_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
- //	    g_dc_buck_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
- //	    g_dc_buck_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
- //	    g_dc_buck_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
- //	    g_dc_buck_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
- 	  }
-       }
-}
-
-void boost_VoltageClosedLoop_test()
-{
-
-  //蓝牙调试串口抽象层初始化
-     g_message_handler=stm32_message::getUART1();
-     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
-     g_message_handler.startReceive();
-     //mk1031传感器初始化 //低压侧 电池
-     g_modbus_message_handler=stm32_message::getUART2();
-     g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
-     //mk1031传感器初始化 //高压侧 电源
-     g_modbus_message_handler_in=stm32_message::getUART3();
-     g_mk1031_sensor_handler_in=stm32_mk1031::getMK1031(&g_modbus_message_handler_in, 1);
-     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数 低压侧
-     g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
- 					 {
-       g_mk1031_sensor_handler.responseHandler(data,len);
- 					 },PINGPONG_BUFFER);
-     g_modbus_message_handler.startReceive();
-
-     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数  高压侧
-     g_modbus_message_handler_in.attachEvent([](uint8_t *data, uint16_t len)
-      					 {
-     g_mk1031_sensor_handler_in.responseHandler(data,len);
-				     },PINGPONG_BUFFER);
-     g_modbus_message_handler_in.startReceive();
-
-     g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler, &g_mk1031_sensor_handler_in);
-
-     //定时器初始化
-     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
-
-     //定时事件处理，处理串口空闲中断接收到的数据
-     HAL_TIM_Base_Start_IT(&htim1);
-     //TO DO
-     g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-//     g_current_pid.begin(0.0197,0.0228,0,0.1109);
-//     g_dc_boost_sensor_handler.setCC_PID(&g_current_pid);
-
-     g_voltage_pid.begin(0, 0, 0, 0);
-     g_dc_boost_sensor_handler.setCV_PID(&g_voltage_pid);
+    //定时事件处理，处理串口空闲中断接收到的数据
+    HAL_TIM_Base_Start_IT(&htim1);
+    //TO DO
+    g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    g_current_pid.begin(0,0,0,0);
+    g_dc_boost_sensor_handler.setCC_PID(&g_current_pid);
 
 
 
-//    g_dc_boost_sensor_handler.setCurrent(0.3);
-     g_dc_boost_sensor_handler.setVin(15);
-     g_hrtimer_pwm_handler.setOutput();
-     g_dc_boost_sensor_handler.enable();
+    g_dc_boost_sensor_handler.setCurrent(0.3);
+
+    g_hrtimer_pwm_handler.setOutput();
+    g_dc_boost_sensor_handler.enable();
 
 
 
-     while (1)
-       {
-// 	HAL_Delay(1);
-//	 printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
-// 	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
- 	g_dc_boost_sensor_handler.setVin(g_target_vofa_set.target_voltage);
+    while (1)
+      {
+	// 	HAL_Delay(1);
+	//	 printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
+	// 	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
+	g_dc_boost_sensor_handler.setCurrent(g_target_vofa_set.target_current);
 
-// 	g_dc_boost_sensor_handler.setCurrent(0.7);
- 	if (g_bool_isResetPID == RESET_PID)
- 	  {
-// 	   g_dc_boost_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
-// 	   g_dc_boost_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
-// 	   g_dc_boost_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
-// 	   g_dc_boost_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
- 	   g_dc_boost_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
- 	   g_dc_boost_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
- 	   g_dc_boost_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
- 	   g_dc_boost_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
- 	  }
-       }
-}
+	// 	g_dc_boost_sensor_handler.setCurrent(0.7);
+	if (g_bool_isResetPID == RESET_PID)
+	  {
+	    g_dc_boost_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
+	    g_dc_boost_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
+	    g_dc_boost_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
+	    g_dc_boost_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
+	    // 	   g_dc_boost_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
+	    // 	   g_dc_boost_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
+	    // 	   g_dc_boost_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
+	    // 	   g_dc_boost_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
+	  }
+      }
+  }
 
-void boost_CurrentVoltageClosedLoop_test()
-{
-  //蓝牙调试串口抽象层初始化
-     g_message_handler=stm32_message::getUART1();
-     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
-     g_message_handler.startReceive();
-     //mk1031传感器初始化 //低压侧 电池
-     g_modbus_message_handler=stm32_message::getUART2();
-     g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
-     //mk1031传感器初始化 //高压侧 电源
-     g_modbus_message_handler_in=stm32_message::getUART3();
-     g_mk1031_sensor_handler_in=stm32_mk1031::getMK1031(&g_modbus_message_handler_in, 1);
-     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数 高压侧
-     g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
- 					 {
-       g_mk1031_sensor_handler.responseHandler(data,len);
- 					 },PINGPONG_BUFFER);
-     g_modbus_message_handler.startReceive();
+  void boost_VoltageClosedLoop_test()
+  {
 
-     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数  低压侧
-     g_modbus_message_handler_in.attachEvent([](uint8_t *data, uint16_t len)
-      					 {
-     g_mk1031_sensor_handler_in.responseHandler(data,len);
-				     },PINGPONG_BUFFER);
-     g_modbus_message_handler_in.startReceive();
+    //蓝牙调试串口抽象层初始化
+    g_message_handler=stm32_message::getUART1();
+    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+    //mk1031传感器初始化 //低压侧 电池
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+    //mk1031传感器初始化 //高压侧 电源
+    g_modbus_message_handler_in=stm32_message::getUART3();
+    g_mk1031_sensor_handler_in=stm32_mk1031::getMK1031(&g_modbus_message_handler_in, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数 低压侧
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
+      g_mk1031_sensor_handler.responseHandler(data,len);
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
 
-     g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler, &g_mk1031_sensor_handler_in);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数  高压侧
+    g_modbus_message_handler_in.attachEvent([](uint8_t *data, uint16_t len)
+					    {
+      g_mk1031_sensor_handler_in.responseHandler(data,len);
+					    },PINGPONG_BUFFER);
+    g_modbus_message_handler_in.startReceive();
 
-     //定时器初始化
-     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler, &g_mk1031_sensor_handler_in);
 
-     //定时事件处理，处理串口空闲中断接收到的数据
-     HAL_TIM_Base_Start_IT(&htim1);
-     //TO DO
-     g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-     g_current_pid.begin(0.0197,0.0228,0,0.1109);
-     g_dc_boost_sensor_handler.setCC_PID(&g_current_pid);
+    //定时器初始化
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
 
-     g_voltage_pid.begin(0, 0, 0, 0);
-     g_dc_boost_sensor_handler.setCV_PID(&g_voltage_pid);
+    //定时事件处理，处理串口空闲中断接收到的数据
+    HAL_TIM_Base_Start_IT(&htim1);
+    //TO DO
+    g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    //     g_current_pid.begin(0.0197,0.0228,0,0.1109);
+    //     g_dc_boost_sensor_handler.setCC_PID(&g_current_pid);
 
-
-
-     g_dc_boost_sensor_handler.setCurrent(0.3);
-     g_dc_boost_sensor_handler.setVin(15);
-     g_hrtimer_pwm_handler.setOutput();
-     g_dc_boost_sensor_handler.enable();
+    g_voltage_pid.begin(0.0139, 0.0027, 0, 0.0009);
+    g_dc_boost_sensor_handler.setCV_PID(&g_voltage_pid);
 
 
-     while (1)
-       {
-// 	HAL_Delay(1);
-// 	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
- 	g_dc_boost_sensor_handler.setCurrent(g_target_vofa_set.target_voltage);
 
-// 	g_dc_boost_sensor_handler.setCurrent(0.7);
- 	if (g_bool_isResetPID == RESET_PID)
- 	  {
-// 	   g_dc_boost_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
-// 	   g_dc_boost_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
-// 	   g_dc_boost_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
-// 	   g_dc_boost_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
- 	    g_dc_buck_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
- 	    g_dc_buck_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
- 	    g_dc_buck_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
- 	    g_dc_buck_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
- 	  }
-       }
-}
-
-void boost_openLoop_test()
-{
-  //蓝牙调试串口抽象层初始化
-     g_message_handler=stm32_message::getUART1();
-     g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
-     g_message_handler.startReceive();
-     //mk1031传感器初始化
-     g_modbus_message_handler=stm32_message::getUART2();
-     g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
-     //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
-     g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
- 					 {
-       g_mk1031_sensor_handler.responseHandler(data,len);
- 					 },PINGPONG_BUFFER);
-     g_modbus_message_handler.startReceive();
-
-     g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
-     //定时器初始化
-     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+    //    g_dc_boost_sensor_handler.setCurrent(0.3);
+    g_dc_boost_sensor_handler.setVin(30);
+    g_hrtimer_pwm_handler.setOutput();
+    g_dc_boost_sensor_handler.enable();
 
 
-     //定时事件处理，处理串口空闲中断接收到的数据
-     HAL_TIM_Base_Start_IT(&htim1);
-     //TO DO
-     g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-     g_dc_boost_sensor_handler.setVin(10);
-     g_dc_boost_sensor_handler.setVout(20);
-     g_hrtimer_pwm_handler.setOutput();
-     g_dc_boost_sensor_handler.enable();
-  while (1)
-    {
-//	HAL_Delay(1);
-//	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
-//	if(g_bool_isOutput == OUTPUT_START)
-//	  {
-//	    g_dc_buck_sensor_handler.enable();
-//	  }
-//	else
-//	  {
-//	    g_dc_buck_sensor_handler.disable();
-//	  }
-//	g_dc_buck_sensor_handler.setVout(g_target_vofa_set.target_voltage);
+
+    while (1)
+      {
+	// 	HAL_Delay(1);
+	//	 printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
+	// 	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
+	g_dc_boost_sensor_handler.setVin(g_target_vofa_set.target_voltage);
+
+	// 	g_dc_boost_sensor_handler.setCurrent(0.7);
+	if (g_bool_isResetPID == RESET_PID)
+	  {
+	    // 	   g_dc_boost_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
+	    // 	   g_dc_boost_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
+	    // 	   g_dc_boost_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
+	    // 	   g_dc_boost_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
+	    g_dc_boost_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
+	    g_dc_boost_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
+	    g_dc_boost_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
+	    g_dc_boost_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
+	  }
+      }
+  }
+
+  void boost_CurrentVoltageClosedLoop_test()
+  {
+    //蓝牙调试串口抽象层初始化
+    g_message_handler=stm32_message::getUART1();
+    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+    //mk1031传感器初始化 //低压侧 电池
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+    //mk1031传感器初始化 //高压侧 电源
+    g_modbus_message_handler_in=stm32_message::getUART3();
+    g_mk1031_sensor_handler_in=stm32_mk1031::getMK1031(&g_modbus_message_handler_in, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数 低压侧
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
+      g_mk1031_sensor_handler.responseHandler(data,len);
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
+
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数  高压侧
+    g_modbus_message_handler_in.attachEvent([](uint8_t *data, uint16_t len)
+					    {
+      g_mk1031_sensor_handler_in.responseHandler(data,len);
+					    },PINGPONG_BUFFER);
+    g_modbus_message_handler_in.startReceive();
+
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler, &g_mk1031_sensor_handler_in);
+
+    //定时器初始化
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+
+    //定时事件处理，处理串口空闲中断接收到的数据
+    HAL_TIM_Base_Start_IT(&htim1);
+    //TO DO
+    g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    g_current_pid.begin(0.0429,0.0131,0,0.1109);
+    g_dc_boost_sensor_handler.setCC_PID(&g_current_pid);
+
+    g_voltage_pid.begin(0, 0, 0, 0);
+    g_dc_boost_sensor_handler.setCV_PID(&g_voltage_pid);
+
+
+
+
+    g_dc_boost_sensor_handler.setVin(25);
+    g_hrtimer_pwm_handler.setOutput();
+    g_dc_boost_sensor_handler.enable();
+
+
+
+    while (1)
+      {
+	// 	HAL_Delay(1);
+	//	 printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
+	// 	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
+	g_dc_boost_sensor_handler.setVin(g_target_vofa_set.target_voltage);
+
+	// 	g_dc_boost_sensor_handler.setCurrent(0.7);
+	if (g_bool_isResetPID == RESET_PID)
+	  {
+	    // 	   g_dc_boost_sensor_handler.cc_pid_->kp=g_current_pid_vofa_set.kp;
+	    // 	   g_dc_boost_sensor_handler.cc_pid_->ki=g_current_pid_vofa_set.ki;
+	    // 	   g_dc_boost_sensor_handler.cc_pid_->kd=g_current_pid_vofa_set.kd;
+	    // 	   g_dc_boost_sensor_handler.cc_pid_->integral_limit=g_current_pid_vofa_set.integral_limit;
+	    g_dc_boost_sensor_handler.cv_pid_->kp=g_voltage_pid_vofa_set.kp;
+	    g_dc_boost_sensor_handler.cv_pid_->ki=g_voltage_pid_vofa_set.ki;
+	    g_dc_boost_sensor_handler.cv_pid_->kd=g_voltage_pid_vofa_set.kd;
+	    g_dc_boost_sensor_handler.cv_pid_->integral_limit=g_voltage_pid_vofa_set.integral_limit;
+	  }
+      }
+  }
+
+  void boost_openLoop_test()
+  {
+    //蓝牙调试串口抽象层初始化
+    g_message_handler=stm32_message::getUART1();
+    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+    //mk1031传感器初始化
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
+      g_mk1031_sensor_handler.responseHandler(data,len);
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
+
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
+    //定时器初始化
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+
+
+    //定时事件处理，处理串口空闲中断接收到的数据
+    HAL_TIM_Base_Start_IT(&htim1);
+    //TO DO
+    g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    g_dc_boost_sensor_handler.setVin(10);
+    g_dc_boost_sensor_handler.setVout(20);
+    g_hrtimer_pwm_handler.setOutput();
+    g_dc_boost_sensor_handler.enable();
+    while (1)
+      {
+	//	HAL_Delay(1);
+	//	printf("%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
+	//	if(g_bool_isOutput == OUTPUT_START)
+	//	  {
+	//	    g_dc_buck_sensor_handler.enable();
+	//	  }
+	//	else
+	//	  {
+	//	    g_dc_buck_sensor_handler.disable();
+	//	  }
+	//	g_dc_buck_sensor_handler.setVout(g_target_vofa_set.target_voltage);
 	g_dc_boost_sensor_handler.openVoltageLoopControl();
-    }
-}
+      }
+  }
 
 
 
@@ -847,45 +912,45 @@ void boost_openLoop_test()
   void dc_dc_openLoop_test()
   {
     //蓝牙调试串口抽象层初始化
-       g_message_handler=stm32_message::getUART1();
-       g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
-       g_message_handler.startReceive();
-       //mk1031传感器初始化
-       g_modbus_message_handler=stm32_message::getUART2();
-       g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
-       //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
-       g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
-   					 {
-         g_mk1031_sensor_handler.responseHandler(data,len);
-   					 },PINGPONG_BUFFER);
-       g_modbus_message_handler.startReceive();
+    g_message_handler=stm32_message::getUART1();
+    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+    //mk1031传感器初始化
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
+      g_mk1031_sensor_handler.responseHandler(data,len);
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
 
-       g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
-       //定时器初始化
-       g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler);
+    //定时器初始化
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
 
 
-       //定时事件处理，处理串口空闲中断接收到的数据
-       HAL_TIM_Base_Start_IT(&htim1);
-       //TO DO
-       g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
-       g_dc_buck_sensor_handler.setVin(10);
-       g_dc_buck_sensor_handler.setVout(5);
-       g_hrtimer_pwm_handler.setOutput();
-       g_dc_buck_sensor_handler.enable();
+    //定时事件处理，处理串口空闲中断接收到的数据
+    HAL_TIM_Base_Start_IT(&htim1);
+    //TO DO
+    g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    g_dc_buck_sensor_handler.setVin(10);
+    g_dc_buck_sensor_handler.setVout(5);
+    g_hrtimer_pwm_handler.setOutput();
+    g_dc_buck_sensor_handler.enable();
     while (1)
       {
 	HAL_Delay(1);
 	printf("%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readCurrent());
-//	if(g_bool_isOutput == OUTPUT_START)
-//	  {
-//	    g_dc_buck_sensor_handler.enable();
-//	  }
-//	else
-//	  {
-//	    g_dc_buck_sensor_handler.disable();
-//	  }
-//	g_dc_buck_sensor_handler.setVout(g_target_vofa_set.target_voltage);
+	//	if(g_bool_isOutput == OUTPUT_START)
+	//	  {
+	//	    g_dc_buck_sensor_handler.enable();
+	//	  }
+	//	else
+	//	  {
+	//	    g_dc_buck_sensor_handler.disable();
+	//	  }
+	//	g_dc_buck_sensor_handler.setVout(g_target_vofa_set.target_voltage);
 	g_dc_buck_sensor_handler.openVoltageLoopControl();
       }
   }
@@ -1035,6 +1100,316 @@ void boost_openLoop_test()
     SEGGER_SYSVIEW_Start();           /* Starts SystemView recording*/
     SEGGER_SYSVIEW_OnIdle();          /* Tells SystemView that System is currently in "Idle"*/
   }
+
+  /* 校赛测试结束 */
+
+  void keyboard_test()
+  {
+    g_keyboard_handler=stm32_keyboard::getKeyboard(1);
+    g_keyboard_handler.attach(3, [](){
+      printf("KEY3\n");
+    });
+    while(1)
+      {
+	g_keyboard_handler.processHandler();
+      }
+  }
+
+
+  void oled_menu_test()
+  {
+    float temp=0;
+    static uint8_t swim=0;
+    switch (g_oled_menu_mode)
+    {
+      case OLED_MENU_BUCK:
+	if (g_oled_menu_isSelect == OLED_MENU_SELECT)
+	  {
+	    OLED_Printf(10, 40-swim, 16, ">I_set=%.2f",g_target_vofa_set.target_current);
+	  }
+	else
+	  {
+	    OLED_Printf(10, 40-swim, 16, "I_set=%.2f",g_target_vofa_set.target_current );
+	  }
+	OLED_Printf(10, 57-swim, 16, "I_out=%.2f", g_mk1031_wrapper_handler.readCurrent());
+	OLED_Printf(10, 74-swim, 16, "U_batt=%.2f", g_mk1031_wrapper_handler.readVout());
+	OLED_Printf(10, 91-swim, 16, "W=%.2f", g_mk1031_wrapper_handler.readCurrent() * g_mk1031_wrapper_handler.readVout());
+	OLED_Reflash();
+	OLED_GRAM_CLR();
+	swim=(swim+1)%128;
+	break;
+      case OLED_MENU_BOOST:
+	OLED_Printf(10, 10, 16, "I_out=%.2f",g_mk1031_wrapper_handler.readCurrent_in() );
+	OLED_Printf(10, 27, 16, "U2=%.2f", g_mk1031_wrapper_handler.readVin());
+	OLED_Printf(10, 43, 16, "W=%.2f", g_mk1031_wrapper_handler.readCurrent_in() * g_mk1031_wrapper_handler.readVin());
+	OLED_Reflash();
+	break;
+      default:
+	break;
+    }
+  }
+
+  void oled_test()
+  {
+    OLED_Init();//OLED初始化
+    g_keyboard_handler=stm32_keyboard::getKeyboard(1);
+
+    g_keyboard_handler.attach(13, [](){
+      //13 - 切换模式
+      OLED_GRAM_CLR();
+      if(g_oled_menu_mode == OLED_MENU_BUCK)
+	{
+	  g_oled_menu_mode = OLED_MENU_BOOST;
+	  g_relay_handler.on();
+	}
+      else if(g_oled_menu_mode == OLED_MENU_BOOST)
+	{
+	  g_oled_menu_mode = OLED_MENU_BUCK;
+	  g_relay_handler.off();
+	}
+    });
+
+    g_keyboard_handler.attach(14, [](){
+      //14 - 在buck下选中设置电流
+      if(g_oled_menu_mode == OLED_MENU_BUCK)
+	{
+	  g_oled_menu_isSelect = static_cast<oled_menu_isSelcet_bool_t>(((static_cast<int>(g_oled_menu_isSelect))  + 1)% OLED_MENU_SELCET_NUM);
+	}
+    });
+
+    g_keyboard_handler.attach(15, [](){
+      //15 - 选中后增加值
+      if(g_oled_menu_mode == OLED_MENU_BUCK && g_oled_menu_isSelect == OLED_MENU_SELECT)
+	{
+	  if(g_target_vofa_set.target_current < 2)
+	    {
+	      g_target_vofa_set.target_current+=0.1;//增加电流
+	      g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);//设置Buck充电电流
+	    }
+	}
+    });
+
+    g_keyboard_handler.attach(16, [](){
+      //15 - 选中后减少值
+      if(g_oled_menu_mode == OLED_MENU_BUCK && g_oled_menu_isSelect == OLED_MENU_SELECT)
+	{
+	  if(g_target_vofa_set.target_current > 0.0001)
+	    {
+	      g_target_vofa_set.target_current-=0.1; //减少电流
+	      g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);//设置Buck充电电流
+	    }
+	}
+    });
+    /*交互初始化结束*/
+
+    /*控制初始化开始*/
+
+    /*硬件抽象层初始化开始*/
+    g_relay_handler=stm32_relay::getRelay1();//获得继电器
+    while(1)
+      {
+	oled_menu_test();
+	g_keyboard_handler.processHandler();//TO DO ，移动定时器里去轮询
+
+      }
+  }
+
+  void nuedc_2015_init_test()
+  {
+    /*交互初始化开始*/
+    OLED_Init();//OLED初始化
+    g_keyboard_handler=stm32_keyboard::getKeyboard(1);
+
+    g_keyboard_handler.attach(13, [](){
+      //13 - 切换模式
+      OLED_GRAM_CLR();
+      if(g_oled_menu_mode == OLED_MENU_BUCK)
+	{
+	  g_oled_menu_mode = OLED_MENU_BOOST;
+	  g_relay_handler.on();
+	}
+      else if(g_oled_menu_mode == OLED_MENU_BOOST)
+	{
+	  g_oled_menu_mode = OLED_MENU_BUCK;
+	  g_relay_handler.off();
+	}
+    });
+
+    g_keyboard_handler.attach(14, [](){
+      //14 - 在buck下选中设置电流
+      if(g_oled_menu_mode == OLED_MENU_BUCK)
+	{
+	  g_oled_menu_isSelect = static_cast<oled_menu_isSelcet_bool_t>(((static_cast<int>(g_oled_menu_isSelect))  + 1)% OLED_MENU_SELCET_NUM);
+	}
+    });
+
+    g_keyboard_handler.attach(15, [](){
+      //15 - 选中后增加值
+      if(g_oled_menu_mode == OLED_MENU_BUCK && g_oled_menu_isSelect == OLED_MENU_SELECT)
+	{
+	  if(g_target_vofa_set.target_current < 2)
+	    {
+	      g_target_vofa_set.target_current+=0.1;//增加电流
+	      g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);//设置Buck充电电流
+	    }
+	}
+    });
+
+    g_keyboard_handler.attach(16, [](){
+      //15 - 选中后减少值
+      if(g_oled_menu_mode == OLED_MENU_BUCK && g_oled_menu_isSelect == OLED_MENU_SELECT)
+	{
+	  if(g_target_vofa_set.target_current > 0.0001)
+	    {
+	      g_target_vofa_set.target_current-=0.1; //减少电流
+	      g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);//设置Buck充电电流
+	    }
+	}
+    });
+    /*交互初始化结束*/
+
+    /*控制初始化开始*/
+
+    /*硬件抽象层初始化开始*/
+    g_relay_handler=stm32_relay::getRelay1();//获得继电器
+    //蓝牙调试串口抽象层初始化
+    g_message_handler=stm32_message::getUART1();
+    g_message_handler.attachEvent(vofaReceiveCallback,PINGPONG_BUFFER);
+    g_message_handler.startReceive();
+    //mk1031传感器初始化 //低压侧 电池
+    g_modbus_message_handler=stm32_message::getUART2();
+    g_mk1031_sensor_handler=stm32_mk1031::getMK1031(&g_modbus_message_handler, 1);
+    //mk1031传感器初始化 //高压侧 电源
+    g_modbus_message_handler_in=stm32_message::getUART3();
+    g_mk1031_sensor_handler_in=stm32_mk1031::getMK1031(&g_modbus_message_handler_in, 1);
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数 高压侧
+    g_modbus_message_handler.attachEvent([](uint8_t *data, uint16_t len)
+					 {
+      g_mk1031_sensor_handler.responseHandler(data,len);
+					 },PINGPONG_BUFFER);
+    g_modbus_message_handler.startReceive();
+
+    //在对应的串口中断回调使用stm32_message的callbackhandler，并注册回调函数  低压侧
+    g_modbus_message_handler_in.attachEvent([](uint8_t *data, uint16_t len)
+					    {
+      g_mk1031_sensor_handler_in.responseHandler(data,len);
+					    },PINGPONG_BUFFER);
+    g_modbus_message_handler_in.startReceive();
+
+    g_mk1031_wrapper_handler.init(&g_mk1031_sensor_handler, &g_mk1031_sensor_handler_in);
+
+    //定时器初始化
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerAOutput();
+
+    //定时事件处理，处理串口空闲中断接收到的数据
+    HAL_TIM_Base_Start_IT(&htim1);
+    /*硬件抽象层初始化结束*/
+
+
+    //TO DO  修改PID参数
+    g_dc_buck_sensor_handler=stm32_dc_dc::getDCBuckMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    g_current_pid.begin(0.0429,0.0131,0,0.1109);
+    g_dc_buck_sensor_handler.setCC_PID(&g_current_pid);
+
+    g_dc_boost_sensor_handler=stm32_dc_dc::getDCBoostMK1031(&g_hrtimer_pwm_handler,&g_mk1031_wrapper_handler);
+    g_voltage_pid.begin(0.0139, 0.0027, 0, 0.0013);
+    g_dc_boost_sensor_handler.setCV_PID(&g_voltage_pid);
+
+    //设置目标值
+//    g_dc_buck_sensor_handler.setCurrent(1);//设置Buck充电电流
+    g_dc_boost_sensor_handler.setVin(30);//设置Boost放电输出电压
+
+    //设置输出
+    g_hrtimer_pwm_handler.setOutput();
+    g_dc_buck_sensor_handler.enable();
+    g_dc_boost_sensor_handler.enable();
+    /*控制初始化结束*/
+  }
+
+  void nuedc_2015_tim1Callback_test()
+  {
+    //定时器1的频率是2000hz，周期为0.5ms
+
+    /* 采样逻辑开始 */
+    constexpr uint16_t clock_div=100;//mk1031的采样周期要大于这里clock_div对应的25
+    static uint16_t count=0;
+    float u,i,w;
+    if(count == 0)
+      {
+	//发送modbus采样
+	stm32_test::g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
+	stm32_test::g_mk1031_sensor_handler_in.readRegisters(MK1031_VOLTAGE,3);
+
+
+	/* 控制逻辑开始 */
+	//根据菜单选择控制模式
+	switch(g_oled_menu_mode)
+	{
+	  case OLED_MENU_BUCK:
+	    //单电流环
+	    //TO DO 控制逻辑
+	    u=g_mk1031_wrapper_handler.readVout();
+	    i=g_mk1031_wrapper_handler.readCurrent();
+	    w=u*i;
+//	    printf("%.2f,%.2f,%.2f\n",u,i,w);
+	    g_dc_buck_sensor_handler.closedCurrentLoopControl();
+	    break;
+
+	  case OLED_MENU_BOOST:
+	    u=g_mk1031_wrapper_handler.readVin();
+	    i=g_mk1031_wrapper_handler.readCurrent();
+	    w=u*i;
+//	    printf("%.2f,%.2f,%.2f\n",u,i,w);
+	    g_dc_boost_sensor_handler.closedVoltageLoopControl();
+	    break;
+	}
+	/* 控制逻辑结束 */
+
+      }
+    count=(count+1)%clock_div;
+    /* 采样逻辑结束 */
+
+    /* 处理串口逻辑开始 */
+    stm32_test::g_message_handler.processHandler();//蓝牙调试
+    stm32_test:: g_modbus_message_handler.processHandler();//处理modbus接收数据 低压
+    stm32_test:: g_modbus_message_handler_in.processHandler();//处理modbus接收数据 高压
+    /* 处理串口逻辑结束 */
+  }
+
+  void nuedc_2015_loop_test()
+  {
+    nuedc_2015_init_test();
+    float u=0,i=0,w=0;
+    while(1)
+      {
+	oled_menu_test();
+	g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);
+//	switch(g_oled_menu_mode)
+//	{
+//	  case OLED_MENU_BUCK:
+//	    //单电流环
+//	    //TO DO 控制逻辑
+//	    u=g_mk1031_wrapper_handler.readVout();
+//	    i=g_mk1031_wrapper_handler.readCurrent();
+//	    w=u*i;
+//	    printf("%f,%f,%f\n",u,i,w);
+//	    break;
+//	  case OLED_MENU_BOOST:
+//	    u=g_mk1031_wrapper_handler.readVin();
+//	    i=g_mk1031_wrapper_handler.readCurrent();
+//	    w=u*i;
+//	    printf("%f,%f,%f\n",u,i,w);
+//	    break;
+//	}
+	g_keyboard_handler.processHandler();//TO DO ，移动定时器里去轮询
+	//控制逻辑放在定时器里
+      }
+  }
+
+  /* 校赛测试结束 */
+
+
+
 }
 
 #endif /* INC_STM32_TEST_H_ */

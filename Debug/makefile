@@ -11,6 +11,7 @@ RM := rm -rf
 -include sources.mk
 -include Segger/debug/subdir.mk
 -include Port/Src/subdir.mk
+-include Hardware/port/Inc/subdir.mk
 -include Drivers/STM32G4xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
