@@ -93,9 +93,9 @@ namespace stm32_test
 
   oled_menu_mode_t g_oled_menu_mode = OLED_MENU_BUCK;
   oled_menu_isSelcet_bool_t g_oled_menu_isSelect = OLED_MENU_NO_SELECT;
-  target_oled_set_value_t g_target_oled_set={0};
+  target_oled_set_value_t g_target_vofa_set={0};
 
-  target_vofa_set_value_t g_target_vofa_set={0};
+//  target_vofa_set_value_t g_target_vofa_set={0};
   vofa_isResetPID_bool_t g_bool_isResetPID = NO_RESET_PID;
   vofa_isOutput_bool_t g_bool_isOutput = OUTPUT_STOP;
   power_control_mode_t g_power_control_mode = VOLTAGE_CLOSE_LOOP;
@@ -241,11 +241,10 @@ namespace stm32_test
 	//	printf("%d\n",g_dc_buck_adc_handler.isEnable());
 
 
-	printf("current:%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readCurrent());
-	//	printf("Vol_ouput:%f\n",g_dc_boost_sensor_handler.cv_pid_->lastOutput);
-	//	printf("Cur_output:%f\n",g_dc_boost_sensor_handler.cc_pid_->lastOutput);
-	//	printf("current:%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
-	//	printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
+//	printf("current:%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readCurrent());
+		printf("Vol_ouput:%f\n",g_dc_boost_sensor_handler.cv_pid_->lastOutput);
+		printf("current:%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
+		printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
       }
   }
 
@@ -758,7 +757,7 @@ namespace stm32_test
 
 
     //    g_dc_boost_sensor_handler.setCurrent(0.3);
-    g_dc_boost_sensor_handler.setVin(25);
+    g_dc_boost_sensor_handler.setVin(30);
     g_hrtimer_pwm_handler.setOutput();
     g_dc_boost_sensor_handler.enable();
 
@@ -1126,23 +1125,23 @@ namespace stm32_test
       case OLED_MENU_BUCK:
 	if (g_oled_menu_isSelect == OLED_MENU_SELECT)
 	  {
-	    OLED_Printf(10, 40-swim, 16, ">I_set=%.2f",g_target_oled_set.target_current);
+	    OLED_Printf(10, 40-swim, 16, ">I_set=%.2f",g_target_vofa_set.target_current);
 	  }
 	else
 	  {
-	    OLED_Printf(10, 40-swim, 16, "I_set=%.2f",g_target_oled_set.target_current );
+	    OLED_Printf(10, 40-swim, 16, "I_set=%.2f",g_target_vofa_set.target_current );
 	  }
-	OLED_Printf(10, 57-swim, 16, "I_out=%.2f", temp);
-	OLED_Printf(10, 74-swim, 16, "U_batt=%.2f", temp);
-	OLED_Printf(10, 91-swim, 16, "W=%.2f", temp);
+	OLED_Printf(10, 57-swim, 16, "I_out=%.2f", g_mk1031_wrapper_handler.readCurrent());
+	OLED_Printf(10, 74-swim, 16, "U_batt=%.2f", g_mk1031_wrapper_handler.readVout());
+	OLED_Printf(10, 91-swim, 16, "W=%.2f", g_mk1031_wrapper_handler.readCurrent() * g_mk1031_wrapper_handler.readVout());
 	OLED_Reflash();
 	OLED_GRAM_CLR();
 	swim=(swim+1)%128;
 	break;
       case OLED_MENU_BOOST:
-	OLED_Printf(10, 10, 16, "I_out=%.2f",temp );
-	OLED_Printf(10, 27, 16, "U2=%.2f", temp);
-	OLED_Printf(10, 43, 16, "W=%.2f", temp);
+	OLED_Printf(10, 10, 16, "I_out=%.2f",g_mk1031_wrapper_handler.readCurrent_in() );
+	OLED_Printf(10, 27, 16, "U2=%.2f", g_mk1031_wrapper_handler.readVin());
+	OLED_Printf(10, 43, 16, "W=%.2f", g_mk1031_wrapper_handler.readCurrent_in() * g_mk1031_wrapper_handler.readVin());
 	OLED_Reflash();
 	break;
       default:
@@ -1182,10 +1181,10 @@ namespace stm32_test
       //15 - 选中后增加值
       if(g_oled_menu_mode == OLED_MENU_BUCK && g_oled_menu_isSelect == OLED_MENU_SELECT)
 	{
-	  if(g_target_oled_set.target_current < 2)
+	  if(g_target_vofa_set.target_current < 2)
 	    {
-	      g_target_oled_set.target_current+=0.1;//增加电流
-	      g_dc_buck_sensor_handler.setCurrent(g_target_oled_set.target_current);//设置Buck充电电流
+	      g_target_vofa_set.target_current+=0.1;//增加电流
+	      g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);//设置Buck充电电流
 	    }
 	}
     });
@@ -1194,10 +1193,10 @@ namespace stm32_test
       //15 - 选中后减少值
       if(g_oled_menu_mode == OLED_MENU_BUCK && g_oled_menu_isSelect == OLED_MENU_SELECT)
 	{
-	  if(g_target_oled_set.target_current > 0.0001)
+	  if(g_target_vofa_set.target_current > 0.0001)
 	    {
-	      g_target_oled_set.target_current-=0.1; //减少电流
-	      g_dc_buck_sensor_handler.setCurrent(g_target_oled_set.target_current);//设置Buck充电电流
+	      g_target_vofa_set.target_current-=0.1; //减少电流
+	      g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);//设置Buck充电电流
 	    }
 	}
     });
@@ -1248,10 +1247,10 @@ namespace stm32_test
       //15 - 选中后增加值
       if(g_oled_menu_mode == OLED_MENU_BUCK && g_oled_menu_isSelect == OLED_MENU_SELECT)
 	{
-	  if(g_target_oled_set.target_current < 2)
+	  if(g_target_vofa_set.target_current < 2)
 	    {
-	      g_target_oled_set.target_current+=0.1;//增加电流
-	      g_dc_buck_sensor_handler.setCurrent(g_target_oled_set.target_current);//设置Buck充电电流
+	      g_target_vofa_set.target_current+=0.1;//增加电流
+	      g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);//设置Buck充电电流
 	    }
 	}
     });
@@ -1260,10 +1259,10 @@ namespace stm32_test
       //15 - 选中后减少值
       if(g_oled_menu_mode == OLED_MENU_BUCK && g_oled_menu_isSelect == OLED_MENU_SELECT)
 	{
-	  if(g_target_oled_set.target_current > 0.0001)
+	  if(g_target_vofa_set.target_current > 0.0001)
 	    {
-	      g_target_oled_set.target_current-=0.1; //减少电流
-	      g_dc_buck_sensor_handler.setCurrent(g_target_oled_set.target_current);//设置Buck充电电流
+	      g_target_vofa_set.target_current-=0.1; //减少电流
+	      g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);//设置Buck充电电流
 	    }
 	}
     });
@@ -1334,6 +1333,7 @@ namespace stm32_test
     /* 采样逻辑开始 */
     constexpr uint16_t clock_div=100;//mk1031的采样周期要大于这里clock_div对应的25
     static uint16_t count=0;
+    float u,i,w;
     if(count == 0)
       {
 	//发送modbus采样
@@ -1348,10 +1348,18 @@ namespace stm32_test
 	  case OLED_MENU_BUCK:
 	    //单电流环
 	    //TO DO 控制逻辑
+	    u=g_mk1031_wrapper_handler.readVout();
+	    i=g_mk1031_wrapper_handler.readCurrent();
+	    w=u*i;
+//	    printf("%.2f,%.2f,%.2f\n",u,i,w);
 	    g_dc_buck_sensor_handler.closedCurrentLoopControl();
 	    break;
 
 	  case OLED_MENU_BOOST:
+	    u=g_mk1031_wrapper_handler.readVin();
+	    i=g_mk1031_wrapper_handler.readCurrent();
+	    w=u*i;
+//	    printf("%.2f,%.2f,%.2f\n",u,i,w);
 	    g_dc_boost_sensor_handler.closedVoltageLoopControl();
 	    break;
 	}
@@ -1371,10 +1379,28 @@ namespace stm32_test
   void nuedc_2015_loop_test()
   {
     nuedc_2015_init_test();
+    float u=0,i=0,w=0;
     while(1)
       {
 	oled_menu_test();
-	g_dc_buck_sensor_handler.setCurrent(g_target_oled_set.target_current);
+	g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);
+//	switch(g_oled_menu_mode)
+//	{
+//	  case OLED_MENU_BUCK:
+//	    //单电流环
+//	    //TO DO 控制逻辑
+//	    u=g_mk1031_wrapper_handler.readVout();
+//	    i=g_mk1031_wrapper_handler.readCurrent();
+//	    w=u*i;
+//	    printf("%f,%f,%f\n",u,i,w);
+//	    break;
+//	  case OLED_MENU_BOOST:
+//	    u=g_mk1031_wrapper_handler.readVin();
+//	    i=g_mk1031_wrapper_handler.readCurrent();
+//	    w=u*i;
+//	    printf("%f,%f,%f\n",u,i,w);
+//	    break;
+//	}
 	g_keyboard_handler.processHandler();//TO DO ，移动定时器里去轮询
 	//控制逻辑放在定时器里
       }

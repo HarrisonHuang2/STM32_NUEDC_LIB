@@ -36,6 +36,12 @@ public:
     if(!mk1031_out){return 0;}
     return mk1031_out->m_sensorData.current;
   }
+
+  float readCurrent_in()
+  {
+    if(!mk1031_in){return 0;}
+    return mk1031_in->m_sensorData.current;
+  }
 private:
   Hardware_MK1031 *mk1031_in;
   Hardware_MK1031 *mk1031_out;

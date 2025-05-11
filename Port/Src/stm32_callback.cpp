@@ -80,10 +80,10 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 //	  stm32_test::g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
 //	  stm32_test::g_mk1031_sensor_handler_in.readRegisters(MK1031_VOLTAGE,3);
 //	  //buck电流环测试
-//	  stm32_test::g_dc_buck_sensor_handler.closedCurrentLoopControl();
+////	  stm32_test::g_dc_buck_sensor_handler.closedCurrentLoopControl();
 //
 //	  //boost电压环
-////	  stm32_test::g_dc_boost_sensor_handler.closedVoltageLoopControl();
+//	  stm32_test::g_dc_boost_sensor_handler.closedVoltageLoopControl();
 //
 ////	  stm32_test::g_dc_boost_sensor_handler.openVoltageLoopControl();
 //
@@ -94,7 +94,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 //      stm32_test:: g_modbus_message_handler_in.processHandler();//处理modbus接收数据 高压
 //
 //
-//      //      nuedc_2015::g_message_handler.processHandler();
+//            nuedc_2015::g_message_handler.processHandler();
 
 
       /* 校赛测试开始 */

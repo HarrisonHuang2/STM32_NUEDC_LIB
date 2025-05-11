@@ -132,7 +132,7 @@ int main(void)
 //    stm32_test::dc_dc_openLoop_test();
   //  stm32_test::boost_currentClosedLoop_test();
   //    stm32_test::boost_CurrentVoltageClosedLoop_test();
-  //    stm32_test::boost_VoltageClosedLoop_test();
+//      stm32_test::boost_VoltageClosedLoop_test();
   //    stm32_test::boost_currentClosedLoop_test();
   //    stm32_test::boost_openLoop_test();
   //  stm32_test::vofa_receive_test();
