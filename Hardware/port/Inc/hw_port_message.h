@@ -21,6 +21,56 @@ typedef void (*MessageCallback)(uint8_t *data, uint16_t len);
 class Hardware_STM32_Message
 {
 public:
+
+  Hardware_STM32_Message(){};
+  // 移动构造函数
+  Hardware_STM32_Message(Hardware_STM32_Message&& other) noexcept
+  {
+    // 使用 std::exchange 交换资源
+    _huart = std::exchange(other._huart, nullptr);
+    for (int i = 0; i < _buffer_num; i++) {
+	delete[] _buffer[i];
+	_buffer[i] =std::exchange(other._buffer[i], nullptr);
+    }
+    _buffer = std::exchange(other._buffer, nullptr);
+    _buffer_num = std::exchange(other._buffer_num, 0);
+    _buffer_len = std::exchange(other._buffer_len, 0);
+    _data_len = std::exchange(other._data_len, 0);
+    _new_data_available = std::exchange(other._new_data_available, false);
+    _receiveBufferIndex = std::exchange(other._receiveBufferIndex, 0);
+    _processBufferIndex = std::exchange(other._processBufferIndex, -1);
+    for(int i=0; i<number_of_event; i++)
+      {
+	_cb[i] = std::exchange(other._cb[i], nullptr);
+      }
+  }
+
+  Hardware_STM32_Message& operator=(Hardware_STM32_Message&& other) noexcept
+  {
+    // 自我赋值检查
+    if (this == &other)
+      {
+	return *this;
+      }
+
+
+    // 使用 std::swap 交换资源
+    std::swap(_huart, other._huart);
+    for (int i = 0; i < _buffer_num; i++) {
+	delete[] _buffer[i];
+	_buffer[i] = nullptr;
+	std::swap(_buffer[i], other._buffer[i]);
+    }
+    std::swap(_buffer_num, other._buffer_num);
+    std::swap(_buffer_len, other._buffer_len);
+    std::swap(_data_len, other._data_len);
+    std::swap(_new_data_available, other._new_data_available);
+    std::swap(_receiveBufferIndex, other._receiveBufferIndex);
+    std::swap(_processBufferIndex, other._processBufferIndex);
+    std::swap(_cb, other._cb);
+
+    return *this;
+  }
   void begin(uint16_t buffer_num, size_t buffer_len, UART_HandleTypeDef *huart)
   {
     if (!huart) {
