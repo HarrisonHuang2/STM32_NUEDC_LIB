@@ -9,6 +9,7 @@
 #include"hw_port_hrtim_pwm.h"
 #include "alg_dc_buck.h"
 #include "alg_dc_boost.h"
+#include "alg_dc_ac.h"
 #include "hw_port_mk1031_wrapper.h"
 #include"hw_port_adc.h"
 #include"hw_port_message.h"
@@ -30,6 +31,7 @@ namespace stm32_test
   extern Hardware_STM32_Message g_modbus_message_handler_in;
   extern Algorithim_DC_Buck<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper>g_dc_buck_sensor_handler;
   extern Algorithim_DC_Boost<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> g_dc_boost_sensor_handler;
+  extern Algorithim_DC_AC<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> g_dc_ac_sensor_handler;
   void pll_it_test();
   void filiter_hilbert_it_singlePoint_test();
   void filiter_hilbert_multyPoints_test();
@@ -66,6 +68,15 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
   stm32_test:: g_modbus_message_handler_in.callbackHandler(huart, Size);
   //  nuedc_2015::g_message_handler.callbackHandler(huart, Size);
 }
+void HAL_HRTIM_CounterResetCallback(HRTIM_HandleTypeDef *hhrtim,
+                                           uint32_t TimerIdx)
+{
+  if (hhrtim == &hhrtim1 && TimerIdx == HRTIM_TIMERINDEX_TIMER_C)
+    {
+      stm32_test::g_dc_ac_sensor_handler.openLoopControl();//逆变测试
+    }
+}
+
 
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {

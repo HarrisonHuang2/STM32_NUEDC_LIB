@@ -126,7 +126,7 @@ int main(void)
   //    stm32_test::timerA_pwm_test();
 //    stm32_test::dc_dc_currentClosedLoop_test();
   //    stm32_test::oled_test();
-  stm32_test::nuedc_2015_loop_test();
+//  stm32_test::nuedc_2015_loop_test();//校赛测试
   //  stm32_test::dc_dc_current_voltage_ClosedLoop_test();
   //  stm32_test::mk1031_sensor_test();
 //    stm32_test::dc_dc_openLoop_test();
@@ -136,6 +136,8 @@ int main(void)
   //    stm32_test::boost_currentClosedLoop_test();
   //    stm32_test::boost_openLoop_test();
   //  stm32_test::vofa_receive_test();
+  stm32_test::dc_ac_openLoop_test();
+//  stm32_test::timerC_center_align_pwm_test();
   /* USER CODE END 2 */
 
   /* Infinite loop */

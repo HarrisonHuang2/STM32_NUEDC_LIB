@@ -66,6 +66,7 @@ extern ADC_HandleTypeDef hadc3;
 extern DMA_HandleTypeDef hdma_dac1_ch1;
 extern DMA_HandleTypeDef hdma_dac1_ch2;
 extern DAC_HandleTypeDef hdac1;
+extern HRTIM_HandleTypeDef hhrtim1;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
@@ -459,6 +460,20 @@ void DMA2_Channel1_IRQHandler(void)
   /* USER CODE BEGIN DMA2_Channel1_IRQn 1 */
 
   /* USER CODE END DMA2_Channel1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles HRTIM timer C global interrupt.
+  */
+void HRTIM1_TIMC_IRQHandler(void)
+{
+  /* USER CODE BEGIN HRTIM1_TIMC_IRQn 0 */
+
+  /* USER CODE END HRTIM1_TIMC_IRQn 0 */
+  HAL_HRTIM_IRQHandler(&hhrtim1,HRTIM_TIMERINDEX_TIMER_C);
+  /* USER CODE BEGIN HRTIM1_TIMC_IRQn 1 */
+
+  /* USER CODE END HRTIM1_TIMC_IRQn 1 */
 }
 
 /**

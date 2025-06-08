@@ -93,6 +93,11 @@ public:
     HAL_HRTIM_WaveformCounterStart(hhrtim_, channel_);  // Start the counter of the Timer
   }
 
+  void setOutput_IT()
+  {
+    HAL_HRTIM_WaveformCounterStart_IT(hhrtim_, channel_);  // Start the counter of the Timer
+  }
+
   void setFrequency(float freq) {
     if(freq == 0){return ;}
     period_ = static_cast<uint32_t>(sysclk_frequency_ / freq);

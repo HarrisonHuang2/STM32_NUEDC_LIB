@@ -18,6 +18,7 @@
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_Conf.h"
 #include "stm32_keyboard.h"
+#include "stm32_dc_ac.h"
 #include "oled.h"
 
 namespace stm32_test
@@ -43,6 +44,7 @@ namespace stm32_test
   Hardware_MK1031 g_mk1031_sensor_handler_in;   //高压侧
   Hardware_MK1031_Wrapper g_mk1031_wrapper_handler;
   Hardware_STM32_Keyboard g_keyboard_handler;
+  Algorithim_DC_AC<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> g_dc_ac_sensor_handler;
 
   enum power_control_mode_t
   {
@@ -271,13 +273,24 @@ namespace stm32_test
   }
 
   /*函数名: timerC_pwm_test
-   * 测试高级定时器C互补pwm是否正常输出
+   * 测试高级定时器C互补pwm的左对齐是否正常输出
    * */
   void timerC_pwm_test ()
   {
     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerCOutput();
-    g_hrtimer_pwm_handler.setDutyCycle(0.3);
+    g_hrtimer_pwm_handler.setDutyCycle(0.3);//频率为50khz
     g_hrtimer_pwm_handler.setOutput();
+  }
+
+
+  /*函数名: timerC_pwm_test
+   * 测试高级定时器C互补pwm的中心对齐是否正常输出
+   * */
+  void timerC_center_align_pwm_test ()
+  {
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerCOutput();
+    g_hrtimer_pwm_handler.setDutyCycle(0.3);//频率为25khz
+    g_hrtimer_pwm_handler.setOutput_IT();
   }
 
 
@@ -1056,6 +1069,23 @@ namespace stm32_test
       }
   }
 
+  void dc_ac_openLoop_test()
+  {
+    g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerCOutput();
+
+    g_dc_ac_sensor_handler=stm32_dc_ac::getDCACMK1031(&g_hrtimer_pwm_handler);
+
+    g_dc_ac_sensor_handler.enable();
+    g_hrtimer_pwm_handler.setOutput_IT();
+
+    while(1)
+      {
+
+      }
+    //修改占空比的部分在中断回调中实现
+  }
+
+
   /*函数名: vofa_send_test
    * 测试串口发送是否正常工作
    * */
@@ -1384,23 +1414,6 @@ namespace stm32_test
       {
 	oled_menu_test();
 	g_dc_buck_sensor_handler.setCurrent(g_target_vofa_set.target_current);
-//	switch(g_oled_menu_mode)
-//	{
-//	  case OLED_MENU_BUCK:
-//	    //单电流环
-//	    //TO DO 控制逻辑
-//	    u=g_mk1031_wrapper_handler.readVout();
-//	    i=g_mk1031_wrapper_handler.readCurrent();
-//	    w=u*i;
-//	    printf("%f,%f,%f\n",u,i,w);
-//	    break;
-//	  case OLED_MENU_BOOST:
-//	    u=g_mk1031_wrapper_handler.readVin();
-//	    i=g_mk1031_wrapper_handler.readCurrent();
-//	    w=u*i;
-//	    printf("%f,%f,%f\n",u,i,w);
-//	    break;
-//	}
 	g_keyboard_handler.processHandler();//TO DO ，移动定时器里去轮询
 	//控制逻辑放在定时器里
       }

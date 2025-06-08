@@ -68,7 +68,8 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
  ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h \
  ../Segger/SystemView/SEGGER_RTT_Conf.h \
  ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h ../Port/Inc/stm32_keyboard.h \
- ../Hardware/port/Inc/hw_port_keyboard.h ../Hardware/port/Inc/oled.h \
+ ../Hardware/port/Inc/hw_port_keyboard.h ../Port/Inc/stm32_dc_ac.h \
+ ../App/algorithim/Inc/alg_dc_ac.h ../Hardware/port/Inc/oled.h \
  ../Port/Inc/stm32_message.h ../Port/Inc/stm32_dc_dc.h \
  ../Core/NUEDC/2015.h
 ../Core/Inc/main.h:
@@ -164,6 +165,8 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
 ../Segger/SystemView/SEGGER_SYSVIEW_Conf.h:
 ../Port/Inc/stm32_keyboard.h:
 ../Hardware/port/Inc/hw_port_keyboard.h:
+../Port/Inc/stm32_dc_ac.h:
+../App/algorithim/Inc/alg_dc_ac.h:
 ../Hardware/port/Inc/oled.h:
 ../Port/Inc/stm32_message.h:
 ../Port/Inc/stm32_dc_dc.h:
