@@ -9,7 +9,7 @@
 #include "arm_math.h"
 #endif
 
-class Flt_Fir_Sogi {
+class Flt_Sogi {
 private:
     // v' 通道系数
     float b0_v, b1_v, b2_v;
