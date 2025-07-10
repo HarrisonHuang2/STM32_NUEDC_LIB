@@ -66,11 +66,17 @@ public:
   void begin(PWM *pwm, float carrierFreq, float signalFreq,
 	     float ratio = 0.9f, DATA *dataWrapper = nullptr)
   {
+      if (pwm == nullptr || carrierFreq <= 0.0f || signalFreq <= 0.0f
+	  || ratio < 0.0f || ratio > 1.0f)
+	{
+	  return; // 参数不合法
+	}
     pwm_ = pwm;
     dataWrapper_ = dataWrapper;
     carrierFreq_ = carrierFreq;
     signalFreq_ = signalFreq;
     ratio_ = ratio;
+    pwm_->setFrequency(carrierFreq_); // 设置PWM频率
 
     // 生成SPWM波表
     generateSPWMTable();
@@ -100,6 +106,18 @@ public:
     // 重新生成波表
     generateSPWMTable();
     outputIndex_ = 0;
+  }
+
+  void setFrequency (float carrierFreq, float signalFreq)
+  {
+    if (carrierFreq <= 0.0f || signalFreq <= 0.0f)
+      {
+	return; // 参数不合法
+      }
+    carrierFreq_ = carrierFreq;
+    signalFreq_ = signalFreq;
+    pwm_->setFrequency (carrierFreq_); // 设置PWM频率
+    generateSPWMTable();
   }
 
   void openLoopControl ()
