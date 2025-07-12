@@ -17,119 +17,133 @@
 #include "flt_sogi.h"
 #include "alg_pid.h"
 
+
+
+
 class Algorithm_PLL {
 private:
-    // SOGI 滤波器 - 延迟初始化
-    Flt_Sogi sogi_filter;  // 默认构造，后续通过 begin 初始化
+  // SOGI �˲��� - �ӳٳ�ʼ��
+  Flt_Sogi sogi_filter;  // Ĭ�Ϲ��죬����ͨ�� begin ��ʼ��
 
-    // PID 控制器 - 延迟初始化
-    Algorithm_PID pid_controller;
+  // PID ������ - �ӳٳ�ʼ��
+  Algorithim_PID *pid_controller;
 
-    // 当前相位角
-    float theta;
+  // ��ǰ��λ��
+  float theta;
 
-    // 当前频率偏差
-    float frequency_deviation;
+  // ��ǰƵ��ƫ��
+  float frequence_adjust;
 
-    // 初始相位
-    float initial_phase;
+  // ��ʼ��λ
+  float initial_phase;
 
-    // 采样周期
-    float Ts;
+  //pid ǰ��
+  float pid_feedforward = 0; // PID ǰ��ֵ
 
-    bool is_initialized = false;  // 初始化标志
+  // ��������
+  float Ts;
+
+  bool is_initialized = false;  // ��ʼ����־
 
 public:
-    // 默认构造函数
-    Algorithm_PLL()
-        : theta(0.0f),
-          frequency_deviation(0.0f),
-          initial_phase(0.0f),
-          Ts(0.0f),
-          is_initialized(false)
-    {}
+  // Ĭ�Ϲ��캯��
+  Algorithm_PLL() = default;
 
-    /**
-     * 延迟初始化方法
-     * @param f0 目标频率 (Hz)
-     * @param fs 采样频率 (Hz)
-     * @param kp 比例系数
-     * @param ki 积分系数
-     * @param kd 微分系数
-     * @param integral_limit 积分限幅
-     * @param output_limit 输出限幅
-     * @param delta_output_limit 输出变化速率限制
-     * @param initial_phase 初始相位
-     */
-    void begin(float f0, float fs, float kp, float ki, float kd,
-               float integral_limit = std::numeric_limits<float>::infinity(),
-               float output_limit = std::numeric_limits<float>::infinity(),
-               float delta_output_limit = std::numeric_limits<float>::infinity(),
-               float initial_phase_ = 0.0f)
-    {
-        // 防止重复初始化
-        if (is_initialized) return;
-        is_initialized = true;
+  /**
+   * �ӳٳ�ʼ������
+   * @param f0 Ŀ��Ƶ�� (Hz)
+   * @param fs ����Ƶ�� (Hz)
+   * @param kp ����ϵ��
+   * @param ki ����ϵ��
+   * @param kd ΢��ϵ��
+   * @param integral_limit �����޷�
+   * @param output_limit ����޷�
+   * @param delta_output_limit ����仯��������
+   * @param initial_phase ��ʼ��λ
+   */
+  void begin(float f0, float fs,float initial_phase_,Algorithim_PID *pid_controller,float sogi_k=1.0f,float pid_feedforward=50.0f)
+  {
+    // ��ֹ�ظ���ʼ��
+    if (is_initialized || fs <= 0) return;
+    is_initialized = true;
 
-        // 构造 SOGI 滤波器
-        sogi_filter = Flt_Fir_Sogi(f0, fs, 1.0f);
+    // ���� SOGI �˲���
+    sogi_filter = Flt_Sogi(f0, fs, sogi_k);
 
-        // 初始化 PID 控制器
-        pid_controller.begin(kp, ki, kd, integral_limit, output_limit, delta_output_limit);
+    // // ��ʼ�� PID ������
+    // pid_controller.begin(kp, ki, kd, integral_limit, output_limit, delta_output_limit);
+    this->pid_controller = pid_controller;
 
-        // 设置初始相位和采样周期
-        this->initial_phase = initial_phase_;
-        this->theta = initial_phase_;
-        this->Ts = 1.0f / fs;
+    // ���ó�ʼ��λ�Ͳ�������
+    this->initial_phase = initial_phase_;
+    this->theta = initial_phase_;
+    this->Ts = 1.0f / fs;
+    this->pid_feedforward = pid_feedforward;
+  }
+
+
+
+  /**
+   * �������໷״̬
+   * @param Ugrid �����ѹ�ź�
+   * @param ref �ο�ֵ
+   * @return ��ǰ��λ�� theta
+   */
+  float update(float Ugrid, float ref)
+  {
+    if (!is_initialized) {
+	// ���δ��ʼ�������ص�ǰ��λ���׳�����
+	return theta;
     }
 
-    /**
-     * 更新锁相环状态
-     * @param Ugrid 输入电压信号
-     * @param ref 参考值
-     * @return 当前相位角 theta
-     */
-    float update(float Ugrid, float ref)
-    {
-        if (!is_initialized) {
-            // 如果未初始化，返回当前相位或抛出错误
-            return theta;
-        }
+    // 1. SOGI �˲������������ź�
+    float outputs[2];
+    sogi_filter.filter(Ugrid, outputs);
+    float U_alpha = outputs[0];
+    float U_beta = outputs[1];
 
-        // 1. SOGI 滤波器处理输入信号
-        float outputs[2];
-        sogi_filter.filter(Ugrid, outputs);
-        float U_alpha = outputs[0];
-        float U_beta = outputs[1];
+    // 2. ���˱任
+    float Id, Iq;
+    float sin_theta;
+    float cos_theta;
 
-        // 2. 帕克变换
-        float Id, Iq;
-        float sin_theta = std::sin(theta);
-        float cos_theta = std::cos(theta);
-        arm_park_f32(U_alpha, U_beta, &Id, &Iq, sin_theta, cos_theta);
+#ifdef USE_ARM_MATH
+    arm_sin_cos_f32(theta, &sin_theta, &cos_theta);
+    arm_park_f32(U_alpha, U_beta, &Id, &Iq, sin_theta, cos_theta);
+#else
+    // ���û��ʹ�� ARM ��ѧ�⣬�ֶ��������Һ�����
+    sin_theta = std::sin(theta);
+    cos_theta = std::cos(theta);
+    Id = U_alpha * cos_theta + U_beta * sin_theta;
+    Iq = -U_alpha * sin_theta + U_beta * cos_theta;
+#endif
 
-        // 3. PID 控制器计算频率偏差
-        frequency_deviation = pid_controller.cal_increase(ref, Iq);
+    // 3. PID ����������Ƶ��ƫ��
+    frequence_adjust = pid_feedforward + pid_controller->cal_increase(0, Iq);
 
-        // 4. 更新相位角
-        theta += frequency_deviation * Ts;
-        theta = fmod(theta + M_PI, 2.0f * M_PI) - M_PI; // [-pi, pi]
+    // 4. ������λ��
+    theta += frequence_adjust * Ts;//����Ҫ��Ҫ��Tsȥ��
+#ifdef USE_ARM_MATH
+    theta = fmod(theta + PI, 2.0f * PI) - PI; // [-pi, pi]
+#else
+    theta = fmod(theta + M_PI, 2.0f * M_PI) - M_PI; // [-pi, pi]
+#endif
 
-        return theta;
-    }
+    return theta;
+  }
 
-    /**
-     * 重置锁相环状态
-     */
-    void reset()
-    {
-        if (!is_initialized) return;
+  /**
+   * �������໷״̬
+   */
+  void reset()
+  {
+    if (!is_initialized) return;
 
-        sogi_filter.reset();
-        pid_controller.reset();
-        theta = initial_phase;
-        frequency_deviation = 0.0f;
-    }
+    sogi_filter.reset();
+    pid_controller->reset();
+    theta = initial_phase;
+    frequence_adjust = 0.0f;
+  }
 };
 
 #endif /* ALGORITHIM_INC_ALG_PLL_H_ */

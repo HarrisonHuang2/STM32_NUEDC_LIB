@@ -11,101 +11,109 @@
 #include "portmacro.h"
 class Algorithim_PID {
 public:
-  // PID参数
-  float kp=0; // 比例系数
-  float ki=0; // 积分系数
-  float kd=0; // 微分系数
+    // PID����
+    float kp = 0; // ����ϵ��
+    float ki = 0; // ����ϵ��
+    float kd = 0; // ΢��ϵ��
 
-  // 状态变量
-  float lastError=0; // 上一次的误差
-  float last_lastError=0; // 上上次误差（用于增量式PID）
-  float integral=0;  // 积分项
-  float lastOutput=0; // 上一次的输出（用于增量式PID）
-  float integral_limit=0;  // 积分限幅
-  float output_limit=0;    // 输出限幅
-  float delta_output_limit=0; // 输出变化速率限制
+    // ״̬����
+    float lastError = 0; // ��һ�ε����
+    float last_lastError = 0; // ���ϴ�����������ʽPID��
+    float integral = 0;  // ������
+    float lastOutput = 0; // ��һ�ε��������������ʽPID��
+    float integral_limit = 0;  // �����޷�
+    float output_limit = 0;    // ����޷�
+    float delta_output_limit = 0; // ����仯��������
 
 
-  // 初始化方法
-  void begin(float kp, float ki, float kd,float integral_limit=-1, float output_limit=-1, float delta_output_limit=-1){
-    this->kp = kp;
-    this->ki = ki;
-    this->kd = kd;
-    this->lastError = 0;
-    this->integral = 0;
-    this->last_lastError = 0;
-    this->lastOutput = 0;
-    this->integral_limit = integral_limit;
-    this->output_limit = output_limit;
-    this->delta_output_limit = delta_output_limit;
-  }
-
-  // 增量式PID计算输出
-  float cal_absolute(float target_value, float measured_value) {
-    float error = target_value - measured_value; // 计算误差
-    float proportional = kp * error;
-    integral += error;
-    if (integral_limit > 0) {
-	integral = LIMIT(integral, -integral_limit, integral_limit);
-    }
-    float integralTerm = ki * integral;
-    float derivative = kd * (error - lastError);
-    float output = proportional + integralTerm + derivative;
-
-    if (output_limit > 0) {
-	output = LIMIT(output, -output_limit, output_limit);
+    // ��ʼ������
+    void begin(float kp, float ki, float kd, float integral_limit = -1, float output_limit = -1, float delta_output_limit = -1) {
+        this->kp = kp;
+        this->ki = ki;
+        this->kd = kd;
+        this->lastError = 0;
+        this->integral = 0;
+        this->last_lastError = 0;
+        this->lastOutput = 0;
+        this->integral_limit = integral_limit;
+        this->output_limit = output_limit;
+        this->delta_output_limit = delta_output_limit;
     }
 
-    if(delta_output_limit > 0){//设为-1可以禁用
-	// 对PID的变化速率进行限制
-	float output_rate = output - lastOutput;
-	if (output_rate > delta_output_limit)
-	  output = lastOutput + delta_output_limit;
-	else if (output_rate < -delta_output_limit)
-	  output = lastOutput - delta_output_limit;
+    // ����ʽPID�������
+    float cal_absolute(float target_value, float measured_value) {
+        float error = target_value - measured_value; // �������
+        float proportional = kp * error;
+        integral += error;
+        if (integral_limit > 0) {
+            integral = LIMIT(integral, -integral_limit, integral_limit);
+        }
+        float integralTerm = ki * integral;
+        float derivative = kd * (error - lastError);
+        float output = proportional + integralTerm + derivative;
+
+        if (output_limit > 0) {
+            output = LIMIT(output, -output_limit, output_limit);
+        }
+
+        if (delta_output_limit > 0) {//��Ϊ-1���Խ���
+            // ��PID�ı仯���ʽ�������
+            float output_rate = output - lastOutput;
+            if (output_rate > delta_output_limit)
+                output = lastOutput + delta_output_limit;
+            else if (output_rate < -delta_output_limit)
+                output = lastOutput - delta_output_limit;
+        }
+
+        // ����״̬����
+        lastError = error;
+        lastOutput = output;
+
+        return output;
     }
 
-    // 更新状态变量
-    lastError = error;
-    lastOutput = output;
+    // ����ʽPID�������
+    float cal_increase(float target_value, float measured_value) {
+        float error = target_value - measured_value; // �������
+        float proportional = kp * (error - lastError);
+        float integralTerm = ki * error;
+        // �޷�
+        if (integral_limit > 0) {
+            integralTerm = LIMIT(integralTerm, -integral_limit, integral_limit);
+        }
 
-    return output;
-  }
 
-  // 绝对式PID计算输出
-  float cal_increase(float target_value, float measured_value) {
-    float error = target_value - measured_value; // 计算误差
-    float proportional = kp * (error-lastError);
-    float integralTerm = ki * error;
-    // 限幅
-    if (integral_limit > 0) {
-	integralTerm = LIMIT(integralTerm, -integral_limit, integral_limit);
+        float derivative = kd * (error - 2 * lastError + last_lastError);
+        float output = lastOutput + proportional + integralTerm + derivative;
+
+        if (output_limit > 0) {
+            output = LIMIT(output, -output_limit, output_limit);
+        }
+
+        if (delta_output_limit > 0) {//��Ϊ-1���Խ���
+            // ��PID�ı仯���ʽ�������
+            float output_rate = output - lastOutput;
+            if (output_rate > delta_output_limit)
+                output = lastOutput + delta_output_limit;
+            else if (output_rate < -delta_output_limit)
+                output = lastOutput - delta_output_limit;
+        }
+
+        // ����״̬����
+        last_lastError = lastError;
+        lastError = error;
+        lastOutput = output;
+
+        return output;
     }
 
-
-    float derivative = kd * (error - 2*lastError + last_lastError);
-    float output = lastOutput + proportional + integralTerm + derivative;
-
-    if (output_limit > 0) {
-	output = LIMIT(output, -output_limit, output_limit);
+    void reset()
+    {
+        lastError = 0;
+        last_lastError = 0;
+        integral = 0;
+        lastOutput = 0;
     }
-
-    if(delta_output_limit > 0){//设为-1可以禁用
-	// 对PID的变化速率进行限制
-	float output_rate = output - lastOutput;
-	if (output_rate > delta_output_limit)
-	  output = lastOutput + delta_output_limit;
-	else if (output_rate < -delta_output_limit)
-	  output = lastOutput - delta_output_limit;
-    }
-
-    // 更新状态变量
-    last_lastError = lastError;
-    lastError = error;
-    lastOutput = output;
-
-    return output;
-  }
 };
 
 

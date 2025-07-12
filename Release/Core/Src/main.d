@@ -71,7 +71,8 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
  ../Hardware/port/Inc/hw_port_keyboard.h ../Port/Inc/stm32_dc_ac.h \
  ../App/algorithim/Inc/alg_dc_ac.h ../Hardware/port/Inc/oled.h \
  ../Port/Inc/stm32_message.h ../Port/Inc/stm32_dc_dc.h \
- ../Core/NUEDC/2015.h
+ ../Core/NUEDC/2015.h ../App/algorithim/Inc/alg_pll.h \
+ ../App/filiter/Inc/flt_sogi.h ../App/algorithim/Inc/alg_pid.h
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
 ../Core/Inc/stm32g4xx_hal_conf.h:
@@ -171,3 +172,6 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
 ../Port/Inc/stm32_message.h:
 ../Port/Inc/stm32_dc_dc.h:
 ../Core/NUEDC/2015.h:
+../App/algorithim/Inc/alg_pll.h:
+../App/filiter/Inc/flt_sogi.h:
+../App/algorithim/Inc/alg_pid.h:

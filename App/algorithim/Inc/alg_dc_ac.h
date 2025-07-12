@@ -44,33 +44,33 @@ public:
   Algorithim_DC_AC(Algorithim_DC_AC&& other)noexcept = default;
 
   Algorithim_DC_AC& operator= (Algorithim_DC_AC &&other) noexcept
-    {
-      if (this == &other)
-	{
-	  return *this;
-	}
-      // 交换资源
-      std::swap (pwm_, other.pwm_);
-      std::swap (dataWrapper_, other.dataWrapper_);
-      std::swap (isEnable_, other.isEnable_);
-      std::swap (ratio_, other.ratio_);
-      std::swap (carrierFreq_, other.carrierFreq_);
-      std::swap (signalFreq_, other.signalFreq_);
-      std::swap (spwmTable_, other.spwmTable_);
-      std::swap (tableSize_, other.tableSize_);
-      std::swap (outputIndex_, other.outputIndex_);
-      return *this;
-    }
+  {
+    if (this == &other)
+      {
+	return *this;
+      }
+    // 交换资源
+    std::swap (pwm_, other.pwm_);
+    std::swap (dataWrapper_, other.dataWrapper_);
+    std::swap (isEnable_, other.isEnable_);
+    std::swap (ratio_, other.ratio_);
+    std::swap (carrierFreq_, other.carrierFreq_);
+    std::swap (signalFreq_, other.signalFreq_);
+    std::swap (spwmTable_, other.spwmTable_);
+    std::swap (tableSize_, other.tableSize_);
+    std::swap (outputIndex_, other.outputIndex_);
+    return *this;
+  }
 
   // 初始化接口
   void begin(PWM *pwm, float carrierFreq, float signalFreq,
 	     float ratio = 0.9f, DATA *dataWrapper = nullptr)
   {
-      if (pwm == nullptr || carrierFreq <= 0.0f || signalFreq <= 0.0f
-	  || ratio < 0.0f || ratio > 1.0f)
-	{
-	  return; // 参数不合法
-	}
+    if (pwm == nullptr || carrierFreq <= 0.0f || signalFreq <= 0.0f
+	|| ratio < 0.0f || ratio > 1.0f)
+      {
+	return; // 参数不合法
+      }
     pwm_ = pwm;
     dataWrapper_ = dataWrapper;
     carrierFreq_ = carrierFreq;
@@ -128,6 +128,13 @@ public:
       }
     pwm_->setDutyCycle (LIMIT(spwmTable_[outputIndex_],STM32_MIN_DUTY,STM32_MAX_DUTY));
     outputIndex_ = (outputIndex_ + 1) % tableSize_;
+  }
+
+  void closedLoopAngleControl(float angle)
+  {
+    if (!isEnable_ ){return;}
+    angle = 0.5f * (1.0f + ratio_ * std::sin(angle));
+    pwm_ -> setDutyCycle(LIMIT(angle,STM32_MIN_DUTY,STM32_MAX_DUTY));
   }
 
 private:
