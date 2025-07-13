@@ -36,6 +36,7 @@ namespace stm32_test
   void filiter_hilbert_it_singlePoint_test();
   void filiter_hilbert_multyPoints_test();
   void nuedc_2015_tim1Callback_test();
+  void filiter_sogi_it_test ();
 }
 
 namespace nuedc_2015
@@ -69,7 +70,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
   //  nuedc_2015::g_message_handler.callbackHandler(huart, Size);
 }
 void HAL_HRTIM_CounterResetCallback(HRTIM_HandleTypeDef *hhrtim,
-                                           uint32_t TimerIdx)
+				    uint32_t TimerIdx)
 {
   if (hhrtim == &hhrtim1 && TimerIdx == HRTIM_TIMERINDEX_TIMER_C)
     {
@@ -82,32 +83,6 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
   if(htim == &htim1)
     {
-//      //定时器1的频率是2000hz，周期为0.5ms
-//      constexpr uint16_t clock_div=100;//mk1031的采样周期要大于这里clock_div对应的25
-//      static uint16_t count=0;
-//      if(count == 0)
-//	{
-//	  //发送modbus采样
-//	  stm32_test::g_mk1031_sensor_handler.readRegisters(MK1031_VOLTAGE,3);
-//	  stm32_test::g_mk1031_sensor_handler_in.readRegisters(MK1031_VOLTAGE,3);
-//	  //buck电流环测试
-////	  stm32_test::g_dc_buck_sensor_handler.closedCurrentLoopControl();
-//
-//	  //boost电压环
-//	  stm32_test::g_dc_boost_sensor_handler.closedVoltageLoopControl();
-//
-////	  stm32_test::g_dc_boost_sensor_handler.openVoltageLoopControl();
-//
-//	}
-//      count=(count+1)%clock_div;
-//      stm32_test::g_message_handler.processHandler();//蓝牙调试
-//      stm32_test:: g_modbus_message_handler.processHandler();//处理modbus接收数据 低压
-//      stm32_test:: g_modbus_message_handler_in.processHandler();//处理modbus接收数据 高压
-//
-//
-//            nuedc_2015::g_message_handler.processHandler();
-
-
       /* 校赛测试开始 */
 
       stm32_test::nuedc_2015_tim1Callback_test();
@@ -117,7 +92,8 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
     }
   else if(htim == &htim7)
     {
-      stm32_test::pll_it_test();
+      stm32_test::filiter_sogi_it_test();
+      //      stm32_test::pll_it_test();
       //      stm32_test::filiter_hilbert_it_singlePoint_test();
     }
   //  stm32_test::g_us_timer_handler.callbackHandler(htim);

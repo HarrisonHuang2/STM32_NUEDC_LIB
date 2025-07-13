@@ -33,6 +33,7 @@ enum hw_dac_mode_t
   STM32_DAC_VAR_MODE
 };
 
+//这个模板参数和宏一样的，规定了生成的最大点数，默认为256
 template <size_t MaxPoints = 256>
 class Hardware_STM32_DAC {
 public:

@@ -20,6 +20,7 @@
 #include "stm32_keyboard.h"
 #include "stm32_dc_ac.h"
 #include "oled.h"
+#include "flt_sogi.h"
 
 namespace stm32_test
 {
@@ -38,7 +39,10 @@ namespace stm32_test
   Algorithim_PID g_pll_pid;
   Hardware_STM32_DAC<200> g_dac_ch1_handler;
   Hardware_STM32_DAC<200> g_dac_ch2_handler;
+  Hardware_STM32_DAC<400> g_dac_ch1_20khz_handler;
+  Hardware_STM32_DAC<400> g_dac_ch2_20khz_handler;
   Hardware_STM32_US_Timer g_us_timer_handler;
+  Flt_Sogi g_flt_sogi_handler;
   Flt_Fir_Hilbert g_filiter_hilbert_handler;
   Hardware_MK1031 g_mk1031_sensor_handler;      //低压侧
   Hardware_MK1031 g_mk1031_sensor_handler_in;   //高压侧
@@ -97,7 +101,7 @@ namespace stm32_test
   oled_menu_isSelcet_bool_t g_oled_menu_isSelect = OLED_MENU_NO_SELECT;
   target_oled_set_value_t g_target_vofa_set={0};
 
-//  target_vofa_set_value_t g_target_vofa_set={0};
+  //  target_vofa_set_value_t g_target_vofa_set={0};
   vofa_isResetPID_bool_t g_bool_isResetPID = NO_RESET_PID;
   vofa_isOutput_bool_t g_bool_isOutput = OUTPUT_STOP;
   power_control_mode_t g_power_control_mode = VOLTAGE_CLOSE_LOOP;
@@ -243,10 +247,10 @@ namespace stm32_test
 	//	printf("%d\n",g_dc_buck_adc_handler.isEnable());
 
 
-//	printf("current:%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readCurrent());
-		printf("Vol_ouput:%f\n",g_dc_boost_sensor_handler.cv_pid_->lastOutput);
-		printf("current:%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
-		printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
+	//	printf("current:%f\n",stm32_test::g_dc_buck_sensor_handler.dataWrapper_->readCurrent());
+	printf("Vol_ouput:%f\n",g_dc_boost_sensor_handler.cv_pid_->lastOutput);
+	printf("current:%f\n",stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readCurrent());
+	printf("Vin:%f\n", stm32_test::g_dc_boost_sensor_handler.dataWrapper_->readVin());
       }
   }
 
@@ -385,11 +389,34 @@ namespace stm32_test
 
   void dac1_dma_test()
   {
+    //请注意，该实验使用TIM6和TIM7来触发DAC的正弦表更新，需要检查对应定时器的频率
     g_dac_ch1_handler=stm32_dac::getDAC1_CH1();
     g_dac_ch1_handler.enable();
     g_dac_ch2_handler=stm32_dac::getDAC1_CH2();
     g_dac_ch2_handler.enable();
     while(1){}
+  }
+
+  void dac1_dma_test_20khz()
+  {
+    //请注意，该实验使用TIM6和TIM7来触发DAC的正弦表更新，需要检查对应定时器的频率，并检查对应的中断回调函数
+    g_dac_ch1_20khz_handler=stm32_dac::getDAC1_CH1_20khz();
+    g_dac_ch1_20khz_handler.enable();
+    g_dac_ch2_20khz_handler=stm32_dac::getDAC1_CH2_20khz();
+    g_dac_ch2_20khz_handler.enable();
+    float f0=50; //正弦波频率
+    float fs=20000; //采样频率
+    float sogi_k=1.0f;
+    g_flt_sogi_handler.begin(f0,fs,sogi_k);
+    while(1){}
+  }
+
+  void filiter_sogi_it_test ()
+  {
+    float sogi_output[2];
+    g_flt_sogi_handler.filter(g_dac_ch1_20khz_handler.getOutputValue(),sogi_output);
+//    g_dac_ch1_20khz_handler.update_diy(static_cast<uint16_t>(sogi_output[0]));
+    g_dac_ch2_20khz_handler.update_diy(static_cast<uint16_t>(sogi_output[0]));
   }
 
   void filiter_hilbert_it_singlePoint_test()
@@ -1346,7 +1373,7 @@ namespace stm32_test
     g_dc_boost_sensor_handler.setCV_PID(&g_voltage_pid);
 
     //设置目标值
-//    g_dc_buck_sensor_handler.setCurrent(1);//设置Buck充电电流
+    //    g_dc_buck_sensor_handler.setCurrent(1);//设置Buck充电电流
     g_dc_boost_sensor_handler.setVin(30);//设置Boost放电输出电压
 
     //设置输出
@@ -1381,7 +1408,7 @@ namespace stm32_test
 	    u=g_mk1031_wrapper_handler.readVout();
 	    i=g_mk1031_wrapper_handler.readCurrent();
 	    w=u*i;
-//	    printf("%.2f,%.2f,%.2f\n",u,i,w);
+	    //	    printf("%.2f,%.2f,%.2f\n",u,i,w);
 	    g_dc_buck_sensor_handler.closedCurrentLoopControl();
 	    break;
 
@@ -1389,7 +1416,7 @@ namespace stm32_test
 	    u=g_mk1031_wrapper_handler.readVin();
 	    i=g_mk1031_wrapper_handler.readCurrent();
 	    w=u*i;
-//	    printf("%.2f,%.2f,%.2f\n",u,i,w);
+	    //	    printf("%.2f,%.2f,%.2f\n",u,i,w);
 	    g_dc_boost_sensor_handler.closedVoltageLoopControl();
 	    break;
 	}

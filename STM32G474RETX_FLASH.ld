@@ -38,8 +38,14 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
 
-_Min_Heap_Size = 0x200; /* required amount of heap */
-_Min_Stack_Size = 0x400; /* required amount of stack */
+/*
+ * Heap and stack management symbols
+ * These are required by sysmem.c (_sbrk)
+ */
+_end = .;  /* This defines the end of data/bss segment */
+
+_Min_Heap_Size = 0x8000; /* 堆大小 32 KB */
+_Min_Stack_Size = 0x1000; /* 栈大小 4 KB */
 
 /* Memories definition */
 MEMORY
@@ -165,7 +171,7 @@ SECTIONS
   } >RAM
 
   /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */
-  ._user_heap_stack :
+  /*._user_heap_stack :
   {
     . = ALIGN(8);
     PROVIDE ( end = . );
@@ -173,7 +179,7 @@ SECTIONS
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
-  } >RAM
+  } >RAM*/
 
   /* Remove information from the compiler libraries */
   /DISCARD/ :

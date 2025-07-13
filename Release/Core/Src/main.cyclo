@@ -1,11 +1,11 @@
 ../Hardware/port/Inc/hw_port_mk1031.h:58:8:virtual void Hardware_MK1031::updateSensorData(const uint8_t*, size_t)	5
-../Port/Inc/stm32_test.h:1101:8:void stm32_test::vofa_receive_callback_test(uint8_t*, uint16_t)	3
-../Port/Inc/stm32_test.h:1139:34:static constexpr void stm32_test::keyboard_test()::<lambda()>::_FUN()	1
-../Port/Inc/stm32_test.h:112:8:void stm32_test::vofaReceiveCallback(uint8_t*, uint16_t)	27
+../Port/Inc/stm32_test.h:1128:8:void stm32_test::vofa_receive_callback_test(uint8_t*, uint16_t)	3
+../Port/Inc/stm32_test.h:1166:34:static constexpr void stm32_test::keyboard_test()::<lambda()>::_FUN()	1
+../Port/Inc/stm32_test.h:116:8:void stm32_test::vofaReceiveCallback(uint8_t*, uint16_t)	27
 ../Core/NUEDC/2015.h:69:8:void nuedc_2015::vofaReceiveCallback(uint8_t*, uint16_t)	26
-../Port/Inc/stm32_test.h:1202:35:static constexpr void stm32_test::oled_test()::<lambda()>::_FUN()	2
-../Port/Inc/stm32_test.h:1222:35:static constexpr void stm32_test::oled_test()::<lambda()>::_FUN()	4
-../Port/Inc/stm32_test.h:1210:35:static constexpr void stm32_test::oled_test()::<lambda()>::_FUN()	4
+../Port/Inc/stm32_test.h:1229:35:static constexpr void stm32_test::oled_test()::<lambda()>::_FUN()	2
+../Port/Inc/stm32_test.h:1249:35:static constexpr void stm32_test::oled_test()::<lambda()>::_FUN()	4
+../Port/Inc/stm32_test.h:1237:35:static constexpr void stm32_test::oled_test()::<lambda()>::_FUN()	4
 ../Hardware/port/Inc/hw_port_message.h:74:8:void Hardware_STM32_Message::begin(uint16_t, size_t, UART_HandleTypeDef*)	1
 ../Hardware/port/Inc/hw_port_message.h:74:8:void Hardware_STM32_Message::begin(uint16_t, size_t, UART_HandleTypeDef*)	1
 ../Hardware/port/Inc/hw_port_message.h:74:8:void Hardware_STM32_Message::begin(uint16_t, size_t, UART_HandleTypeDef*)	1
@@ -13,27 +13,27 @@
 ../Hardware/port/Inc/hw_port_message.h:138:8:void Hardware_STM32_Message::_startDMA()	1
 ../Hardware/port/Inc/hw_port_hrtim_pwm.h:46:8:void Hardware_STM32_HRTIM_PWM::begin(HRTIM_HandleTypeDef*, hw_port_hrtim_pwm_channel_t, hw_port_hrtim_pwm_compare_unit_t)	9
 ../Hardware/port/Inc/hw_port_message.h:48:27:Hardware_STM32_Message& Hardware_STM32_Message::operator=(Hardware_STM32_Message&&)	6
+../Port/Inc/stm32_test.h:1280:35:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda()>::_FUN()	5
 ../Hardware/port/Inc/hw_port_adc.h:58:8:void Hardware_STM32_ADC::begin(ADC_HandleTypeDef*, hw_stm32_adc_mode_t, size_t)	2
-../Port/Inc/stm32_test.h:1187:35:static constexpr void stm32_test::oled_test()::<lambda()>::_FUN()	5
-../Port/Inc/stm32_test.h:1268:35:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda()>::_FUN()	2
-../Port/Inc/stm32_test.h:1253:35:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda()>::_FUN()	5
-../Port/Inc/stm32_test.h:1288:35:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda()>::_FUN()	4
-../Port/Inc/stm32_test.h:1276:35:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda()>::_FUN()	4
-../Port/Inc/stm32_test.h:672:42:static constexpr void stm32_test::boost_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:548:42:static constexpr void stm32_test::dc_dc_current_voltage_ClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:742:42:static constexpr void stm32_test::boost_VoltageClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:1316:42:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:935:42:static constexpr void stm32_test::dc_dc_openLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:611:45:static constexpr void stm32_test::dc_dc_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:814:42:static constexpr void stm32_test::boost_CurrentVoltageClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:749:45:static constexpr void stm32_test::boost_VoltageClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:679:45:static constexpr void stm32_test::boost_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:604:42:static constexpr void stm32_test::dc_dc_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:1323:45:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:513:42:static constexpr void stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:821:45:static constexpr void stm32_test::boost_CurrentVoltageClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Port/Inc/stm32_test.h:883:42:static constexpr void stm32_test::boost_openLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
-../Hardware/port/Inc/hw_port_dac.h:64:23:Hardware_STM32_DAC<MaxPoints>& Hardware_STM32_DAC<MaxPoints>::operator=(Hardware_STM32_DAC<MaxPoints>&&) [with unsigned int MaxPoints = 200]	12
+../Port/Inc/stm32_test.h:1295:35:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda()>::_FUN()	2
+../Port/Inc/stm32_test.h:1214:35:static constexpr void stm32_test::oled_test()::<lambda()>::_FUN()	5
+../Port/Inc/stm32_test.h:1303:35:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda()>::_FUN()	4
+../Port/Inc/stm32_test.h:1315:35:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda()>::_FUN()	4
+../Port/Inc/stm32_test.h:841:42:static constexpr void stm32_test::boost_CurrentVoltageClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:638:45:static constexpr void stm32_test::dc_dc_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:699:42:static constexpr void stm32_test::boost_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:776:45:static constexpr void stm32_test::boost_VoltageClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:848:45:static constexpr void stm32_test::boost_CurrentVoltageClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:706:45:static constexpr void stm32_test::boost_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:575:42:static constexpr void stm32_test::dc_dc_current_voltage_ClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:1343:42:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:910:42:static constexpr void stm32_test::boost_openLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:540:42:static constexpr void stm32_test::mk1031_sensor_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:631:42:static constexpr void stm32_test::dc_dc_currentClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:769:42:static constexpr void stm32_test::boost_VoltageClosedLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:1350:45:static constexpr void stm32_test::nuedc_2015_init_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Port/Inc/stm32_test.h:962:42:static constexpr void stm32_test::dc_dc_openLoop_test()::<lambda(uint8_t*, uint16_t)>::_FUN(uint8_t*, uint16_t)	10
+../Hardware/port/Inc/hw_port_dac.h:65:23:Hardware_STM32_DAC<MaxPoints>& Hardware_STM32_DAC<MaxPoints>::operator=(Hardware_STM32_DAC<MaxPoints>&&) [with unsigned int MaxPoints = 200]	12
 ../Port/Inc/stm32_hrtim_pwm.h:15:28:Hardware_STM32_HRTIM_PWM stm32_hrtim_pwm::getTimerAOutput()	1
 ../Port/Inc/stm32_hrtim_pwm.h:22:28:Hardware_STM32_HRTIM_PWM stm32_hrtim_pwm::getTimerBOutput()	1
 ../Port/Inc/stm32_hrtim_pwm.h:29:28:Hardware_STM32_HRTIM_PWM stm32_hrtim_pwm::getTimerCOutput()	1
@@ -53,52 +53,58 @@
 ../Port/Inc/stm32_message.h:25:26:Hardware_STM32_Message stm32_message::getUART2()	1
 ../Port/Inc/stm32_message.h:32:26:Hardware_STM32_Message stm32_message::getUART3()	1
 ../Port/Inc/stm32_dac.h:16:27:Hardware_STM32_DAC<200> stm32_dac::getDAC1_CH1()	2
-../Port/Inc/stm32_dac.h:23:27:Hardware_STM32_DAC<200> stm32_dac::getDAC1_CH2()	2
+../Port/Inc/stm32_dac.h:23:27:Hardware_STM32_DAC<400> stm32_dac::getDAC1_CH1_20khz()	2
+../Port/Inc/stm32_dac.h:31:27:Hardware_STM32_DAC<200> stm32_dac::getDAC1_CH2()	2
+../Port/Inc/stm32_dac.h:38:27:Hardware_STM32_DAC<400> stm32_dac::getDAC1_CH2_20khz()	2
 ../Port/Inc/stm32_mk1031.h:15:19:Hardware_MK1031 stm32_mk1031::getMK1031(Hardware_STM32_Message*, uint8_t)	1
 ../Port/Inc/stm32_keyboard.h:15:27:Hardware_STM32_Keyboard stm32_keyboard::getKeyboard(uint8_t)	1
 ../Port/Inc/stm32_dc_ac.h:20:3:Algorithim_DC_AC<Hardware_STM32_HRTIM_PWM, Hardware_MK1031_Wrapper> stm32_dc_ac::getDCACMK1031(Hardware_STM32_HRTIM_PWM*, Hardware_MK1031_Wrapper*)	11
-../Port/Inc/stm32_test.h:257:8:void stm32_test::timerA_pwm_test()	8
-../Port/Inc/stm32_test.h:268:8:void stm32_test::timerB_pwm_test()	1
-../Port/Inc/stm32_test.h:278:8:void stm32_test::timerC_pwm_test()	1
-../Port/Inc/stm32_test.h:289:8:void stm32_test::timerC_center_align_pwm_test()	1
-../Port/Inc/stm32_test.h:300:8:void stm32_test::adc1_dma_test()	3
-../Port/Inc/stm32_test.h:321:8:void stm32_test::adc1_it_test()	3
-../Port/Inc/stm32_test.h:337:8:void stm32_test::adc2_dma_test()	3
-../Port/Inc/stm32_test.h:355:8:void stm32_test::adc2_it_test()	3
-../Port/Inc/stm32_test.h:372:8:void stm32_test::adc3_dma_test()	3
-../Port/Inc/stm32_test.h:395:8:void stm32_test::filiter_hilbert_it_singlePoint_test()	8
-../Port/Inc/stm32_test.h:403:8:void stm32_test::us_timer_test()	3
-../Port/Inc/stm32_test.h:413:8:void stm32_test::pll_init_test()	27
-../Port/Inc/stm32_test.h:432:8:void stm32_test::pll_it_test()	25
-../Port/Inc/stm32_test.h:508:8:void stm32_test::mk1031_sensor_test()	3
-../Port/Inc/stm32_test.h:538:8:void stm32_test::dc_dc_current_voltage_ClosedLoop_test()	4
-../Port/Inc/stm32_test.h:591:8:void stm32_test::dc_dc_currentClosedLoop_test()	2
-../Port/Inc/stm32_test.h:659:8:void stm32_test::boost_currentClosedLoop_test()	2
-../Port/Inc/stm32_test.h:728:8:void stm32_test::boost_VoltageClosedLoop_test()	2
-../Port/Inc/stm32_test.h:801:8:void stm32_test::boost_CurrentVoltageClosedLoop_test()	2
-../Port/Inc/stm32_test.h:873:8:void stm32_test::boost_openLoop_test()	12
-../Port/Inc/stm32_test.h:925:8:void stm32_test::dc_dc_openLoop_test()	14
-../Port/Inc/stm32_test.h:974:8:void stm32_test::dc_dc_voltageClosedLoop_test()	42
-../Port/Inc/stm32_test.h:1002:8:void stm32_test::dc_dc_doubleMode_closedLoop_test()	91
-../Port/Inc/stm32_test.h:1092:8:void stm32_test::vofa_send_test()	1
-../Port/Inc/stm32_test.h:1112:8:void stm32_test::vofa_receive_test()	3
-../Port/Inc/stm32_test.h:1127:8:void stm32_test::segger_systemview_test_enable()	1
-../Port/Inc/stm32_test.h:1136:8:void stm32_test::keyboard_test()	16
-../Port/Inc/stm32_test.h:1149:8:void stm32_test::oled_menu_test()	10
-../Port/Inc/stm32_test.h:1182:8:void stm32_test::oled_test()	16
-../Port/Inc/stm32_test.h:1247:8:void stm32_test::nuedc_2015_init_test()	13
-../Port/Inc/stm32_test.h:1359:8:void stm32_test::nuedc_2015_tim1Callback_test()	93
-../Port/Inc/stm32_test.h:1409:8:void stm32_test::nuedc_2015_loop_test()	16
+../Port/Inc/stm32_test.h:261:8:void stm32_test::timerA_pwm_test()	8
+../Port/Inc/stm32_test.h:272:8:void stm32_test::timerB_pwm_test()	1
+../Port/Inc/stm32_test.h:282:8:void stm32_test::timerC_pwm_test()	1
+../Port/Inc/stm32_test.h:293:8:void stm32_test::timerC_center_align_pwm_test()	1
+../Port/Inc/stm32_test.h:304:8:void stm32_test::adc1_dma_test()	3
+../Port/Inc/stm32_test.h:325:8:void stm32_test::adc1_it_test()	3
+../Port/Inc/stm32_test.h:341:8:void stm32_test::adc2_dma_test()	3
+../Port/Inc/stm32_test.h:359:8:void stm32_test::adc2_it_test()	3
+../Port/Inc/stm32_test.h:376:8:void stm32_test::adc3_dma_test()	3
+../Port/Inc/stm32_test.h:414:8:void stm32_test::filiter_sogi_it_test()	8
+../Port/Inc/stm32_test.h:422:8:void stm32_test::filiter_hilbert_it_singlePoint_test()	8
+../Port/Inc/stm32_test.h:430:8:void stm32_test::us_timer_test()	3
+../Port/Inc/stm32_test.h:440:8:void stm32_test::pll_init_test()	27
+../Port/Inc/stm32_test.h:459:8:void stm32_test::pll_it_test()	25
+../Port/Inc/stm32_test.h:535:8:void stm32_test::mk1031_sensor_test()	3
+../Port/Inc/stm32_test.h:565:8:void stm32_test::dc_dc_current_voltage_ClosedLoop_test()	4
+../Port/Inc/stm32_test.h:618:8:void stm32_test::dc_dc_currentClosedLoop_test()	2
+../Port/Inc/stm32_test.h:686:8:void stm32_test::boost_currentClosedLoop_test()	2
+../Port/Inc/stm32_test.h:755:8:void stm32_test::boost_VoltageClosedLoop_test()	2
+../Port/Inc/stm32_test.h:828:8:void stm32_test::boost_CurrentVoltageClosedLoop_test()	2
+../Port/Inc/stm32_test.h:900:8:void stm32_test::boost_openLoop_test()	12
+../Port/Inc/stm32_test.h:952:8:void stm32_test::dc_dc_openLoop_test()	14
+../Port/Inc/stm32_test.h:1001:8:void stm32_test::dc_dc_voltageClosedLoop_test()	42
+../Port/Inc/stm32_test.h:1029:8:void stm32_test::dc_dc_doubleMode_closedLoop_test()	91
+../Port/Inc/stm32_test.h:1119:8:void stm32_test::vofa_send_test()	1
+../Port/Inc/stm32_test.h:1139:8:void stm32_test::vofa_receive_test()	3
+../Port/Inc/stm32_test.h:1154:8:void stm32_test::segger_systemview_test_enable()	1
+../Port/Inc/stm32_test.h:1163:8:void stm32_test::keyboard_test()	16
+../Port/Inc/stm32_test.h:1176:8:void stm32_test::oled_menu_test()	10
+../Port/Inc/stm32_test.h:1209:8:void stm32_test::oled_test()	16
+../Port/Inc/stm32_test.h:1274:8:void stm32_test::nuedc_2015_init_test()	13
+../Port/Inc/stm32_test.h:1386:8:void stm32_test::nuedc_2015_tim1Callback_test()	93
+../Port/Inc/stm32_test.h:1436:8:void stm32_test::nuedc_2015_loop_test()	16
 ../Core/NUEDC/2015.h:179:8:void nuedc_2015::hardware_init()	7
 ../Core/NUEDC/2015.h:212:8:void nuedc_2015::loop()	83
-../Core/Src/main.cpp:167:6:void SystemClock_Config()	3
-../Core/Src/main.cpp:217:6:void Error_Handler()	1
-../Hardware/port/Inc/hw_port_dac.h:188:8:void Hardware_STM32_DAC<MaxPoints>::enable() [with unsigned int MaxPoints = 200]	5
-../Port/Inc/stm32_test.h:386:8:void stm32_test::dac1_dma_test()	1
-../Port/Inc/stm32_test.h:483:8:void stm32_test::filiter_hilbert_test()	0
-../Port/Inc/stm32_test.h:494:8:void stm32_test::dq_pll_test()	1
+../Core/Src/main.cpp:164:6:void SystemClock_Config()	3
+../Core/Src/main.cpp:214:6:void Error_Handler()	1
+../Hardware/port/Inc/hw_port_dac.h:189:8:void Hardware_STM32_DAC<MaxPoints>::enable() [with unsigned int MaxPoints = 200]	5
+../Port/Inc/stm32_test.h:390:8:void stm32_test::dac1_dma_test()	1
+../Port/Inc/stm32_test.h:510:8:void stm32_test::filiter_hilbert_test()	0
+../Port/Inc/stm32_test.h:521:8:void stm32_test::dq_pll_test()	1
+../Hardware/port/Inc/hw_port_dac.h:189:8:void Hardware_STM32_DAC<MaxPoints>::enable() [with unsigned int MaxPoints = 400]	5
+../Hardware/port/Inc/hw_port_dac.h:65:23:Hardware_STM32_DAC<MaxPoints>& Hardware_STM32_DAC<MaxPoints>::operator=(Hardware_STM32_DAC<MaxPoints>&&) [with unsigned int MaxPoints = 400]	8
+../Port/Inc/stm32_test.h:400:8:void stm32_test::dac1_dma_test_20khz()	1
+../Core/Src/main.cpp:80:5:int main()	0
 ../App/algorithim/Inc/alg_dc_ac.h:142:8:void Algorithim_DC_AC<PWM, DATA>::generateSPWMTable() [with PWM = Hardware_STM32_HRTIM_PWM; DATA = Hardware_MK1031_Wrapper]	13
-../Port/Inc/stm32_test.h:1072:8:void stm32_test::dc_ac_openLoop_test()	9
-../Core/Src/main.cpp:84:5:int main()	0
-../Core/Src/main.cpp:226:1:cpp)	1
-../Core/Src/main.cpp:226:1:cpp)	5
+../Port/Inc/stm32_test.h:1099:8:void stm32_test::dc_ac_openLoop_test()	9
+../Core/Src/main.cpp:223:1:cpp)	1
+../Core/Src/main.cpp:223:1:cpp)	5

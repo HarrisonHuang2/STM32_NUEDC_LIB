@@ -68,7 +68,7 @@ public:
     is_initialized = true;
 
     // ���� SOGI �˲���
-    sogi_filter = Flt_Sogi(f0, fs, sogi_k);
+    sogi_filter.begin(f0, fs, sogi_k);
 
     // // ��ʼ�� PID ������
     // pid_controller.begin(kp, ki, kd, integral_limit, output_limit, delta_output_limit);

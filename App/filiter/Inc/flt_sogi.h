@@ -41,7 +41,7 @@ public:
      * @param k ����ϵ��
      */
     Flt_Sogi() = default;
-    Flt_Sogi(float f0, float fs, float k) {
+    void begin(float f0, float fs, float k) {
         float T = 1.0f / fs;
         float omega_d;
         #ifdef USE_ARM_MATH
