@@ -419,6 +419,13 @@ namespace stm32_test
     g_dac_ch2_20khz_handler.update_diy(static_cast<uint16_t>(sogi_output[0]));
   }
 
+  void filiter_sogi_it_uart_test ()
+  {
+    float sogi_output[2];
+    g_flt_sogi_handler.filter(g_dac_ch1_20khz_handler.getOutputValue(),sogi_output);
+    printf("samples:%f,%f\n",sogi_output[0],sogi_output[1]);
+  }
+
   void filiter_hilbert_it_singlePoint_test()
   {
     float hilbert_signal=g_filiter_hilbert_handler.process(g_dac_ch1_handler.getOutputValue() );

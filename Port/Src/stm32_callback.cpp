@@ -37,6 +37,7 @@ namespace stm32_test
   void filiter_hilbert_multyPoints_test();
   void nuedc_2015_tim1Callback_test();
   void filiter_sogi_it_test ();
+  void filiter_sogi_it_uart_test ();
 }
 
 namespace nuedc_2015
@@ -92,7 +93,8 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
     }
   else if(htim == &htim7)
     {
-      stm32_test::filiter_sogi_it_test();
+//      stm32_test::filiter_sogi_it_test();
+      stm32_test::filiter_sogi_it_uart_test();
       //      stm32_test::pll_it_test();
       //      stm32_test::filiter_hilbert_it_singlePoint_test();
     }

@@ -137,7 +137,7 @@ int main(void)
   //    stm32_test::boost_openLoop_test();
   //  stm32_test::vofa_receive_test();
   //  stm32_test::dc_ac_openLoop_test();
-  stm32_test::dac1_dma_test_20khz();
+//  stm32_test::dac1_dma_test_20khz();
   //  stm32_test::timerC_center_align_pwm_test();
   /* USER CODE END 2 */
 
