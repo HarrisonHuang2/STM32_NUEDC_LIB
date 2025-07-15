@@ -24,7 +24,7 @@ namespace stm32_dac
   {
     //20khz定时器频率，生成50hz正弦信号，有400个点
     Hardware_STM32_DAC<400> dac;
-    dac.begin(&hdac1,&htim6,STM32_DAC_CHANNEL1,50,400,STM32_DAC_DDS_MODE);
+    dac.begin(&hdac1,&htim6,STM32_DAC_CHANNEL1,50,20,STM32_DAC_DDS_MODE);
     return dac;
   }
 
@@ -39,7 +39,7 @@ namespace stm32_dac
   {
     //20khz定时器频率，生成50hz正弦信号，有400个点
     Hardware_STM32_DAC<400> dac;
-    dac.begin(&hdac1,&htim7,STM32_DAC_CHANNEL2,50,400,STM32_DAC_DDS_MODE);
+    dac.begin(&hdac1,&htim7,STM32_DAC_CHANNEL2,50,20,STM32_DAC_DDS_MODE);
     return dac;
   }
 }
