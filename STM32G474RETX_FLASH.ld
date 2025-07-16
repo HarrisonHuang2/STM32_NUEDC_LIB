@@ -44,8 +44,8 @@ _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
  */
 _end = .;  /* This defines the end of data/bss segment */
 
-_Min_Heap_Size = 0x8000; /* 堆大小 32 KB */
-_Min_Stack_Size = 0x1000; /* 栈大小 4 KB */
+_Min_Heap_Size = 0x200; /* 堆大小 32 KB */
+_Min_Stack_Size = 0x400; /* 栈大小 4 KB */
 
 /* Memories definition */
 MEMORY

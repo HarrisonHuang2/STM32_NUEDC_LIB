@@ -404,19 +404,44 @@ namespace stm32_test
     g_dac_ch1_20khz_handler.enable();
     g_dac_ch2_20khz_handler=stm32_dac::getDAC1_CH2_20khz();
     g_dac_ch2_20khz_handler.enable();
-    float f0=50; //正弦波频率
-    float fs=20000; //采样频率
-    float sogi_k=1.0f;
-    g_flt_sogi_handler.begin(f0,fs,sogi_k);
+//    float f0=50; //正弦波频率
+//    float fs=20000; //采样频率
+//    float sogi_k=0.5f;
+//    g_flt_sogi_handler.begin(f0,fs,sogi_k);
+
+    float f0 = 50.0f;      // 目标频率 (Hz)
+    float fs = 20000.0f;   // 采样频率 (Hz)
+    float lpf_b0 = 0.01f;  // 低通滤波器系数
+    float lpf_b1 = 0.01f;
+    float k = 0.5;        // SOGI增益
+    g_flt_sogi_handler.config(f0, fs, lpf_b0, lpf_b1, k);
+
     while(1){}
   }
 
   void filiter_sogi_it_test ()
   {
+    int point = 20;
     float sogi_output[2];
-    g_flt_sogi_handler.filter(g_dac_ch1_20khz_handler.getOutputValue(),sogi_output);
-//    g_dac_ch1_20khz_handler.update_diy(static_cast<uint16_t>(sogi_output[0]));
-    g_dac_ch2_20khz_handler.update_diy(static_cast<uint16_t>(sogi_output[0]));
+
+    const float angleIncrement = 2.0f * 3.1415926 / static_cast<float>(point);
+    static int i = 0;
+
+    i = (i+1)%point;
+
+    float angle = angleIncrement * i ;
+    float sineValue = arm_sin_f32(angle);
+
+    // 转换为DAC值 (假设12位DAC)
+    uint16_t m_waveTabl = static_cast<uint16_t>((sineValue + 1.0f) * 2047.5f);
+
+
+    g_flt_sogi_handler.filter(m_waveTabl);
+    sogi_output[0] =  g_flt_sogi_handler.getAlpha();
+    sogi_output[1] =  g_flt_sogi_handler.getBeta();
+
+    g_dac_ch1_20khz_handler.update_diy(static_cast<uint16_t>(sogi_output[0]));
+    g_dac_ch2_20khz_handler.update_diy(static_cast<uint16_t>(sogi_output[1]));
   }
 
   void filiter_sogi_it_uart_test ()
