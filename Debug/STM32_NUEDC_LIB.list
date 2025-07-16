@@ -33,21 +33,21 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_rnglists 0000250b  00000000  00000000  00060f50  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_macro  00032d19  00000000  00000000  0006345b  2**0
+ 15 .debug_macro  00032d2d  00000000  00000000  0006345b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_line   0002e658  00000000  00000000  00096174  2**0
+ 16 .debug_line   0002e666  00000000  00000000  00096188  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_str    001549bb  00000000  00000000  000c47cc  2**0
+ 17 .debug_str    001549d3  00000000  00000000  000c47ee  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .comment      000000b8  00000000  00000000  00219187  2**0
+ 18 .comment      000000b8  00000000  00000000  002191c1  2**0
                   CONTENTS, READONLY
- 19 .debug_frame  0000ea3c  00000000  00000000  00219240  2**2
+ 19 .debug_frame  0000ea3c  00000000  00000000  0021927c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_line_str 0000004b  00000000  00000000  00227c7c  2**0
+ 20 .debug_line_str 0000004b  00000000  00000000  00227cb8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_loc    000000db  00000000  00000000  00227cc7  2**0
+ 21 .debug_loc    000000db  00000000  00000000  00227d03  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_ranges 00000010  00000000  00000000  00227da2  2**0
+ 22 .debug_ranges 00000010  00000000  00000000  00227dde  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -4349,7 +4349,7 @@ class Hardware_STM32_ADC
         return output;
     }
 
-    // ����ʽPID�������
+    // 增量式PID计算
     float cal_increase(float target_value, float measured_value) {
  8002334:	b480      	push	{r7}
  8002336:	b08b      	sub	sp, #44	@ 0x2c
@@ -4357,11 +4357,12 @@ class Hardware_STM32_ADC
  800233a:	60f8      	str	r0, [r7, #12]
  800233c:	ed87 0a02 	vstr	s0, [r7, #8]
  8002340:	edc7 0a01 	vstr	s1, [r7, #4]
-        float error = target_value - measured_value; // �������
+        float error = target_value - measured_value;
  8002344:	ed97 7a02 	vldr	s14, [r7, #8]
  8002348:	edd7 7a01 	vldr	s15, [r7, #4]
  800234c:	ee77 7a67 	vsub.f32	s15, s14, s15
  8002350:	edc7 7a07 	vstr	s15, [r7, #28]
+
         float proportional = kp * (error - lastError);
  8002354:	68fb      	ldr	r3, [r7, #12]
  8002356:	ed93 7a00 	vldr	s14, [r3]
@@ -4377,7 +4378,7 @@ class Hardware_STM32_ADC
  8002376:	ed97 7a07 	vldr	s14, [r7, #28]
  800237a:	ee67 7a27 	vmul.f32	s15, s14, s15
  800237e:	edc7 7a09 	vstr	s15, [r7, #36]	@ 0x24
-        // �޷�
+
         if (integral_limit > 0) {
  8002382:	68fb      	ldr	r3, [r7, #12]
  8002384:	edd3 7a07 	vldr	s15, [r3, #28]
@@ -4408,7 +4409,6 @@ class Hardware_STM32_ADC
  80023d2:	edd7 7a09 	vldr	s15, [r7, #36]	@ 0x24
  80023d6:	edc7 7a09 	vstr	s15, [r7, #36]	@ 0x24
         }
-
 
         float derivative = kd * (error - 2 * lastError + last_lastError);
  80023da:	68fb      	ldr	r3, [r7, #12]
@@ -4465,13 +4465,12 @@ class Hardware_STM32_ADC
  800247a:	edc7 7a08 	vstr	s15, [r7, #32]
         }
 
-        if (delta_output_limit > 0) {//��Ϊ-1���Խ���
+        if (delta_output_limit > 0) {
  800247e:	68fb      	ldr	r3, [r7, #12]
  8002480:	edd3 7a09 	vldr	s15, [r3, #36]	@ 0x24
  8002484:	eef5 7ac0 	vcmpe.f32	s15, #0.0
  8002488:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
  800248c:	dd33      	ble.n	80024f6 <_ZN14Algorithim_PID12cal_increaseEff+0x1c2>
-            // ��PID�ı仯���ʽ�������
             float output_rate = output - lastOutput;
  800248e:	68fb      	ldr	r3, [r7, #12]
  8002490:	edd3 7a06 	vldr	s15, [r3, #24]
@@ -4510,7 +4509,6 @@ class Hardware_STM32_ADC
  80024f2:	edc7 7a08 	vstr	s15, [r7, #32]
         }
 
-        // ����״̬����
         last_lastError = lastError;
  80024f6:	68fb      	ldr	r3, [r7, #12]
  80024f8:	68da      	ldr	r2, [r3, #12]
@@ -5254,9 +5252,9 @@ class Algorithim_DC_AC {
 
 0800298e <_ZN8Flt_Sogi6filterEfPf>:
     /**
-     * ����һ���������������������������
-     * @param input �����ź�
-     * @param outputs ������飨outputs[0] = v', outputs[1] = qv'��
+     * 输入信号经过 SOGI 滤波
+     * @param input 输入信号
+     * @param outputs 输出信号 [v', qv']
      */
     void filter(float input, float* outputs) {
  800298e:	b480      	push	{r7}
@@ -5265,7 +5263,6 @@ class Algorithim_DC_AC {
  8002994:	60f8      	str	r0, [r7, #12]
  8002996:	ed87 0a02 	vstr	s0, [r7, #8]
  800299a:	6079      	str	r1, [r7, #4]
-        // ���� v' ͨ��
         float output_v = b0_v * input + b1_v * x_prev1 + b2_v * x_prev2
  800299c:	68fb      	ldr	r3, [r7, #12]
  800299e:	ed93 7a00 	vldr	s14, [r3]
@@ -5299,7 +5296,6 @@ class Algorithim_DC_AC {
  80029f6:	ee77 7a67 	vsub.f32	s15, s14, s15
  80029fa:	edc7 7a05 	vstr	s15, [r7, #20]
 
-        // ���� qv' ͨ��
         float output_qv = b0_qv * input + b1_qv * x_prev1 + b2_qv * x_prev2
  80029fe:	68fb      	ldr	r3, [r7, #12]
  8002a00:	ed93 7a05 	vldr	s14, [r3, #20]
@@ -5333,7 +5329,6 @@ class Algorithim_DC_AC {
  8002a58:	ee77 7a67 	vsub.f32	s15, s14, s15
  8002a5c:	edc7 7a04 	vstr	s15, [r7, #16]
 
-        // ���¹�������״̬
         x_prev2 = x_prev1;
  8002a60:	68fb      	ldr	r3, [r7, #12]
  8002a62:	6a9a      	ldr	r2, [r3, #40]	@ 0x28
@@ -5344,7 +5339,6 @@ class Algorithim_DC_AC {
  8002a6a:	68ba      	ldr	r2, [r7, #8]
  8002a6c:	629a      	str	r2, [r3, #40]	@ 0x28
 
-        // ���� v' ״̬
         y_prev2_v = y_prev1_v;
  8002a6e:	68fb      	ldr	r3, [r7, #12]
  8002a70:	6b1a      	ldr	r2, [r3, #48]	@ 0x30
@@ -5355,7 +5349,6 @@ class Algorithim_DC_AC {
  8002a78:	697a      	ldr	r2, [r7, #20]
  8002a7a:	631a      	str	r2, [r3, #48]	@ 0x30
 
-        // ���� qv' ״̬
         y_prev2_qv = y_prev1_qv;
  8002a7c:	68fb      	ldr	r3, [r7, #12]
  8002a7e:	6b9a      	ldr	r2, [r3, #56]	@ 0x38
@@ -5366,7 +5359,6 @@ class Algorithim_DC_AC {
  8002a86:	693a      	ldr	r2, [r7, #16]
  8002a88:	639a      	str	r2, [r3, #56]	@ 0x38
 
-        // ��ֵ���
         outputs[0] = output_v;
  8002a8a:	687b      	ldr	r3, [r7, #4]
  8002a8c:	697a      	ldr	r2, [r7, #20]
