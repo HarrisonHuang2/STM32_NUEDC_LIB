@@ -440,16 +440,38 @@ namespace stm32_test
     sogi_output[0] =  g_flt_sogi_handler.getAlpha();
     sogi_output[1] =  g_flt_sogi_handler.getBeta();
 
+//    uint8_t data[2]={0x31,0x32};
+//    uint8_t len=2;
+//    HAL_UART_Transmit(&huart1, data, len,10);
+
     g_dac_ch1_20khz_handler.update_diy(static_cast<uint16_t>(sogi_output[0]));
     g_dac_ch2_20khz_handler.update_diy(static_cast<uint16_t>(sogi_output[1]));
   }
 
   void filiter_sogi_it_uart_test ()
   {
+    int point = 20;
     float sogi_output[2];
-    g_flt_sogi_handler.filter(g_dac_ch1_20khz_handler.getOutputValue(),sogi_output);
+
+    const float angleIncrement = 2.0f * 3.1415926 / static_cast<float>(point);
+    static int i = 0;
+
+    i = (i+1)%point;
+
+    float angle = angleIncrement * i ;
+    float sineValue = arm_sin_f32(angle);
+
+
+    uint16_t m_waveTabl = static_cast<uint16_t>((sineValue + 1.0f) * 2047.5f);
+
+
+    g_flt_sogi_handler.filter(m_waveTabl);
+    sogi_output[0] =  g_flt_sogi_handler.getAlpha();
+    sogi_output[1] =  g_flt_sogi_handler.getBeta();
+
+
     printf("samples:%f,%f\n",sogi_output[0],sogi_output[1]);
-  }
+    }
 
   void filiter_hilbert_it_singlePoint_test()
   {
@@ -1150,6 +1172,9 @@ namespace stm32_test
    * */
   void vofa_send_test()
   {
+//    uint8_t data[2]={0x31,0x32};
+//	uint8_t len=2;
+//    HAL_UART_Transmit(&huart1, data, len,10);
     printf("good\n");
     HAL_Delay(500);
   }
