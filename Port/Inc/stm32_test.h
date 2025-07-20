@@ -1154,7 +1154,7 @@ namespace stm32_test
   {
     g_hrtimer_pwm_handler=stm32_hrtim_pwm::getTimerCOutput();
 
-    g_dc_ac_sensor_handler=stm32_dc_ac::getDCACMK1031(&g_hrtimer_pwm_handler);
+    g_dc_ac_sensor_handler=stm32_dc_ac::getDCACMK1031(&g_hrtimer_pwm_handler);//获得DC-AC控制器句柄
 
     g_dc_ac_sensor_handler.enable();
     g_hrtimer_pwm_handler.setOutput_IT();

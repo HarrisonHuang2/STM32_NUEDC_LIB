@@ -133,7 +133,12 @@ public:
   void closedLoopAngleControl(float angle)
   {
     if (!isEnable_ ){return;}
+#ifdef USE_ARM_MATH
+    angle = 0.5f * (1.0f + ratio_ * arm_sin_f32(angle));
+#else
+      // 使用标准库计算正弦值
     angle = 0.5f * (1.0f + ratio_ * std::sin(angle));
+#endif
     pwm_ -> setDutyCycle(LIMIT(angle,STM32_MIN_DUTY,STM32_MAX_DUTY));
   }
 
