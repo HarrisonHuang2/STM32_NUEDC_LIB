@@ -160,6 +160,7 @@ private:
 	float angle = i * phaseStep;
 	spwmTable_[i] = 0.5f * (1.0f + ratio_ * std::sin(angle));
     }
+
   }
 };
 
